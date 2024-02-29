@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  --primary-color: #212529;
+  --secondary-color: #F8F9FA;
+  --third-color: #bfc0c0;
+  --text-color-light: #03071E;
+  --button-color-light: #a3cef1;
+  --button-hover-light: #ebebeb;
+  --card-color-light: #DEE2E6;
+  --card-hover-light: #f8f9fa;
+
+
+  --primary-color-dark: ;
+  --seconday-color-dark: ;
+  --third-color-dark: ;
+  --text-color-dark: #ffffff;
+  --button-color-dark: ;
+  --card-color-dark: ;
+}
+
+body {
+  height: 100dvh;
+  background-color: #E6E8E6;
+  color: white;
+  margin: 0; 
+  backdrop-filter: blur(5px);
+  font-family: 'Roboto', sans-serif;
+}

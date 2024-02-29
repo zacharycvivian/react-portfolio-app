@@ -1,0 +1,8 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Zachary Vivian
+N:Vivian;Zachary;;;
+TEL;TYPE=MOBILE,VOICE:(608) 574-0816
+EMAIL:zacharycvivian@icloud.com
+PHOTO;VALUE=URL;TYPE=JPEG:
+END:VCARD

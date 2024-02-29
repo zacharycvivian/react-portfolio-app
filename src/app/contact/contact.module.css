@@ -1,0 +1,90 @@
+/* contact.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: var(--secondary-color);
+  z-index: 10000;
+  height: 100%;
+}
+
+.sectionTitle {
+  max-width: 80%;
+  margin: 0 auto;
+  color: var(--text-color-light);
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+}
+
+.card {
+  margin: 10px 0;
+  padding: 20px;
+  background-color: var(--card-color-light);
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  color: var(--text-color-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+  max-width: 97.5%;
+  width: 97.5%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: var(--card-hover-light);
+  width: 99%;
+}
+
+.card a {
+  color: var(--primary-color); /* Choose a color that fits your theme */
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.downloadButton {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--button-color-light); 
+  color: var(--text-color-light);
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.downloadButton:hover {
+  background-color: var(--button-hover-light); 
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 120px 20px 20px;
+  }
+
+  .section {
+    flex-direction: column;
+  }
+}
