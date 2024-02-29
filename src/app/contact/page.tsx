@@ -25,11 +25,9 @@ const ContactPage = () => {
         <div className={styles.card}>
           <p>LinkedIn: <a href="https://www.linkedin.com/in/zacharycvivian" target="_blank" rel="noopener noreferrer">zacharycvivian</a></p>
         </div>
-        {/*
         <div className={styles.card}>
-          <p>GitHub: <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">yourusername</a></p>
+          <p>GitHub: <a href="https://github.com/zacharycvivian" target="_blank" rel="noopener noreferrer">zacharycvivian</a></p>
         </div>
-        */}
       </div>
       <div className={styles.buttonContainer}>
         <button onClick={downloadVCard} className={styles.downloadButton}>
