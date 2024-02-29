@@ -11,18 +11,17 @@
   --secondary-color: #F8F9FA;
   --third-color: #bfc0c0;
   --text-color-light: #03071E;
+  --text-color-dark: #ffffff;
   --button-color-light: #a3cef1;
   --button-hover-light: #ebebeb;
   --card-color-light: #DEE2E6;
   --card-hover-light: #f8f9fa;
+}
 
-
-  --primary-color-dark: ;
-  --seconday-color-dark: ;
-  --third-color-dark: ;
-  --text-color-dark: #ffffff;
-  --button-color-dark: ;
-  --card-color-dark: ;
+[data-theme='dark'] {
+  --background-color: #000000;
+  --text-color: #ffffff;
+  /* Add more variables as needed */
 }
 
 body {
