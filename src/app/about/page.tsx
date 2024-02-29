@@ -36,6 +36,15 @@ const AboutPage = () => {
             Science in Cybersecurity, Minor in Business Administration.
           </p>
         </div>
+        <div className={styles.card}>
+          <p>
+            Hobbies: In my free time, I love to spend time outdoors hiking and
+            backpacking alongside my buddies and my dog, Turbo. I also enjoy
+            playing racing video games such as Gran Turismo 7, but I like to
+            balance my life style and take some of my time to learn new
+            things--such as devloping this website!
+          </p>
+        </div>
       </div>
 
       <h2 className={styles.sectionTitle}>Experience:</h2>
