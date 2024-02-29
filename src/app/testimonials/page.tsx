@@ -133,6 +133,7 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
+                  placeholder="Borat"
                   value={formData.fname}
                   onChange={(e) =>
                     setFormData({ ...formData, fname: e.target.value })
@@ -144,6 +145,7 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
+                  placeholder="Sagdiyev"
                   value={formData.lname}
                   onChange={(e) =>
                     setFormData({ ...formData, lname: e.target.value })
@@ -170,6 +172,7 @@ const TestimonialsPage = () => {
                 Review:
                 <textarea
                   className={styles.textareaField}
+                  placeholder="Very nice!"
                   value={formData.review}
                   onChange={(e) =>
                     setFormData({ ...formData, review: e.target.value })
