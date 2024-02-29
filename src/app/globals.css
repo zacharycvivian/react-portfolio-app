@@ -19,9 +19,15 @@
 }
 
 [data-theme='dark'] {
-  --background-color: #000000;
-  --text-color: #ffffff;
-  /* Add more variables as needed */
+  --primary-color: #250902;
+  --secondary-color: #38040E;
+  --third-color: #640D14;
+  --text-color-light: #e7d9da;
+  --text-color-dark: #ffffff;
+  --button-color-light: #AD2831;
+  --button-hover-light: #b34a51;
+  --card-color-light: #800E13;
+  --card-hover-light: #833539;
 }
 
 body {

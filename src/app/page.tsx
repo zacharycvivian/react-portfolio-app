@@ -35,7 +35,8 @@ export default function Home() {
             Hello, {session?.user?.name || "Guest"}
           </h1>
           <p className={styles.instructions}>
-            Click the icon on the top left to learn more about me!
+            Click the icon on the top left to learn more about me, or download
+            my Resume above.
           </p>
           <div className={styles.infoContainer}>
             <h2>Welcome to my Resume Website!</h2>
