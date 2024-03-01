@@ -21,21 +21,21 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 40px;
-  max-height: calc(100vh - 200px - 60px); 
+  max-height: calc(100vh - 200px - 60px);
   overflow-y: auto;
 }
-
 
 .card {
   margin: 10px auto;
   padding: 20px;
-  background-color: var(--card-color-light);;
+  background-color: var(--card-color-light);
   border-radius: 10px;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
   max-width: 97.5%;
   width: 95%;
 }
@@ -65,7 +65,7 @@
 }
 
 .addButton:hover {
-  background-color: var(--button-hover-light); 
+  background-color: var(--button-hover-light);
 }
 
 .modalBackdrop {
@@ -132,6 +132,15 @@
 .submitButton:hover,
 .cancelButton:hover {
   opacity: 0.9;
+}
+
+.userImage {
+  float: left;
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  border-radius: 50%; /* Circular image */
+  margin-right: 15px; /* Space between image and text */
+  z-index: 1000;
 }
 
 @media (max-width: 97.5%) {
