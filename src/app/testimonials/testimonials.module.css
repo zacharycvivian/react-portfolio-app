@@ -141,6 +141,11 @@
   z-index: 1000;
 }
 
+.timeText {
+  font-style: italic;
+  font-size: 0.75em;
+}
+
 @media (max-width: 600px) {
   .card {
     width: 100%; /* Makes each card take full width on smaller screens */

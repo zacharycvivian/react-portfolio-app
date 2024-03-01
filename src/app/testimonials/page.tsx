@@ -121,11 +121,13 @@ const TestimonialsPage = () => {
               className={styles.userImage}
             />
             <p>
-              Name: {testimonial.fname} {testimonial.lname}
+              <strong>
+                {testimonial.fname} {testimonial.lname}
+              </strong>
             </p>
-            <p>Stars: {"★".repeat(testimonial.stars)}</p>
-            <p>Review: {testimonial.review}</p>
-            <p>Time: {formatDate(testimonial.time)}</p>
+            <p>{"★".repeat(testimonial.stars)}</p>
+            <p>{testimonial.review}</p>
+            <p className={styles.timeText}>{formatDate(testimonial.time)}</p>
           </div>
         ))}
       </div>
@@ -143,7 +145,7 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
-                  placeholder="First Name"
+                  placeholder="Borat"
                   value={formData.fname}
                   onChange={(e) =>
                     setFormData({ ...formData, fname: e.target.value })
@@ -155,7 +157,7 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
-                  placeholder="Last Name"
+                  placeholder="Sagdiyev"
                   value={formData.lname}
                   onChange={(e) =>
                     setFormData({ ...formData, lname: e.target.value })
@@ -163,7 +165,7 @@ const TestimonialsPage = () => {
                 />
               </label>
               <label className={styles.formLabel}>
-                Stars:
+                Rating:
                 <input
                   className={styles.inputField}
                   type="number"
@@ -182,7 +184,7 @@ const TestimonialsPage = () => {
                 Review:
                 <textarea
                   className={styles.textareaField}
-                  placeholder="Your review"
+                  placeholder="Very Nice!"
                   value={formData.review}
                   onChange={(e) =>
                     setFormData({ ...formData, review: e.target.value })
