@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import Login from "./Login";
 import SessionProvider from "@/components/SessionProvider";
+import { Providers } from './providers.jsx'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,19 +24,21 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-      <SessionProvider session={session}>
-        {!session ? (
-          <Login/>
-        ): (
-          <>
-            <Header />
-            <Sidebar />
-            {children}
-          </>
-        )}
-      </SessionProvider>
+        <Providers>
+          <SessionProvider session={session}>
+            {!session ? (
+              <Login/>
+            ): (
+              <>
+                <Header />
+                <Sidebar />
+                {children}
+              </>
+            )}
+          </SessionProvider>
+        </Providers>
       </body>
     </html>
   );
