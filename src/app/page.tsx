@@ -15,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -48,7 +49,18 @@ export default function Home() {
               development and have been happy with my work in the past.
             </p>
           </div>
-          <Carousel className={styles.carouselItem}>
+          <Carousel
+            className={styles.carouselItem}
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            plugins={[
+              Autoplay({
+                delay: 2000,
+              }),
+            ]}
+          >
             <CarouselContent>
               <CarouselItem className={styles.image}>
                 <Image src={Zach} alt="img" />

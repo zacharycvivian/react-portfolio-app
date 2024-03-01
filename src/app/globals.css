@@ -19,15 +19,15 @@
 }
 
 [data-theme='dark'] {
-  --primary-color: #250902;
-  --secondary-color: #38040E;
-  --third-color: #640D14;
+  --primary-color: #002029;
+  --secondary-color: #00303D;
+  --third-color: #004052;
   --text-color-light: #e7d9da;
   --text-color-dark: #ffffff;
-  --button-color-light: #AD2831;
-  --button-hover-light: #b34a51;
-  --card-color-light: #800E13;
-  --card-hover-light: #833539;
+  --button-color-light: #00607A;
+  --button-hover-light: #1e7e98;
+  --card-color-light: #005066;
+  --card-hover-light: #17667c;
 }
 
 body {
