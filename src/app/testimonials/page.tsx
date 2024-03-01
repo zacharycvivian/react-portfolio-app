@@ -115,7 +115,6 @@ const TestimonialsPage = () => {
       <div className={styles.section}>
         {testimonials.map((testimonial) => (
           <div className={styles.card} key={testimonial.id}>
-            {/* Use session?.user?.image or a default image */}
             <img
               src={session?.user?.image || Logo.src}
               alt="User"
@@ -139,7 +138,6 @@ const TestimonialsPage = () => {
         <div className={styles.modalBackdrop}>
           <div className={styles.modalContent}>
             <form onSubmit={handleSubmit}>
-              {/* Form fields and submit logic */}
               <label className={styles.formLabel}>
                 First Name:
                 <input
@@ -152,7 +150,45 @@ const TestimonialsPage = () => {
                   }
                 />
               </label>
-              {/* ... rest of your form */}
+              <label className={styles.formLabel}>
+                Last Name:
+                <input
+                  className={styles.inputField}
+                  type="text"
+                  placeholder="Last Name"
+                  value={formData.lname}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lname: e.target.value })
+                  }
+                />
+              </label>
+              <label className={styles.formLabel}>
+                Stars:
+                <input
+                  className={styles.inputField}
+                  type="number"
+                  value={formData.stars.toString()}
+                  min="1"
+                  max="5"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      stars: e.target.value ? parseInt(e.target.value, 10) : 0,
+                    })
+                  }
+                />
+              </label>
+              <label className={styles.formLabel}>
+                Review:
+                <textarea
+                  className={styles.textareaField}
+                  placeholder="Your review"
+                  value={formData.review}
+                  onChange={(e) =>
+                    setFormData({ ...formData, review: e.target.value })
+                  }
+                />
+              </label>
               <div className={styles.formButtons}>
                 <button
                   type="button"
