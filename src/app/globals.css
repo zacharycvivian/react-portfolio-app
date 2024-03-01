@@ -7,27 +7,27 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 
-  --primary-color: #212529;
-  --secondary-color: #F8F9FA;
-  --third-color: #bfc0c0;
+  --primary-color: #001233;
+  --secondary-color: #B6CCFE;
+  --third-color: #ABC4FF;
   --text-color-light: #03071E;
   --text-color-dark: #ffffff;
-  --button-color-light: #a3cef1;
-  --button-hover-light: #ebebeb;
-  --card-color-light: #DEE2E6;
-  --card-hover-light: #f8f9fa;
+  --button-color-light: #D7E3FC;
+  --button-hover-light: #EDF2FB;
+  --card-color-light: #CCDBFD;
+  --card-hover-light: #E2EAFC;
 }
 
 [data-theme='dark'] {
-  --primary-color: #002029;
-  --secondary-color: #00303D;
-  --third-color: #004052;
-  --text-color-light: #e7d9da;
-  --text-color-dark: #ffffff;
-  --button-color-light: #00607A;
-  --button-hover-light: #1e7e98;
-  --card-color-light: #005066;
-  --card-hover-light: #17667c;
+  --primary-color: #001233;
+  --secondary-color: #001845;
+  --third-color: #002855;
+  --text-color-light: #d4d7dd;
+  --text-color-dark: #d4d7dd;
+  --button-color-light: #0353A4;
+  --button-hover-light: #0466C8;
+  --card-color-light: #023E7D;
+  --card-hover-light: #33415C;
 }
 
 body {
