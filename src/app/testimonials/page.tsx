@@ -14,6 +14,7 @@ import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
 
+//Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBJd9r0lySN38yQOB1MunpZ8aBVD--767w",
   authDomain: "payrollpal-bc053.firebaseapp.com",
@@ -25,9 +26,11 @@ const firebaseConfig = {
   measurementId: "G-NBV8XVL8XF",
 };
 
+//Initialize firebase
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
+//Interfaces for type declarations
 interface Testimonial {
   id: string;
   name: string;
@@ -40,9 +43,10 @@ interface Timestamp {
   toDate: () => Date;
 }
 
+// Utility function to format date/time for display
 const formatDate = (date: Timestamp | null) => {
   if (!date) return "Time not available";
-
+  // Configuration for the date format
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -58,7 +62,9 @@ const formatDate = (date: Timestamp | null) => {
   return formatter.format(date.toDate());
 };
 
+// Main component for the Testimonials page
 const TestimonialsPage = () => {
+    // State hooks for managing testimonials, modal visibility, and form data
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showModal, setShowModal] = useState(false);
   const { data: session } = useSession();
@@ -70,6 +76,7 @@ const TestimonialsPage = () => {
     review: "",
   });
 
+  // Effect hook to subscribe to testimonials collection updates
   useEffect(() => {
     const q = query(collection(db, "testimonials"), orderBy("time", "desc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -85,12 +92,14 @@ const TestimonialsPage = () => {
     return () => unsubscribe();
   }, []);
 
+  // Effect hook to update form name field with session user name
   useEffect(() => {
     if (session) {
       setFormData({ ...formData, name: session.user?.name || "" });
     }
   }, [session]);
 
+  // Effect hook to fetch and set banned words list
   useEffect(() => {
     fetch("/NaughtyWords.txt")
       .then((response) => response.text())
@@ -100,10 +109,12 @@ const TestimonialsPage = () => {
       });
   }, []);
 
+  // Utility function to escape regex special characters in strings
   const escapeRegExp = (string: string): string => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
+  // Function to filter profanity from text based on banned words list
   const filterProfanity = (text: string): string => {
     let filteredText = text;
     bannedWords.forEach((word) => {
@@ -116,13 +127,16 @@ const TestimonialsPage = () => {
     return filteredText;
   };
 
+  // Handle form submission and add a new testimonial
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // Validate form input before submission
     if (formData.stars === 0 || formData.review.trim() === "") {
       window.alert("Please enter a rating and a review before submitting.");
       return;
     }
     const filteredReview = filterProfanity(formData.review);
+    // Add testimonial if user is logged in and input is valid
     if (
       session?.user?.name &&
       filteredReview &&
@@ -136,6 +150,7 @@ const TestimonialsPage = () => {
           stars: formData.stars,
           time: serverTimestamp(),
         });
+        // Reset form data and close modal on successful submission
         setFormData({
           ...formData,
           name: session?.user?.name || "",
@@ -151,6 +166,7 @@ const TestimonialsPage = () => {
     }
   };
 
+  // Cancel button handler to reset form and hide modal
   const handleCancel = () => {
     setFormData({
       ...formData,
@@ -161,11 +177,13 @@ const TestimonialsPage = () => {
     setShowModal(false);
   };
 
+  // Component for rendering star ratings
   interface StarRatingProps {
     rating: number;
     onRating: (rating: number) => void;
   }
 
+  // Star rating component to allow users to rate testimonials
   const StarRating: React.FC<StarRatingProps> = ({ rating, onRating }) => {
     const stars = [1, 2, 3, 4, 5];
     return (
@@ -183,6 +201,7 @@ const TestimonialsPage = () => {
     );
   };
 
+  // Render testimonials page with form and testimonials list
   return (
     <div className={styles.container}>
       <h2 className={styles.sectionTitle}>Testimonials</h2>
