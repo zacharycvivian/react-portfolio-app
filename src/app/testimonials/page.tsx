@@ -115,11 +115,7 @@ const TestimonialsPage = () => {
       <div className={styles.section}>
         {testimonials.map((testimonial) => (
           <div className={styles.card} key={testimonial.id}>
-            <img
-              src={session?.user?.image || Logo.src}
-              alt="User"
-              className={styles.userImage}
-            />
+            <img src={userPhotoURL} alt="User" className={styles.userImage} />
             <p>
               <strong>
                 {testimonial.fname} {testimonial.lname}
@@ -140,28 +136,14 @@ const TestimonialsPage = () => {
         <div className={styles.modalBackdrop}>
           <div className={styles.modalContent}>
             <form onSubmit={handleSubmit}>
+              {/* Combined Name Field */}
               <label className={styles.formLabel}>
-                First Name:
+                Name:
                 <input
                   className={styles.inputField}
                   type="text"
-                  placeholder="Borat"
-                  value={formData.fname}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fname: e.target.value })
-                  }
-                />
-              </label>
-              <label className={styles.formLabel}>
-                Last Name:
-                <input
-                  className={styles.inputField}
-                  type="text"
-                  placeholder="Sagdiyev"
-                  value={formData.lname}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lname: e.target.value })
-                  }
+                  value={`${session?.user?.name || ""}`} 
+                  readOnly 
                 />
               </label>
               <label className={styles.formLabel}>
@@ -184,7 +166,7 @@ const TestimonialsPage = () => {
                 Review:
                 <textarea
                   className={styles.textareaField}
-                  placeholder="Very Nice!"
+                  placeholder="Your review goes here!"
                   value={formData.review}
                   onChange={(e) =>
                     setFormData({ ...formData, review: e.target.value })
@@ -209,6 +191,6 @@ const TestimonialsPage = () => {
       )}
     </div>
   );
-};
+                }  
 
 export default TestimonialsPage;
