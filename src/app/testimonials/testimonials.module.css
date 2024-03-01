@@ -23,6 +23,8 @@
   justify-content: center; /* Center cards in the section */
   margin-bottom: 40px;
   gap: 20px; /* Adds space between cards */
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 70vh;
 }
 
 .card {
@@ -134,10 +136,10 @@
 
 .userImage {
   float: left;
-  width: 50px; /* Adjust size as needed */
-  height: 50px; /* Adjust size as needed */
-  border-radius: 50%; /* Circular image */
-  margin-right: 15px; /* Space between image and text */
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%;
+  margin-right: 15px; 
   z-index: 1000;
 }
 
@@ -146,6 +148,18 @@
   font-style: italic;
   font-size: 0.75em;
 }
+
+.starRating span {
+  cursor: pointer;
+  font-size: 24px; 
+  margin-right: 8px; 
+  color: black; 
+}
+
+.starRating span.selected {
+  color: rgb(238, 202, 0); 
+}
+
 
 @media (max-width: 600px) {
   .card {

@@ -30,8 +30,7 @@ const db = getFirestore();
 
 interface Testimonial {
   id: string;
-  fname: string;
-  lname: string;
+  name: string;
   stars: number;
   review: string;
   time: any;
@@ -62,23 +61,21 @@ const formatDate = (date: Timestamp | null) => {
 const TestimonialsPage = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    stars: 5,
-    review: "",
-  });
-
   const { data: session } = useSession();
   const userPhotoURL = session?.user?.image || Logo.src;
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    stars: 0,
+    review: "",
+  });
 
   useEffect(() => {
     const q = query(collection(db, "testimonials"), orderBy("time", "desc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const testimonialsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        fname: doc.data().fname,
-        lname: doc.data().lname,
+        name: doc.data().name,
         stars: doc.data().stars,
         review: doc.data().review,
         time: doc.data().time,
@@ -88,25 +85,102 @@ const TestimonialsPage = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (session) {
+      setFormData({ ...formData, name: session.user?.name || "" });
+    }
+  }, [session]);
+
+  useEffect(() => {
+    fetch("/NaughtyWords.txt")
+      .then((response) => response.text())
+      .then((text) => {
+        const words = text.split(/\r?\n/);
+        setBannedWords(words);
+      });
+  }, []);
+
+  const escapeRegExp = (string: string): string => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  };
+
+  const filterProfanity = (text: string): string => {
+    let filteredText = text;
+    bannedWords.forEach((word) => {
+      if (word.trim().length > 0) {
+        const escapedWord = escapeRegExp(word.trim());
+        const regex = new RegExp(escapedWord, "gi");
+        filteredText = filteredText.replace(regex, "*".repeat(word.length));
+      }
+    });
+    return filteredText;
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (formData.stars === 0 || formData.review.trim() === "") {
+      window.alert("Please enter a rating and a review before submitting.");
+      return;
+    }
+    const filteredReview = filterProfanity(formData.review);
     if (
-      formData.fname &&
-      formData.lname &&
-      formData.review &&
+      session?.user?.name &&
+      filteredReview &&
       formData.stars >= 1 &&
       formData.stars <= 5
     ) {
-      await addDoc(collection(db, "testimonials"), {
-        ...formData,
-        stars: formData.stars,
-        time: serverTimestamp(),
-      });
-      setFormData({ fname: "", lname: "", stars: 5, review: "" });
-      setShowModal(false);
+      try {
+        await addDoc(collection(db, "testimonials"), {
+          name: session.user.name,
+          review: filteredReview,
+          stars: formData.stars,
+          time: serverTimestamp(),
+        });
+        setFormData({
+          ...formData,
+          name: session?.user?.name || "",
+          stars: 0,
+          review: "",
+        });
+        setShowModal(false);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     } else {
       // Handle validation error
     }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      ...formData,
+      name: session?.user?.name || "",
+      stars: 0,
+      review: "",
+    });
+    setShowModal(false);
+  };
+
+  interface StarRatingProps {
+    rating: number;
+    onRating: (rating: number) => void;
+  }
+
+  const StarRating: React.FC<StarRatingProps> = ({ rating, onRating }) => {
+    const stars = [1, 2, 3, 4, 5];
+    return (
+      <div className={styles.starRating}>
+        {stars.map((star) => (
+          <span
+            key={star}
+            className={`${star <= rating ? styles.selected : ""}`}
+            onClick={() => onRating(star)}
+          >
+            {star <= rating ? "★" : "☆"}
+          </span>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -117,9 +191,7 @@ const TestimonialsPage = () => {
           <div className={styles.card} key={testimonial.id}>
             <img src={userPhotoURL} alt="User" className={styles.userImage} />
             <p>
-              <strong>
-                {testimonial.fname} {testimonial.lname}
-              </strong>
+              <strong>{testimonial.name}</strong>
             </p>
             <p>{"★".repeat(testimonial.stars)}</p>
             <p>{testimonial.review}</p>
@@ -142,42 +214,39 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
-                  value={`${session?.user?.name || ""}`} 
-                  readOnly 
+                  value={`${session?.user?.name || ""}`}
+                  readOnly
                 />
               </label>
-              <label className={styles.formLabel}>
-                Rating:
-                <input
-                  className={styles.inputField}
-                  type="number"
-                  value={formData.stars.toString()}
-                  min="1"
-                  max="5"
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      stars: e.target.value ? parseInt(e.target.value, 10) : 0,
-                    })
-                  }
-                />
-              </label>
+              <div className={styles.formLabel}>Rating:</div>
+              <StarRating
+                rating={formData.stars}
+                onRating={(rating) =>
+                  setFormData({ ...formData, stars: rating })
+                }
+              />
               <label className={styles.formLabel}>
                 Review:
                 <textarea
                   className={styles.textareaField}
-                  placeholder="Your review goes here!"
+                  placeholder="Your Review (Max. 275 Characters)"
                   value={formData.review}
                   onChange={(e) =>
-                    setFormData({ ...formData, review: e.target.value })
+                    setFormData({
+                      ...formData,
+                      review: e.target.value,
+                    })
                   }
+                  maxLength={275}
+                  style={{ resize: "none" }}
                 />
+                <div>{formData.review.length}/275</div>
               </label>
               <div className={styles.formButtons}>
                 <button
                   type="button"
                   className={styles.cancelButton}
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCancel}
                 >
                   Cancel
                 </button>
@@ -191,6 +260,6 @@ const TestimonialsPage = () => {
       )}
     </div>
   );
-                }  
+};
 
 export default TestimonialsPage;
