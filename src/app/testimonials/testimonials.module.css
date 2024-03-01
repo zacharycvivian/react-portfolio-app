@@ -19,14 +19,14 @@
 
 .section {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center; /* Center cards in the section */
   margin-bottom: 40px;
-  max-height: calc(100vh - 200px - 60px);
-  overflow-y: auto;
+  gap: 20px; /* Adds space between cards */
 }
 
 .card {
-  margin: 10px auto;
+  margin: 10px;
   padding: 20px;
   background-color: var(--card-color-light);
   border-radius: 10px;
@@ -34,10 +34,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
-    background-color 0.3s ease;
-  max-width: 97.5%;
-  width: 95%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  width: calc(50% - 40px); /* Adjust width to fit two cards per row, accounting for margin */
 }
 
 .card:hover {
@@ -143,11 +141,9 @@
   z-index: 1000;
 }
 
-@media (max-width: 97.5%) {
-  .container {
-    padding: 60px 20px;
-    padding: 100px;
-    width: 97.5%;
+@media (max-width: 600px) {
+  .card {
+    width: 100%; /* Makes each card take full width on smaller screens */
   }
 
   .modalContent {
