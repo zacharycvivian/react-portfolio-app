@@ -37,7 +37,7 @@ export default function Home() {
           </h1>
           <p className={styles.instructions}>
             Click the icon on the top left to learn more about me, or download
-            my Resume above.
+            my Resume via the button above!
           </p>
           <div className={styles.infoContainer}>
             <h2>Welcome to my Resume Website!</h2>
@@ -45,8 +45,9 @@ export default function Home() {
               My name is Zachary Vivian, I'm graduating the University of
               Wisconsin - Platteville in May 2024 with a degree in
               Cybersecurity. On this website, you can find out more about myself
-              and leave a testimonial if you'd like to help my career
-              development and have been happy with my work in the past.
+              and leave a testimonial if you'd like to help me out by leaving a
+              reference for potential future employers to learn more about how I
+              can help their business.
             </p>
           </div>
           <Carousel
@@ -63,16 +64,16 @@ export default function Home() {
           >
             <CarouselContent>
               <CarouselItem className={styles.image}>
-                <Image src={Zach} alt="img" />
+                <Image src={Mountains} alt="img" />
               </CarouselItem>
               <CarouselItem className={styles.image}>
-                <Image src={Turbo} alt="img" />
+                <Image src={Zach} alt="img" />
               </CarouselItem>
               <CarouselItem className={styles.image}>
                 <Image src={Squad} alt="img" />
               </CarouselItem>
               <CarouselItem className={styles.image}>
-                <Image src={Mountains} alt="img" />
+                <Image src={Turbo} alt="img" />
               </CarouselItem>
             </CarouselContent>
             <CarouselPrevious />

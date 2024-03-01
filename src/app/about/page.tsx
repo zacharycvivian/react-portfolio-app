@@ -25,7 +25,7 @@ const AboutPage = () => {
         </div>
         <div className={styles.card}>
           <p>
-            Technical Skills: React/CSS/HTML (This Website), Proxmox VE and
+            Technical Skills: React/CSS/JSX (This Website), Proxmox VE and
             Docker, MongoDB/MySQL/Firebase, C/C++/Java/Python, Windows OS and
             365/MacOS/Linux
           </p>
@@ -38,17 +38,39 @@ const AboutPage = () => {
         </div>
         <div className={styles.card}>
           <p>
+            UW-Platteville Senior Project: Throughout my last year at
+            Platteville, we worked on a real-life development scenario creating
+            a CyberLabs environment for the department to use to make
+            cybersecurity labs available to students. Professors are able to
+            create custom lab instructions alongside attaching one of our
+            already pre-configured virtual machines, which automatically get
+            graded upon completion and post the student's grade to Canvas.
+            Combining all of our previous knowledge on the software development
+            life cycle, we had to collaborate and communicate effectively to
+            meet sprint deadlines.
+          </p>
+        </div>
+        <div className={styles.card}>
+          <p>
             Hobbies: In my free time, I love to spend time outdoors hiking and
-            backpacking alongside my buddies and my dog, Turbo. I also enjoy
-            playing racing video games such as Gran Turismo 7, but I like to
-            balance my life style and take some of my time to learn new
-            things--such as devloping this website!
+            backpacking alongside my buddies and my dog, Turbo. Some of my other
+            hobbies include working on and detailing cars, playing video games
+            with friends, and spending time on personal projects.
           </p>
         </div>
       </div>
 
       <h2 className={styles.sectionTitle}>Experience:</h2>
       <div className={styles.section}>
+        <div className={styles.card}>
+          <p>
+            While I may not yet have much experience in the professional
+            cybersecurity industry, I am fast at learning new technologies and
+            software. I have a desire for learning more about intrusion
+            detection and prevention systems to analze threats and potential
+            vulnerabilities to prevent future cyber attacks.
+          </p>
+        </div>
         <div className={styles.card}>
           <p>
             Lands' End -- Orderfiller (2022-2024): Worked independently in a
