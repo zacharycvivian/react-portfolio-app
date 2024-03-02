@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { initializeApp } from "firebase/app";
 import {
   getFirestore,
   collection,
@@ -13,22 +12,7 @@ import {
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
-
-//Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBJd9r0lySN38yQOB1MunpZ8aBVD--767w",
-  authDomain: "payrollpal-bc053.firebaseapp.com",
-  databaseURL: "https://payrollpal-bc053-default-rtdb.firebaseio.com",
-  projectId: "payrollpal-bc053",
-  storageBucket: "payrollpal-bc053.appspot.com",
-  messagingSenderId: "450919626102",
-  appId: "1:450919626102:web:262a476c7a30061f94b657",
-  measurementId: "G-NBV8XVL8XF",
-};
-
-//Initialize firebase
-initializeApp(firebaseConfig);
-const db = getFirestore();
+import { db } from '@/../firebaseConfig.js';
 
 //Interfaces for type declarations
 interface Testimonial {
