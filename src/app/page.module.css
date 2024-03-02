@@ -3,14 +3,14 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding-top: 110px;
+  padding-top: 90px;
   background-color: var(--secondary-color);
 }
 
 .logoContainer {
   position: relative;
   width: 100%; 
-  height: 120px; 
+  height: 180px; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,12 +22,11 @@
   align-items: center;
   height: 100vh;
   text-align: center;
-  padding-top: 20px;
 }
 
 .welcomeMessage {
   font-size: 2rem;
-  margin-bottom: 1rem;
+
   color: var(--text-color-light);
 }
 
@@ -60,7 +59,7 @@
 }
 
 .carouselItem {
-  padding-top: 20px;
+  padding-top: 10px;
   max-width: 600px;
   width: 80vw;
 }
