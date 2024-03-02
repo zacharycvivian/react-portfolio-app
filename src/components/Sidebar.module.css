@@ -27,6 +27,11 @@
   height: 40px; 
 }
 
+.currentLink {
+  transform: scale(1.05); 
+  background-color: var(--card-hover-light); 
+}
+
 .links {
   padding: 10px 20px; 
   color: inherit; 
