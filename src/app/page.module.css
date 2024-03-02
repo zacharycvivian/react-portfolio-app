@@ -41,7 +41,7 @@
   padding: 20px;
   background-color: var(--card-color-light);
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--text-color-light);;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
