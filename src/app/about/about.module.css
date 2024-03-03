@@ -10,9 +10,9 @@
 
 .sectionTitle {
   max-width: 80%;
-  margin: 0 auto; 
+  margin: 0 auto;
   color: var(--text-color-light);
-  font-size: 24px; 
+  font-size: 24px;
   font-weight: bold;
 }
 
@@ -31,18 +31,70 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, width 0.3s ease; /* Added width to the transition */
-  max-width: 97.5%; 
-  width: 97.5%; 
-  margin-left: auto; 
-  margin-right: auto; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease, width 0.3s ease;
+  max-width: 97.5%;
+  width: 97.5%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .card:hover {
-  transform: scale(1.03); 
+  transform: scale(1.03);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   background-color: var(--card-hover-light);
-  width: 99%; 
+  width: 99%;
+}
+
+.skill {
+  margin-bottom: 10px;
+}
+
+.skillSectionTitle {
+  color: var(--text-color-light);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.skillName {
+  font-size: 16px;
+  color: var(--text-color-light);
+  margin-bottom: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-grow: 1; 
+}
+
+.skillBar {
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-grow: 1; 
+  margin-right: 10px;
+}
+
+.skillLevel {
+  background-color: #4caf50; 
+  height: 20px;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.skillLevelInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 2; 
+  padding-bottom:6px;
+}
+
+.skillLevelLabel {
+  font-size: 0.75em;
+  color: var(--text-color-light);
+  white-space: nowrap;
+  font-style: italic; 
+  align-self: flex-end; 
+  padding-left: 10px; 
 }
 
 @media (max-width: 768px) {
