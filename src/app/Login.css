@@ -55,3 +55,23 @@
     margin-top: 10px;
     text-align: center;
 }
+
+/* Responsive adjustments for mobile devices */
+@media screen and (max-width: 768px) {
+    .login-container {
+        width: 90%; /* Adjust width for smaller screens */
+        padding: 15px; /* Adjust padding */
+    }
+
+    .login-container h2 {
+        font-size: 24px; /* Adjust heading size */
+    }
+
+    .login-container button {
+        font-size: 12px; /* Adjust button font size */
+    }
+
+    .login-footer, .disclaimer {
+        font-size: 12px; /* Adjust footer and disclaimer font size */
+    }
+}
