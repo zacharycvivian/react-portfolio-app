@@ -5,7 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Home from "@/app/page"
 import { getServerSession } from "next-auth";
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from "@/../auth";
 import Login from "./Login";
 import SessionProvider from "@/components/SessionProvider";
 import { Providers } from './providers.jsx'
