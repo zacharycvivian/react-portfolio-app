@@ -39,7 +39,7 @@
   width: 100%; 
 }
 
-.link:hover, .link:focus {
+.link:hover {
   transform: scale(1.05); 
   background-color: var(--card-hover-light); 
 }
