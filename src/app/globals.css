@@ -16,6 +16,7 @@
   --button-hover-light: #edf2fb;
   --card-color-light: #c0c9df;
   --card-hover-light: #e2eafc;
+  --footer-color: #3a3f68;
 }
 
 [data-theme="dark"] {
@@ -28,6 +29,7 @@
   --button-hover-light: #0466c8;
   --card-color-light: #1563b6;
   --card-hover-light: #33415c;
+  --footer-color: #131a50;
 }
 
 body {

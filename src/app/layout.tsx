@@ -3,12 +3,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import Home from "@/app/page"
+import Footer from "@/components/Footer";
+import Home from "@/app/page";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import Login from "./Login";
 import SessionProvider from "@/components/SessionProvider";
-import { Providers } from './providers.jsx'
+import { Providers } from "./providers.jsx";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,12 +30,13 @@ export default async function RootLayout({
         <Providers>
           <SessionProvider session={session}>
             {!session ? (
-              <Login/>
-            ): (
+              <Login />
+            ) : (
               <>
                 <Header />
                 <Sidebar />
                 {children}
+                <Footer />
               </>
             )}
           </SessionProvider>
