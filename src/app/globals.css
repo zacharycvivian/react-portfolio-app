@@ -8,33 +8,33 @@
   --background-end-rgb: 255, 255, 255;
 
   --primary-color: #001233;
-  --secondary-color: #B6CCFE;
-  --third-color: #ABC4FF;
-  --text-color-light: #03071E;
+  --secondary-color: #b6ccfe;
+  --third-color: #abc4ffeb;
+  --text-color-light: #03071e;
   --text-color-dark: #ffffff;
-  --button-color-light: #D7E3FC;
-  --button-hover-light: #EDF2FB;
+  --button-color-light: #d7e3fc;
+  --button-hover-light: #edf2fb;
   --card-color-light: #c0c9df;
-  --card-hover-light: #E2EAFC;
+  --card-hover-light: #e2eafc;
 }
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --primary-color: #001233;
   --secondary-color: #002c7c;
   --third-color: #074081ec;
   --text-color-light: #c6d6f6;
   --text-color-dark: #d4d7dd;
-  --button-color-light: #0353A4;
-  --button-hover-light: #0466C8;
+  --button-color-light: #0353a4;
+  --button-hover-light: #0466c8;
   --card-color-light: #1563b6;
-  --card-hover-light: #33415C;
+  --card-hover-light: #33415c;
 }
 
 body {
   height: 100dvh;
-  background-color: #E6E8E6;
+  background-color: #e6e8e6;
   color: white;
-  margin: 0; 
+  margin: 0;
   backdrop-filter: blur(5px);
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
