@@ -56,6 +56,12 @@
     text-align: center;
 }
 
+.login-logo {
+  max-width: 100px; /* Adjust the width as needed */
+  margin-bottom: 20px; /* Adds some space between the logo and the heading */
+}
+
+
 /* Responsive adjustments for mobile devices */
 @media screen and (max-width: 768px) {
     .login-container {
