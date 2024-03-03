@@ -1,83 +1,82 @@
 .login-page {
-    background-color: var(--primary-color);
-    height: 100vh; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-color: var(--primary-color);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    border-radius: 10px;
-    background-color: var(--secondary-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 650px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 10px;
+  background-color: var(--secondary-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 650px;
 }
 
 .login-container h2 {
-    margin-bottom: 20px;
-    color: var(--text-color-light);
-    font-size: 30px;
+  margin-bottom: 10px;
+  color: var(--text-color-light);
+  font-size: 30px;
 }
 
 .login-container button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: var(--button-color-light);
-    color: var(--text-color-light);
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--button-color-light);
+  color: var(--text-color-light);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
 .login-container button:hover {
-    background-color: #357ae8;
+  background-color: #357ae8;
 }
 
 .login-footer {
-    margin-top: 20px;
-    font-size: 14px;
-    color: var(--text-color-light);
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--text-color-light);
 }
 
 .disclaimer {
-    font-size: 12px;
-    color: #666;
-    margin-top: 10px;
-    text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .login-logo {
   max-width: 100px; /* Adjust the width as needed */
-  margin-bottom: 20px; /* Adds some space between the logo and the heading */
 }
-
 
 /* Responsive adjustments for mobile devices */
 @media screen and (max-width: 768px) {
-    .login-container {
-        width: 90%; /* Adjust width for smaller screens */
-        padding: 15px; /* Adjust padding */
-    }
+  .login-container {
+    width: 90%; /* Adjust width for smaller screens */
+    padding: 15px; /* Adjust padding */
+  }
 
-    .login-container h2 {
-        font-size: 24px; /* Adjust heading size */
-    }
+  .login-container h2 {
+    font-size: 24px; /* Adjust heading size */
+  }
 
-    .login-container button {
-        font-size: 12px; /* Adjust button font size */
-    }
+  .login-container button {
+    font-size: 12px; /* Adjust button font size */
+  }
 
-    .login-footer, .disclaimer {
-        font-size: 12px; /* Adjust footer and disclaimer font size */
-    }
+  .login-footer,
+  .disclaimer {
+    font-size: 12px; /* Adjust footer and disclaimer font size */
+  }
 }
