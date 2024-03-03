@@ -5,6 +5,7 @@
   width: 100%;
   padding-top: 90px;
   background-color: var(--secondary-color);
+  height: 100vh;
 }
 
 .logoContainer {
