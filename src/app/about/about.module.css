@@ -46,6 +46,36 @@
   width: 99%;
 }
 
+.cardFadeInLeft {
+  animation: fadeInLeft 0.5s ease forwards;
+}
+
+.cardFadeInRight {
+  animation: fadeInRight 0.5s ease forwards;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .skill {
   margin-bottom: 10px;
 }
