@@ -4,7 +4,7 @@ This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project boot
 If you'd like to use these files in your own personal site (only for personal use), go ahead, but you must mention me as an author and include my copyright in the footer of your web application. If you have suggestions for improvements, please message me on Discord @zacharycvivian.
 
 ## Set Up
-Before starting, you will need to create a .env file and a firebase.ts file in your main folder linking your respective details.
+Before starting, you will need to create a .env file in your main folder linking respective details.
 
 ## .env
 GOOGLE_CLIENT_ID=
@@ -19,36 +19,14 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOURPRIVATEKEYHERE\n-----END 
 
 GOOGLE_APPLICATION_CREDENTIALS=
 
-## firebase.ts
-// Import the functions you need from the SDKs you need
-import { FirebaseApp, getApp, getApps, initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
-  measurementId: ""
-};
-
-// Initialize Firebase
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
-// Initialize Firebase Analytics 
-if (typeof window !== "undefined") {
-  const analytics = getAnalytics(app);
-}
-
-const db = getFirestore(app);
-
-export { app, db };
-
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
 ## Getting Started
 First, run the development server:
