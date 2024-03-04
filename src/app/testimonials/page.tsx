@@ -12,7 +12,7 @@ import {
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
-import { db } from '@/../firebaseConfig.js';
+import { db } from '@/../firebase';
 
 //Interfaces for type declarations
 interface Testimonial {

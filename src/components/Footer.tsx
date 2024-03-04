@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { collection, query, getDocs } from "firebase/firestore";
-import { db } from "@/../firebaseConfig";
+import { db } from '@/../firebase';
 import styles from "./Footer.module.css"; // Import the styles
 
 const Footer = () => {
