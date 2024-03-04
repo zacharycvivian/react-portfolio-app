@@ -18,7 +18,7 @@ const ContactPage = () => {
       <div className={styles.section}>
         <div className={styles.card}>
           <p>
-            Email:{" "}
+            <strong>Email:</strong>{" "}
             <a href="mailto:zacharycvivian@icloud.com">
               zacharycvivian@icloud.com
             </a>
@@ -26,12 +26,12 @@ const ContactPage = () => {
         </div>
         <div className={styles.card}>
           <p>
-            Phone: <a href="tel:+16085740816">+1 608-574-0816</a>
+            <strong>Phone: </strong> <a href="tel:+16085740816">+1 608-574-0816</a>
           </p>
         </div>
         <div className={styles.card}>
           <p>
-            LinkedIn:{" "}
+            <strong>LinkedIn: </strong>{" "}
             <a
               href="https://www.linkedin.com/in/zacharycvivian"
               target="_blank"
@@ -43,7 +43,7 @@ const ContactPage = () => {
         </div>
         <div className={styles.card}>
           <p>
-            GitHub:{" "}
+            <strong>GitHub: </strong>{" "}
             <a
               href="https://github.com/zacharycvivian"
               target="_blank"
