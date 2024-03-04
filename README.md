@@ -1,4 +1,7 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Note
+If you'd like to use these files in your own personal site (only for personal use), go ahead, but you must mention me as an author and include my copyright in the footer of your web application. If you have suggestions for improvements, please message me on Discord @zacharycvivian.
 
 ## Set Up
 Before starting, you will need to create a .env file and a firebase.ts file in your main folder linking your respective details.
