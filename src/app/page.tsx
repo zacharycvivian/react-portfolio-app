@@ -58,7 +58,7 @@ export default function Home() {
             }}
             plugins={[
               Autoplay({
-                delay: 2000,
+                delay: 4000,
               }),
             ]}
           >
