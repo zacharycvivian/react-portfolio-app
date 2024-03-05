@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./cyberwordle.module.css"; // Ensure you have this CSS file in your project
+import styles from "./cyberwordle.module.css"; 
 
 type WordListType = string[];
 type GuessesType = string[];
@@ -40,22 +40,17 @@ const CyberWordle: React.FC = () => {
     // Update the guesses state immediately with the new guess
     const newGuesses = [...guesses, guess.toUpperCase()];
     setGuesses(newGuesses);
-
-    // Display logic for guesses remains the same as previously implemented
-
     if (guess.toUpperCase() === currentWord) {
       setTimeout(() => {
         alert("Congratulations, you guessed the word!");
         setGameOver(true);
-      }, 500); // Adjust delay as needed
+      }, 500); 
     } else if (newGuesses.length >= 6) {
-      // Assuming 6 attempts are allowed
       setTimeout(() => {
         alert(`Game over! The word was ${currentWord}.`);
         setGameOver(true);
-      }, 500); // Adjust delay as needed
+      }, 500); 
     }
-
     // Clear the input fields after submission
     setInputValues(["", "", "", "", ""]);
     inputRefs.current[0]?.focus();
@@ -66,7 +61,6 @@ const CyberWordle: React.FC = () => {
       values.map((val, i) => (i === index ? value.toUpperCase() : val))
     );
     if (value && index < 4) {
-      inputRefs.current[index + 1]?.focus(); // Move focus to the next field
     }
   };
 
@@ -75,7 +69,7 @@ const CyberWordle: React.FC = () => {
       setInputValues((values) =>
         values.map((val, i) => (i === index - 1 ? "" : val))
       ); 
-      inputRefs.current[index - 1]?.focus(); // Move focus to the previous field
+      inputRefs.current[index - 1]?.focus(); 
     } else if (e.key === "Enter") {
         handleSubmitGuess();
     }
@@ -96,8 +90,6 @@ const CyberWordle: React.FC = () => {
       />
     ));
   };
-
-  // Inside your CyberWordle component
 
   const renderGuessFeedback = (
     guess: string,
@@ -124,8 +116,6 @@ const CyberWordle: React.FC = () => {
       return styles.gray;
     }
   };
-
-  // Adjusted part of the return statement in the render method
 
   return (
     <div className={styles.container}>
