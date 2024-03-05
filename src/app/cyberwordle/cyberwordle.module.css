@@ -5,6 +5,10 @@
     justify-content: center;
     min-height: 100vh;
     background-color: var(--secondary-color);
+    padding-top: 120px; /* Adjusted to 120px to account for the header height */
+    height: calc(100vh - 120px); /* Full viewport height minus the header height */
+    overflow-y: auto; /* Enable vertical scrolling within the container */
+    width: 100%;
 }
 
 .title {
@@ -12,8 +16,8 @@
     text-align: center;
     color: var(--text-color-light); 
     font-weight: bold; 
-  }
-  
+}
+
 
 .game {
     display: flex;
@@ -21,6 +25,9 @@
     align-items: center;
     gap: 20px;
     background-color: var(--secondary-color);
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    width: 100%;
 }
 
 .inputBoxes {
@@ -49,13 +56,13 @@
     border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.3s;
-  }
-  
-  .submitButton:hover {
-    background-color: var(--button-hover-light);
-  }
+}
 
-  .restartButton {
+.submitButton:hover {
+    background-color: var(--button-hover-light);
+}
+
+.restartButton {
     display: inline-block;
     padding: 10px 20px;
     background-color: var(--button-color-light);
@@ -65,11 +72,11 @@
     border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.3s;
-  }
-  
-  .restartButton:hover {
+}
+
+.restartButton:hover {
     background-color: var(--button-hover-light);
-  }
+}
 
 .guesses {
     display: flex;
@@ -95,7 +102,7 @@
 .red {
     background-color: #ff6961; /* A light red background */
     /* Other styling similar to .green, .yellow, .gray */
-  }  
+}  
 
 .green {
     background-color: #96f300; /* Example green, adjust as needed */
