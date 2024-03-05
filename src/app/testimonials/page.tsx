@@ -58,9 +58,11 @@ const TestimonialsPage = () => {
   const [filteredTestimonials, setFilteredTestimonials] = useState<
     Testimonial[]
   >([]);
+
   //Filter Testinmonials
   const [filter, setFilter] = useState({ sortBy: "time", order: "asc" });
   const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const [tempFilter, setTempFilter] = useState(filter); // Initializes with the current filter
   const [formData, setFormData] = useState({
     name: "",
     stars: 0,
@@ -85,6 +87,12 @@ const TestimonialsPage = () => {
       }
       return order === "asc" ? comparison : -comparison;
     });
+  };
+
+  //Remember what filter user selects
+  const openFiltersModal = () => {
+    setTempFilter(filter); // Initialize tempFilter with current filter values
+    setShowFiltersModal(true);
   };
 
   // Effect hook to subscribe to testimonials collection updates
@@ -303,22 +311,14 @@ const TestimonialsPage = () => {
           <div className={styles.modalContent}>
             <h2 className={styles.modalTitle}>Filter Testimonials</h2>
             <div className={styles.filterControls}>
-              <select
-                onChange={(e) =>
-                  setFilter({ ...filter, sortBy: e.target.value })
-                }
-                className={styles.filterSelect}
-              >
+            <select value={tempFilter.sortBy} onChange={(e) => setTempFilter({ ...tempFilter, sortBy: e.target.value })} className={styles.filterSelect}>
+
                 <option value="time">Date</option>
                 <option value="name">Name</option>
                 <option value="stars">Rating</option>
               </select>
-              <select
-                onChange={(e) =>
-                  setFilter({ ...filter, order: e.target.value })
-                }
-                className={styles.filterSelect}
-              >
+              <select value={tempFilter.order} onChange={(e) => setTempFilter({ ...tempFilter, order: e.target.value })} className={styles.filterSelect}>
+
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
@@ -330,6 +330,9 @@ const TestimonialsPage = () => {
               >
                 Close
               </button>
+              <button onClick={() => { setFilter(tempFilter); setShowFiltersModal(false); }} className={styles.submitButton}>
+  Apply Filters
+</button>
             </div>
           </div>
         </div>
