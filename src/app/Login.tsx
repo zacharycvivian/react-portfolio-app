@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-import Logo from "@/../public/HeaderLogo.png";
+import Logo from "@/../public/TabLogo.png";
 import "./Login.css";
 import { useEffect } from "react";
 
