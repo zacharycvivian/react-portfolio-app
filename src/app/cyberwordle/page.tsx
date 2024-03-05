@@ -61,6 +61,7 @@ const CyberWordle: React.FC = () => {
       values.map((val, i) => (i === index ? value.toUpperCase() : val))
     );
     if (value && index < 4) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
