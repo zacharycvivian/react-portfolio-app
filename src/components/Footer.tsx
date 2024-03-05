@@ -28,12 +28,12 @@ const Footer = () => {
       <p className={styles["site-map"]}>
         <strong>Total Site Visits:</strong> {sessionCount}
       </p>
-      <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
       <Button variant={"outline"} className={styles.wordleButton}>
         <Link className={styles.links} href={"/cyberwordle"}>
           CyberWordle
         </Link>
       </Button>
+      <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
     </footer>
   );
 };

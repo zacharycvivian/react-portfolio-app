@@ -21,6 +21,7 @@ interface Testimonial {
   stars: number;
   review: string;
   time: any;
+  userImageUrl: string;
 }
 
 interface Timestamp {
@@ -105,6 +106,7 @@ const TestimonialsPage = () => {
         stars: doc.data().stars,
         review: doc.data().review,
         time: doc.data().time,
+        userImageUrl: doc.data().userImageUrl,
       }));
       setTestimonials(testimonialsData);
       setFilteredTestimonials(
@@ -150,44 +152,47 @@ const TestimonialsPage = () => {
     return filteredText;
   };
 
-  // Handle form submission and add a new testimonial
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Validate form input before submission
-    if (formData.stars === 0 || formData.review.trim() === "") {
-      window.alert("Please enter a rating and a review before submitting.");
-      return;
+// Handle form submission and add a new testimonial
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  // Validate form input before submission
+  if (formData.stars === 0 || formData.review.trim() === "") {
+    window.alert("Please enter a rating and a review before submitting.");
+    return;
+  }
+  const filteredReview = filterProfanity(formData.review);
+  // Add testimonial if user is logged in, input is valid, and user image URL is available
+  if (
+    session?.user?.name &&
+    filteredReview &&
+    formData.stars >= 1 &&
+    formData.stars <= 5
+  ) {
+    try {
+      await addDoc(collection(db, "testimonials"), {
+        name: session.user.name,
+        review: filteredReview,
+        stars: formData.stars,
+        time: serverTimestamp(),
+        userImageUrl: session?.user?.image || 'path/to/default/image.png', // Use the user's Google Image URL or a default image path
+      });
+      // Reset form data and close modal on successful submission
+      setFormData({
+        ...formData,
+        name: session?.user?.name || "",
+        stars: 0,
+        review: "",
+      });
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error adding document: ", error);
     }
-    const filteredReview = filterProfanity(formData.review);
-    // Add testimonial if user is logged in and input is valid
-    if (
-      session?.user?.name &&
-      filteredReview &&
-      formData.stars >= 1 &&
-      formData.stars <= 5
-    ) {
-      try {
-        await addDoc(collection(db, "testimonials"), {
-          name: session.user.name,
-          review: filteredReview,
-          stars: formData.stars,
-          time: serverTimestamp(),
-        });
-        // Reset form data and close modal on successful submission
-        setFormData({
-          ...formData,
-          name: session?.user?.name || "",
-          stars: 0,
-          review: "",
-        });
-        setShowModal(false);
-      } catch (error) {
-        console.error("Error adding document: ", error);
-      }
-    } else {
-      // Handle validation error
-    }
-  };
+  } else {
+    // Handle validation error or case where user information is incomplete
+    console.error("Submission failed: incomplete user information or validation error.");
+  }
+};
+
 
   // Cancel button handler to reset form and hide modal
   const handleCancel = () => {
@@ -231,7 +236,7 @@ const TestimonialsPage = () => {
       <div className={styles.section}>
         {testimonials.map((testimonial) => (
           <div className={styles.card} key={testimonial.id}>
-            <img src={userPhotoURL} alt="User" className={styles.userImage} />
+            <img src={testimonial.userImageUrl} alt={`${testimonial.name}'s testimonial`} className={styles.userImage} />
             <p>
               <strong>{testimonial.name}</strong>
             </p>
