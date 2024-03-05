@@ -12,7 +12,7 @@ import {
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
-import { db } from '@/../firebase';
+import { db } from "@/../firebase";
 
 //Interfaces for type declarations
 interface Testimonial {
@@ -48,17 +48,44 @@ const formatDate = (date: Timestamp | null) => {
 
 // Main component for the Testimonials page
 const TestimonialsPage = () => {
-    // State hooks for managing testimonials, modal visibility, and form data
+  // State hooks for managing testimonials, modal visibility, and form data
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showModal, setShowModal] = useState(false);
   const { data: session } = useSession();
   const userPhotoURL = session?.user?.image || Logo.src;
+  //Scan testimonials for banned words
   const [bannedWords, setBannedWords] = useState<string[]>([]);
+  const [filteredTestimonials, setFilteredTestimonials] = useState<
+    Testimonial[]
+  >([]);
+  //Filter Testinmonials
+  const [filter, setFilter] = useState({ sortBy: "time", order: "asc" });
+  const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     stars: 0,
     review: "",
   });
+
+  const sortTestimonials = (
+    testimonials: Testimonial[],
+    sortBy: string,
+    order: string
+  ) => {
+    return testimonials.sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === "name") {
+        comparison = a.name.localeCompare(b.name);
+      } else if (sortBy === "time") {
+        const timeA = a.time ? a.time.toDate().getTime() : 0;
+        const timeB = b.time ? b.time.toDate().getTime() : 0;
+        comparison = timeA - timeB;
+      } else if (sortBy === "stars") {
+        comparison = a.stars - b.stars;
+      }
+      return order === "asc" ? comparison : -comparison;
+    });
+  };
 
   // Effect hook to subscribe to testimonials collection updates
   useEffect(() => {
@@ -72,9 +99,13 @@ const TestimonialsPage = () => {
         time: doc.data().time,
       }));
       setTestimonials(testimonialsData);
+      setFilteredTestimonials(
+        sortTestimonials(testimonialsData, filter.sortBy, filter.order)
+      );
     });
+
     return () => unsubscribe();
-  }, []);
+  }, [filter]);
 
   // Effect hook to update form name field with session user name
   useEffect(() => {
@@ -206,6 +237,12 @@ const TestimonialsPage = () => {
         <button onClick={() => setShowModal(true)} className={styles.addButton}>
           Add Testimonial
         </button>
+        <button
+          onClick={() => setShowFiltersModal(true)}
+          className={styles.filterButton}
+        >
+          Filters
+        </button>
       </div>
       {showModal && (
         <div className={styles.modalBackdrop}>
@@ -258,6 +295,42 @@ const TestimonialsPage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {showFiltersModal && (
+        <div className={styles.filterModalBackdrop}>
+          <div className={styles.modalContent}>
+            <h2 className={styles.modalTitle}>Filter Testimonials</h2>
+            <div className={styles.filterControls}>
+              <select
+                onChange={(e) =>
+                  setFilter({ ...filter, sortBy: e.target.value })
+                }
+                className={styles.filterSelect}
+              >
+                <option value="time">Date</option>
+                <option value="name">Name</option>
+                <option value="stars">Rating</option>
+              </select>
+              <select
+                onChange={(e) =>
+                  setFilter({ ...filter, order: e.target.value })
+                }
+                className={styles.filterSelect}
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
+            <div className={styles.closeButtonContainer}>
+              <button
+                onClick={() => setShowFiltersModal(false)}
+                className={styles.cancelButton}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

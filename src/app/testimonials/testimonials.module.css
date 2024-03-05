@@ -160,6 +160,53 @@
   color: rgb(238, 202, 0); 
 }
 
+.filterButton {
+  background-color: var(--primary-color); /* Adjust to match your theme */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-left: 10px; /* Space between "Add Testimonial" and "Filters" buttons */
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.filter-controls {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+
+.filter-controls select {
+  margin-right: 10px;
+}
+
+.closeButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Adjust as needed */
+}
+
+.modalTitle {
+  font-weight: bold; /* Makes the text bold */
+  padding-bottom: 10px;
+}
+
+.filterModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers children horizontally in a column layout */
+  text-align: center; /* Centers the text for all children */
+}
 
 @media (max-width: 600px) {
   .card {
