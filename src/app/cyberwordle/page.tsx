@@ -1,6 +1,6 @@
-"use client";
+"use client"
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./CyberWordle.module.css"; // Ensure you have this CSS file in your project
+import styles from "./cyberwordle.module.css"; // Ensure you have this CSS file in your project
 
 type WordListType = string[];
 type GuessesType = string[];
