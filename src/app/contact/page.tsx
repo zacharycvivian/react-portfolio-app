@@ -22,11 +22,15 @@ const ContactPage = () => {
             <a href="mailto:zacharycvivian@icloud.com">
               zacharycvivian@icloud.com
             </a>
+            <br />
+            <span className={styles.subtext}>Personal Email for Job Opportunities Only</span>
           </p>
         </div>
         <div className={styles.card}>
           <p>
             <strong>Phone: </strong> <a href="tel:+16085740816">+1 608-574-0816</a>
+            <br />
+            <span className={styles.subtext}>Personal Cell Phone</span>
           </p>
         </div>
         <div className={styles.card}>
@@ -39,6 +43,8 @@ const ContactPage = () => {
             >
               zacharycvivian
             </a>
+            <br />
+            <span className={styles.subtext}>Connect With Me</span>
           </p>
         </div>
         <div className={styles.card}>
@@ -51,6 +57,22 @@ const ContactPage = () => {
             >
               zacharycvivian
             </a>
+            <br />
+            <span className={styles.subtext}>View My Repositories</span>
+          </p>
+        </div>
+        <div className={styles.card}>
+          <p>
+            <strong>ChatGPT: </strong>{" "}
+            <a
+              href="https://chat.openai.com/g/g-N5n358sXE-all-in-one-workflow-assistant"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              All-in-One Workflow Assistant
+            </a>
+            <br />
+            <span className={styles.subtext}>My AI Assistant (Helped Me Make this Website!)</span>
           </p>
         </div>
       </div>
