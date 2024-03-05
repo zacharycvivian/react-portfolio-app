@@ -1,22 +1,22 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from "react";
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "@/../firebase";
-import styles from "./Footer.module.css"; // Import the styles
+import styles from "./Footer.module.css"; 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
-  const [sessionCount, setSessionCount] = useState<number>(0);
+  const [userCount, setUserCount] = useState<number>(0); 
 
   useEffect(() => {
-    const fetchSessionCount = async () => {
-      const q = query(collection(db, "sessions"));
+    const fetchUserCount = async () => {
+      const q = query(collection(db, "users")); 
       const querySnapshot = await getDocs(q);
-      setSessionCount(querySnapshot.size); // Set the count of documents in the "sessions" collection
+      setUserCount(querySnapshot.size); 
     };
 
-    fetchSessionCount();
+    fetchUserCount();
   }, []);
 
   return (
@@ -25,8 +25,8 @@ const Footer = () => {
         <strong>This Website was Built Using:</strong> React, Next.js, and
         Google Firebase
       </p>
-      <p className={styles["site-map"]}>
-        <strong>Total Site Visits:</strong> {sessionCount}
+      <p className={styles["unique-visitors"]}>
+        <strong>Total Unique Visitors:</strong> {userCount} 
       </p>
       <Button variant={"outline"} className={styles.wordleButton}>
         <Link className={styles.links} href={"/cyberwordle"}>
