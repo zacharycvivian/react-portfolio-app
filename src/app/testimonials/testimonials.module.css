@@ -20,10 +20,10 @@
 .section {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Center cards in the section */
+  justify-content: center;
   margin-bottom: 40px;
-  gap: 20px; /* Adds space between cards */
-  overflow-y: auto; /* Enable vertical scrolling */
+  gap: 20px;
+  overflow-y: auto;
   max-height: 70vh;
 }
 
@@ -32,12 +32,13 @@
   padding: 20px;
   background-color: var(--card-color-light);
   border-radius: 10px;
-  border: 1px solid var(--text-color-light);;
+  border: 1px solid var(--text-color-light);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-  width: calc(50% - 40px); /* Adjust width to fit two cards per row, accounting for margin */
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  width: calc(50% - 40px);
 }
 
 .card:hover {
@@ -136,10 +137,10 @@
 
 .userImage {
   float: left;
-  width: 50px; 
-  height: 50px; 
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin-right: 15px; 
+  margin-right: 15px;
   z-index: 1000;
 }
 
@@ -151,21 +152,21 @@
 
 .starRating span {
   cursor: pointer;
-  font-size: 24px; 
-  margin-right: 8px; 
-  color: black; 
+  font-size: 24px;
+  margin-right: 8px;
+  color: black;
 }
 
 .starRating span.selected {
-  color: rgb(238, 202, 0); 
+  color: rgb(238, 202, 0);
 }
 
 .filterButton {
-  background-color: var(--primary-color); /* Adjust to match your theme */
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 10px 20px;
-  margin-left: 10px; /* Space between "Add Testimonial" and "Filters" buttons */
+  margin-left: 10px;
   cursor: pointer;
   border-radius: 5px;
 }
@@ -182,11 +183,12 @@
 .closeButtonContainer {
   display: flex;
   justify-content: center;
-  margin-top: 20px; /* Adjust as needed */
+  margin-top: 20px;
+  gap: 20px;
 }
 
 .modalTitle {
-  font-weight: bold; /* Makes the text bold */
+  font-weight: bold;
   padding-bottom: 10px;
 }
 
@@ -204,13 +206,19 @@
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centers children horizontally in a column layout */
-  text-align: center; /* Centers the text for all children */
+  align-items: center;
+  text-align: center;
+}
+
+.modalButtonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 
 @media (max-width: 600px) {
   .card {
-    width: 100%; 
+    width: 100%;
   }
 
   .modalContent {

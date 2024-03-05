@@ -311,14 +311,24 @@ const TestimonialsPage = () => {
           <div className={styles.modalContent}>
             <h2 className={styles.modalTitle}>Filter Testimonials</h2>
             <div className={styles.filterControls}>
-            <select value={tempFilter.sortBy} onChange={(e) => setTempFilter({ ...tempFilter, sortBy: e.target.value })} className={styles.filterSelect}>
-
+              <select
+                value={tempFilter.sortBy}
+                onChange={(e) =>
+                  setTempFilter({ ...tempFilter, sortBy: e.target.value })
+                }
+                className={styles.filterSelect}
+              >
                 <option value="time">Date</option>
                 <option value="name">Name</option>
                 <option value="stars">Rating</option>
               </select>
-              <select value={tempFilter.order} onChange={(e) => setTempFilter({ ...tempFilter, order: e.target.value })} className={styles.filterSelect}>
-
+              <select
+                value={tempFilter.order}
+                onChange={(e) =>
+                  setTempFilter({ ...tempFilter, order: e.target.value })
+                }
+                className={styles.filterSelect}
+              >
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
@@ -330,9 +340,15 @@ const TestimonialsPage = () => {
               >
                 Close
               </button>
-              <button onClick={() => { setFilter(tempFilter); setShowFiltersModal(false); }} className={styles.submitButton}>
-  Apply Filters
-</button>
+              <button
+                onClick={() => {
+                  setFilter(tempFilter);
+                  setShowFiltersModal(false);
+                }}
+                className={styles.submitButton}
+              >
+                Apply Filters
+              </button>
             </div>
           </div>
         </div>
