@@ -15,10 +15,23 @@
 .footer-content,
 .build-info,
 .site-map {
-  margin-bottom: 10px; /* Spacing between elements */
+  margin-bottom: 10px;
 }
 
-/* Adjusting text size for copyright info to be smaller */
+.wordleButton {
+  padding: 10px 20px;
+  margin-top: 10px; 
+  background-color: var(--primary-color); 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.links {
+  color: white; 
+  text-decoration: none; 
+}
+
 .copyright-info {
   font-size: 0.75rem;
   margin-top: 4px;

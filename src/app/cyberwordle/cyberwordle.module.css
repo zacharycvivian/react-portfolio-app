@@ -1,0 +1,112 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--secondary-color);
+}
+
+.title {
+    font-size: 32px; 
+    text-align: center;
+    color: var(--text-color-light); 
+    font-weight: bold; 
+  }
+  
+
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background-color: var(--secondary-color);
+}
+
+.inputBoxes {
+    display: flex;
+    gap: 10px; 
+}
+
+.letterInput {
+    width: 60px; 
+    height: 60px; 
+    font-size: 32px; 
+    text-align: center;
+    text-transform: uppercase; 
+    border: 2px solid #ccc; 
+    border-radius: 5px; 
+    color: var(--text-color-light); 
+}
+
+.submitButton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--button-color-light);
+    color: var(--text-color-light);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .submitButton:hover {
+    background-color: var(--button-hover-light);
+  }
+
+  .restartButton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--button-color-light);
+    color: var(--text-color-light);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .restartButton:hover {
+    background-color: var(--button-hover-light);
+  }
+
+.guesses {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+}
+
+.guess {
+    display: flex;
+    gap: 5px; 
+}
+
+.green, .yellow, .gray, .red {
+    display: inline-block;
+    width: 60px; 
+    height: 60px; 
+    line-height: 60px; 
+    text-align: center;
+    font-size: 32px; 
+    border-radius: 5px; 
+}
+
+.red {
+    background-color: #ff6961; /* A light red background */
+    /* Other styling similar to .green, .yellow, .gray */
+  }  
+
+.green {
+    background-color: #96f300; /* Example green, adjust as needed */
+    color: black;
+}
+
+.yellow {
+    background-color: #f9f937; /* Example yellow, adjust as needed */
+    color: black;
+}
+
+.gray {
+    background-color: #d3d3d3; /* Example gray, adjust as needed */
+}

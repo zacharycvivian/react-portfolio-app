@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { collection, query, getDocs } from "firebase/firestore";
-import { db } from '@/../firebase';
+import { db } from "@/../firebase";
 import styles from "./Footer.module.css"; // Import the styles
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const [sessionCount, setSessionCount] = useState<number>(0);
@@ -27,6 +29,11 @@ const Footer = () => {
         <strong>Total Site Visits:</strong> {sessionCount}
       </p>
       <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
+      <Button variant={"outline"} className={styles.wordleButton}>
+        <Link className={styles.links} href={"/cyberwordle"}>
+          CyberWordle
+        </Link>
+      </Button>
     </footer>
   );
 };
