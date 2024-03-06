@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./cyberwordle.module.css"; 
+import styles from "./cyberwordle.module.css";
 
 type WordListType = string[];
 type GuessesType = string[];
@@ -28,6 +28,114 @@ const CyberWordle: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    // Cast the elements to HTMLCanvasElement explicitly
+    var canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    var ctx = canvas!.getContext("2d")!;
+    var canvas2 = document.getElementById("canvas2") as HTMLCanvasElement;
+    var ctx2 = canvas2!.getContext("2d")!;
+    var cw = window.innerWidth;
+    var ch = window.innerHeight;
+    var charArr = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z",
+    ];
+    var maxCharCount = 100;
+    var fallingCharArr: Point[] = [];
+    var fontSize = 10;
+    var maxColumns = cw / fontSize;
+    canvas.width = canvas2.width = cw;
+    canvas.height = canvas2.height = ch;
+
+    function randomInt(min: number, max: number) {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function randomFloat(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    class Point {
+      x: number;
+      y: number;
+      value: string;
+      speed: number;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.value = charArr[randomInt(0, charArr.length - 1)].toUpperCase();
+        this.speed = randomFloat(1, 5);
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx2.fillStyle = "rgba(255,255,255,0.8)";
+        ctx2.font = fontSize + "px san-serif";
+        ctx2.fillText(this.value, this.x, this.y);
+
+        ctx.fillStyle = "#c6d6f6";
+        ctx.font = fontSize + "px san-serif";
+        ctx.fillText(this.value, this.x, this.y);
+
+        this.y += this.speed;
+        if (this.y > ch) {
+          this.y = randomFloat(-100, 0);
+          this.speed = randomFloat(2, 5);
+        }
+      }
+    }
+
+    for (var i = 0; i < maxColumns; i++) {
+      fallingCharArr.push(new Point(i * fontSize, randomFloat(-500, 0)));
+    }
+
+    let requestId: number;
+
+    var update = function () {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, cw, ch);
+
+      ctx2.clearRect(0, 0, cw, ch);
+
+      for (let i = fallingCharArr.length - 1; i >= 0; i--) {
+        fallingCharArr[i].draw(ctx);
+      }
+
+      requestId = requestAnimationFrame(update);
+    };
+
+    requestId = requestAnimationFrame(update);
+
+    // Clean up the animation frame when the component unmounts
+    return () => {
+      cancelAnimationFrame(requestId);
+    };
+  }, []);
+
   const handleSubmitGuess = (): void => {
     const guess = inputValues.join("");
     // Add a check for spaces or non-alphabetic characters
@@ -44,12 +152,12 @@ const CyberWordle: React.FC = () => {
       setTimeout(() => {
         alert("Congratulations, you guessed the word!");
         setGameOver(true);
-      }, 500); 
+      }, 500);
     } else if (newGuesses.length >= 6) {
       setTimeout(() => {
         alert(`Game over! The word was ${currentWord}.`);
         setGameOver(true);
-      }, 500); 
+      }, 500);
     }
     // Clear the input fields after submission
     setInputValues(["", "", "", "", ""]);
@@ -69,10 +177,10 @@ const CyberWordle: React.FC = () => {
     if (e.key === "Backspace" && !inputValues[index] && index > 0) {
       setInputValues((values) =>
         values.map((val, i) => (i === index - 1 ? "" : val))
-      ); 
-      inputRefs.current[index - 1]?.focus(); 
+      );
+      inputRefs.current[index - 1]?.focus();
     } else if (e.key === "Enter") {
-        handleSubmitGuess();
+      handleSubmitGuess();
     }
   };
 
@@ -119,37 +227,42 @@ const CyberWordle: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.game}>
-        <h1 className={styles.title}>Cyber Wordle</h1>
-        <div className={styles.inputBoxes}>{renderInputBoxes()}</div>
-        <button
-          className={styles.submitButton}
-          onClick={handleSubmitGuess}
-          disabled={gameOver}
-        >
-          Submit Guess
-        </button>
-        <div className={styles.guesses}>
-          {guesses.map((guess, index) => (
-            <div key={index} className={styles.guess}>
-              {renderGuessFeedback(guess)}
-            </div>
-          ))}
-          {gameOver && guesses[guesses.length - 1] !== currentWord && (
-            <div className={styles.guess}>
-              {renderGuessFeedback(currentWord, true)}
-            </div>
+    <div className={styles.matrixBackground}>
+      <canvas id="canvas" className={styles.matrixCanvas}></canvas>
+      <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
+      {/* Your game content here */}
+      <div className={styles.container}>
+        <div className={styles.game}>
+          <h1 className={styles.title}>Cyber Wordle</h1>
+          <div className={styles.inputBoxes}>{renderInputBoxes()}</div>
+          <button
+            className={styles.submitButton}
+            onClick={handleSubmitGuess}
+            disabled={gameOver}
+          >
+            Submit Guess
+          </button>
+          <div className={styles.guesses}>
+            {guesses.map((guess, index) => (
+              <div key={index} className={styles.guess}>
+                {renderGuessFeedback(guess)}
+              </div>
+            ))}
+            {gameOver && guesses[guesses.length - 1] !== currentWord && (
+              <div className={styles.guess}>
+                {renderGuessFeedback(currentWord, true)}
+              </div>
+            )}
+          </div>
+          {gameOver && (
+            <button
+              className={styles.restartButton}
+              onClick={() => window.location.reload()}
+            >
+              Restart
+            </button>
           )}
         </div>
-        {gameOver && (
-          <button
-            className={styles.restartButton}
-            onClick={() => window.location.reload()}
-          >
-            Restart
-          </button>
-        )}
       </div>
     </div>
   );
