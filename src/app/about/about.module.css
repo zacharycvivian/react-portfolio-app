@@ -54,6 +54,28 @@
   animation: fadeInRight 0.5s ease forwards;
 }
 
+.buttonContainer {
+  padding-top: 45px;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.downloadResumeButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--button-color-light);
+  color: var(--text-color-light);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.downloadResumeButton:hover {
+  background-color: var(--button-hover-light);
+}
+
 @keyframes fadeInLeft {
   from {
     opacity: 0;

@@ -42,13 +42,6 @@ function Sidebar() {
                 Contact
               </Link>
             </Button>
-            {/*
-            <Button variant={"outline"} className={styles.link}>
-              <Link className={styles.links} href={"/projects"}>
-                Projects
-              </Link>
-            </Button>
-            */}
             <Button variant={"outline"} className={styles.link}>
               <Link className={styles.links} href={"/testimonials"}>
                 Testimonials

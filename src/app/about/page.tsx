@@ -172,6 +172,15 @@ const AboutPage = () => {
             restaurant and the ice cream shop serving guests.
           </p>
         </div>
+        <div className={styles.buttonContainer}>
+          <a
+            href="@/../zcvivian_Resume.pdf"
+            download
+            className={styles.downloadResumeButton}
+          >
+            Download my Resume
+          </a>
+        </div>
       </div>
     </div>
   );

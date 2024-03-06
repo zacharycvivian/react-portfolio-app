@@ -20,13 +20,6 @@ function Header() {
   return (
     <header className={styles.header}>
       <h2>Zachary Vivian</h2>
-      <a
-        href="@/../zcvivian_Resume.pdf"
-        download
-        className={styles.downloadResumeButton}
-      >
-        Resume
-      </a>
       <button
         onClick={handleAuthAction}
         className={session ? styles.logoutButton : styles.loginButton}
