@@ -6,7 +6,7 @@ import { Metadata } from "next";
 type WordListType = string[];
 type GuessesType = string[];
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "CyberWordle",
   description: "Play CyberWordle, a game based off of the original using computer-related 5 letter words!",
 };

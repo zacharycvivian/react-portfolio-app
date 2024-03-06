@@ -3,7 +3,7 @@ import React from "react";
 import styles from "./contact.module.css";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with me or add me on various social media platforms!",
 };

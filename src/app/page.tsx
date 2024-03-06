@@ -18,7 +18,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Home",
   description: "Welcome to my personal website!",
 };

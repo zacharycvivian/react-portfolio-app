@@ -3,7 +3,7 @@ import styles from './projects.module.css';
 
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "CyberWordle",
   description: "Play CyberWordle, a game based off of the original using computer-related 5 letter words!",
 };
