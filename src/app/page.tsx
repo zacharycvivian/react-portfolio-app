@@ -42,18 +42,16 @@ export default function Home() {
             Hello, {session?.user?.name || "Guest"}
           </h1>
           <p className={styles.instructions}>
-            Click the icon on the top left to learn more about me, or download
-            my Resume via the button above!
+            Click the icon on the top left to learn more about me and download a copy of my resume!
           </p>
           <div className={styles.infoContainer}>
-            <h2>Welcome to my Resume Website!</h2>
+            <h2>Welcome to my Personal Website!</h2>
             <p>
               My name is Zachary Vivian, I'm graduating the University of
               Wisconsin - Platteville in May 2024 with a degree in
               Cybersecurity. On this website, you can find out more about myself
-              and leave a testimonial if you'd like to help me out by leaving a
-              reference for potential future employers to learn more about how I
-              can help their business.
+              and leave a testimonial if you'd like to help me out by being a
+              reference for potential future employers.
             </p>
           </div>
           <Carousel
