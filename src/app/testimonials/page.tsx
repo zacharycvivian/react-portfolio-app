@@ -70,6 +70,18 @@ const TestimonialsPage = () => {
     review: "",
   });
 
+  const handleAddTestimonialClick = () => {
+    if (!session) {
+      // If the user is not logged in, show an alert message
+      alert("You must be logged in to create a testimonial.");
+      // Optionally, you can redirect the user to a login page or show a login modal
+      // signIn(); // Uncomment this and import `signIn` from 'next-auth/react' to use
+    } else {
+      // If the user is logged in, show the add testimonial modal
+      setShowModal(true);
+    }
+  };
+
   const sortTestimonials = (
     testimonials: Testimonial[],
     sortBy: string,
@@ -152,47 +164,48 @@ const TestimonialsPage = () => {
     return filteredText;
   };
 
-// Handle form submission and add a new testimonial
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  // Validate form input before submission
-  if (formData.stars === 0 || formData.review.trim() === "") {
-    window.alert("Please enter a rating and a review before submitting.");
-    return;
-  }
-  const filteredReview = filterProfanity(formData.review);
-  // Add testimonial if user is logged in, input is valid, and user image URL is available
-  if (
-    session?.user?.name &&
-    filteredReview &&
-    formData.stars >= 1 &&
-    formData.stars <= 5
-  ) {
-    try {
-      await addDoc(collection(db, "testimonials"), {
-        name: session.user.name,
-        review: filteredReview,
-        stars: formData.stars,
-        time: serverTimestamp(),
-        userImageUrl: session?.user?.image || 'path/to/default/image.png', // Use the user's Google Image URL or a default image path
-      });
-      // Reset form data and close modal on successful submission
-      setFormData({
-        ...formData,
-        name: session?.user?.name || "",
-        stars: 0,
-        review: "",
-      });
-      setShowModal(false);
-    } catch (error) {
-      console.error("Error adding document: ", error);
+  // Handle form submission and add a new testimonial
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Validate form input before submission
+    if (formData.stars === 0 || formData.review.trim() === "") {
+      window.alert("Please enter a rating and a review before submitting.");
+      return;
     }
-  } else {
-    // Handle validation error or case where user information is incomplete
-    console.error("Submission failed: incomplete user information or validation error.");
-  }
-};
-
+    const filteredReview = filterProfanity(formData.review);
+    // Add testimonial if user is logged in, input is valid, and user image URL is available
+    if (
+      session?.user?.name &&
+      filteredReview &&
+      formData.stars >= 1 &&
+      formData.stars <= 5
+    ) {
+      try {
+        await addDoc(collection(db, "testimonials"), {
+          name: session.user.name,
+          review: filteredReview,
+          stars: formData.stars,
+          time: serverTimestamp(),
+          userImageUrl: session?.user?.image || "path/to/default/image.png", // Use the user's Google Image URL or a default image path
+        });
+        // Reset form data and close modal on successful submission
+        setFormData({
+          ...formData,
+          name: session?.user?.name || "",
+          stars: 0,
+          review: "",
+        });
+        setShowModal(false);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
+    } else {
+      // Handle validation error or case where user information is incomplete
+      console.error(
+        "Submission failed: incomplete user information or validation error."
+      );
+    }
+  };
 
   // Cancel button handler to reset form and hide modal
   const handleCancel = () => {
@@ -236,7 +249,11 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       <div className={styles.section}>
         {testimonials.map((testimonial) => (
           <div className={styles.card} key={testimonial.id}>
-            <img src={testimonial.userImageUrl} alt={`${testimonial.name}'s testimonial`} className={styles.userImage} />
+            <img
+              src={testimonial.userImageUrl}
+              alt={`${testimonial.name}'s testimonial`}
+              className={styles.userImage}
+            />
             <p>
               <strong>{testimonial.name}</strong>
             </p>
@@ -247,7 +264,10 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         ))}
       </div>
       <div className={styles.buttonContainer}>
-        <button onClick={() => setShowModal(true)} className={styles.addButton}>
+        <button
+          onClick={handleAddTestimonialClick}
+          className={styles.addButton}
+        >
           Add Testimonial
         </button>
         <button

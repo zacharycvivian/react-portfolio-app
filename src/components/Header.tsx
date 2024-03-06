@@ -1,11 +1,20 @@
 "use client";
 import React from "react";
 import styles from "./Header.module.css";
-import { signOut } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 function Header() {
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/" });
+  const { data: session } = useSession();
+
+  const handleAuthAction = () => {
+    if (session) {
+      // User is logged in, handle logout
+      signOut({ callbackUrl: "/" });
+    } else {
+      // User is not logged in, redirect to login page
+      // Replace '/api/auth/signin' with your login route if it's different
+      signIn(undefined, { callbackUrl: "/" });
+    }
   };
 
   return (
@@ -18,8 +27,11 @@ function Header() {
       >
         Resume
       </a>
-      <button onClick={handleLogout} className={styles.logoutButton}>
-        Logout
+      <button
+        onClick={handleAuthAction}
+        className={session ? styles.logoutButton : styles.loginButton}
+      >
+        {session ? "Logout" : "Login"}
       </button>
     </header>
   );

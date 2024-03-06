@@ -4,12 +4,8 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Home from "@/app/page";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/../auth";
-import Login from "./Login";
-import SessionProvider from "@/components/SessionProvider";
-import { Providers } from "./providers.jsx";
+import SessionProvider from "@/components/SessionProvider"; // Ensure this import is correct
+// Import or define your authOptions here if needed for session configuration
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,29 +14,20 @@ export const metadata: Metadata = {
   description: "Find more information out about me and leave testimonials!",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>
-          <SessionProvider session={session}>
-            {!session ? (
-              <Login />
-            ) : (
-              <>
-                <Header />
-                <Sidebar />
-                {children}
-                <Footer />
-              </>
-            )}
-          </SessionProvider>
-        </Providers>
+        <SessionProvider session={null}>
+          <Header />
+          <Sidebar />
+          {children}
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
