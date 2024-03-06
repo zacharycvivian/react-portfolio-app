@@ -13,8 +13,8 @@ import { Providers } from "./providers.jsx";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Zachary Vivian's Personal Website",
-  description: "Find more information out about me and leave testimonials!",
+  title: "Zach Vivian's Personal Website",
+  description: "Find more information about me and leave testimonials!",
 };
 
 export default async function RootLayout({
