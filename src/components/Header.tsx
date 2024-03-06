@@ -13,7 +13,7 @@ function Header() {
     } else {
       // User is not logged in, redirect to login page
       // Replace '/api/auth/signin' with your login route if it's different
-      signIn(undefined, { callbackUrl: "/" });
+      signIn('google', { callbackUrl: "/" });
     }
   };
 
