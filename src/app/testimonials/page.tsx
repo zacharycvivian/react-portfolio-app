@@ -13,6 +13,12 @@ import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
 import { db } from "@/../firebase";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Testimonials",
+  description: "Leave a professional testimonial if you've worked with me in the past! Must be signed in to Google.",
+};
 
 //Interfaces for type declarations
 interface Testimonial {

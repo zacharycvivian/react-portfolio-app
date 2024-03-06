@@ -16,6 +16,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to my personal website!",
+};
 
 export default function Home() {
   const { data: session } = useSession();

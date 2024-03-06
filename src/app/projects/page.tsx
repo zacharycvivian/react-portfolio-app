@@ -1,6 +1,13 @@
 import React from 'react';
 import styles from './projects.module.css';
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "CyberWordle",
+  description: "Play CyberWordle, a game based off of the original using computer-related 5 letter words!",
+};
+
 const AboutPage = () => {
   return (
     <div className={styles.container}>
