@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import styles from "./contact.module.css";
+import Link from 'next/link';
 import { Metadata } from "next";
 
 const metadata: Metadata = {
@@ -20,6 +21,9 @@ const downloadVCard = () => {
 const ContactPage = () => {
   return (
     <div className={styles.container}>
+      <Link href="/snake" legacyBehavior>
+      <div className={styles.apple}></div>
+    </Link>
       <h2 className={styles.sectionTitle}>Contact Me:</h2>
       <div className={styles.section}>
         <div className={styles.card}>
