@@ -17,21 +17,22 @@
   background-image: url('/apple.png'); /* Make sure to have an apple image in your public directory */
   background-size: cover;
   cursor: pointer;
-  animation: float 20s infinite ease-in-out, appearDisappear 20s infinite ease-in-out, spin 4s infinite linear;
-  z-index: 10001;
+  animation: float 25s infinite ease-in-out, infinite ease-in-out, spin 5s infinite linear;
+  z-index: 1;
 }
 
 @keyframes float {
-  0% { top: calc(10vh + 80px); left: 0; transform: translate(0, 0); }
-  25% { top: calc(20vh + 80px); left: 30vw; transform: translate(-50%, -50%); }
-  50% { top: calc(50vh - 80px); left: 60vw; transform: translate(-50%, -50%); }
-  75% { top: calc(70vh - 80px); left: 40vw; transform: translate(-50%, -50%); }
-  100% { top: calc(10vh + 80px); left: 0; transform: translate(0, 0); }
-}
-
-@keyframes appearDisappear {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0% { top: calc(10vh + 10vh * 0.1); left: calc(10vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
+  10% { top: calc(20vh + 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
+  20% { top: calc(80vh - 10vh * 0.1); left: calc(20vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
+  30% { top: calc(85vh - 10vh * 0.1); left: calc(85vw - 10vw * 0.1); transform: translate(-50%, -50%) rotate(-30deg); }
+  40% { top: calc(15vh + 10vh * 0.1); left: calc(85vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
+  50% { top: calc(85vh - 10vh * 0.1); left: calc(15vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
+  60% { top: calc(15vh + 10vh * 0.1); left: calc(15vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
+  70% { top: calc(85vh - 10vh * 0.1); left: calc(85vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-30deg); }
+  80% { top: calc(20vh + 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
+  90% { top: calc(80vh - 10vh * 0.1); left: calc(20vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
+  100% { top: calc(80vh - 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
 }
 
 @keyframes spin {
@@ -68,12 +69,14 @@
   width: 80%;
   margin-left: auto;
   margin-right: auto;
+  z-index: 2;
 }
 
 .card:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   background-color: var(--card-hover-light);
+  z-index: 2;
 }
 
 .card a {
@@ -96,6 +99,7 @@
   display: flex;
   justify-content: center;
   padding-top: 10px;
+  z-index: 2;
 }
 
 .downloadButton {
