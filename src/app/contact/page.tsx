@@ -2,12 +2,7 @@
 import React from "react";
 import styles from "./contact.module.css";
 import Link from 'next/link';
-import { Metadata } from "next";
 
-const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with me or add me on various social media platforms!",
-};
 
 const downloadVCard = () => {
   const link = document.createElement("a");

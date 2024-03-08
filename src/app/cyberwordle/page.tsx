@@ -1,15 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./cyberwordle.module.css";
-import { Metadata } from "next";
 
 type WordListType = string[];
 type GuessesType = string[];
 
-const metadata: Metadata = {
-  title: "CyberWordle",
-  description: "Play CyberWordle, a game based off of the original using computer-related 5 letter words!",
-};
 
 const CyberWordle: React.FC = () => {
   const [wordList, setWordList] = useState<WordListType>([]);

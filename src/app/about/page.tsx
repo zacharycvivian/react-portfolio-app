@@ -1,11 +1,5 @@
 import React from "react";
 import styles from "./about.module.css";
-import { Metadata } from "next";
-
-const metadata: Metadata = {
-  title: "About",
-  description: "Learn more about me!",
-};
 
 interface Skill {
   skill: string;
