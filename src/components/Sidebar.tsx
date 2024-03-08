@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -16,34 +17,42 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import styles from "./Sidebar.module.css";
+import { useState } from "react";
 
 function Sidebar() {
+  const [isSheetOpen, setSheetOpen] = useState(false);
+
+  // Function to close the sheet and navigate
+  const handleCloseAndNavigate = () => {
+    setSheetOpen(false); // Close the sheet
+  };
+
   return (
     <div>
-      <Sheet>
-        <SheetTrigger className={styles.logo}>
+      <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
+        <SheetTrigger className={styles.logo} onClick={() => setSheetOpen(true)}>
           <Image src={Logo} alt="logo" width={80} height={80}></Image>
         </SheetTrigger>
         <SheetContent side={"left"} className={styles.sheetContainer}>
           <SheetHeader>
             <SheetTitle>Discover More</SheetTitle>
             <Button variant={"outline"} className={styles.link}>
-              <Link className={styles.links} href={"/"}>
+              <Link className={styles.links} href={"/"} onClick={handleCloseAndNavigate}>
                 Home
               </Link>
             </Button>
             <Button variant={"outline"} className={styles.link}>
-              <Link className={styles.links} href={"/about"}>
+              <Link className={styles.links} href={"/about"} onClick={handleCloseAndNavigate}>
                 About
               </Link>
             </Button>
             <Button variant={"outline"} className={styles.link}>
-              <Link className={styles.links} href={"/contact"}>
+              <Link className={styles.links} href={"/contact"} onClick={handleCloseAndNavigate}>
                 Contact
               </Link>
             </Button>
             <Button variant={"outline"} className={styles.link}>
-              <Link className={styles.links} href={"/testimonials"}>
+              <Link className={styles.links} href={"/testimonials"} onClick={handleCloseAndNavigate}>
                 Testimonials
               </Link>
             </Button>
