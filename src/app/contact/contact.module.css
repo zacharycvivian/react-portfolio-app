@@ -22,18 +22,38 @@
 }
 
 @keyframes float {
-  0% { top: calc(10vh + 10vh * 0.1); left: calc(10vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
-  10% { top: calc(20vh + 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
-  20% { top: calc(80vh - 10vh * 0.1); left: calc(20vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
-  30% { top: calc(85vh - 10vh * 0.1); left: calc(85vw - 10vw * 0.1); transform: translate(-50%, -50%) rotate(-30deg); }
-  40% { top: calc(15vh + 10vh * 0.1); left: calc(85vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
-  50% { top: calc(85vh - 10vh * 0.1); left: calc(15vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
-  60% { top: calc(15vh + 10vh * 0.1); left: calc(15vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
-  70% { top: calc(85vh - 10vh * 0.1); left: calc(85vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-30deg); }
-  80% { top: calc(20vh + 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-10deg); }
-  90% { top: calc(80vh - 10vh * 0.1); left: calc(20vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(30deg); }
-  100% { top: calc(80vh - 10vh * 0.1); left: calc(80vw + 10vw * 0.1); transform: translate(-50%, -50%) rotate(-20deg); }
+  0%, 100% {
+    top: 10%;
+    left: 10%;
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  17% {
+    top: 20%;
+    left: 90%;
+    transform: translate(-50%, -50%) rotate(15deg);
+  }
+  34% {
+    top: 80%;
+    left: 80%;
+    transform: translate(-50%, -50%) rotate(30deg);
+  }
+  51% {
+    top: 90%;
+    left: 20%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+  }
+  68% {
+    top: 60%;
+    left: 10%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+  }
+  85% {
+    top: 30%;
+    left: 80%;
+    transform: translate(-50%, -50%) rotate(15deg);
+  }
 }
+
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -46,6 +66,7 @@
   color: var(--text-color-light);
   font-size: 24px;
   font-weight: bold;
+  text-align: center;
 }
 
 .section {
@@ -80,7 +101,7 @@
 }
 
 .card a {
-  color: var(--primary-color); /* Choose a color that fits your theme */
+  color: var(--text-color-light); /* Choose a color that fits your theme */
   text-decoration: none;
 }
 
@@ -90,7 +111,7 @@
 
 .subtext {
   font-size: 0.8rem; /* Example size, adjust as necessary */
-  color: #666; /* Example color, adjust as necessary */
+  color: var(--text-color-light);
   display: block; /* To ensure it starts on a new line */
 }
 
