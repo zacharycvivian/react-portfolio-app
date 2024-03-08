@@ -11,17 +11,20 @@ interface Point {
 const SnakeGame: React.FC = () => {
   // Ref to access the canvas element
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const segmentSize = 20; // Define segment size as a constant
   // Effect hook for setting up and updating the game size on window resize
   useEffect(() => {
     const updateGameSize = () => {
       // Adjust the canvas size to match its parent container's size
       if (canvasRef.current && canvasRef.current.parentElement) {
         const parent = canvasRef.current.parentElement;
-        canvasRef.current.width = parent.clientWidth;
-        canvasRef.current.height = parent.clientHeight;
+        const width = Math.floor(parent.clientWidth / segmentSize) * segmentSize;
+        const height = Math.floor(parent.clientHeight / segmentSize) * segmentSize;
+        canvasRef.current.width = width;
+        canvasRef.current.height = height;
         setGameSize({
-          width: parent.clientWidth,
-          height: parent.clientHeight,
+          width,
+          height,
         });
       }
     };
