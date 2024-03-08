@@ -40,3 +40,14 @@
   height: 100%; /* Adjusted to fill available container height */
   background-color: #000; /* Background for visibility */
 }
+
+.score {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  z-index: 3; /* Ensure it's above the game canvas */
+}
+

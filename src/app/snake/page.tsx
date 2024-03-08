@@ -53,6 +53,9 @@ const SnakeGame: React.FC = () => {
   const [apple, setApple] = useState<Point>({ x: 200, y: 200 });
   const [speed, setSpeed] = useState<number>(100); // Speed adjusted for better playability
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -82,6 +85,47 @@ const SnakeGame: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [dir, gameOver]);
 
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      // Track start position
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    };
+  
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchStartRef.current) {
+        return;
+      }
+      // Determine swipe direction
+      const deltaX = e.touches[0].clientX - touchStartRef.current.x;
+      const deltaY = e.touches[0].clientY - touchStartRef.current.y;
+  
+      if (Math.abs(deltaX) > Math.abs(deltaY)) { // Horizontal movement
+        if (deltaX > 0 && dir.x === 0) setDir({ x: 20, y: 0 }); // Right swipe
+        else if (deltaX < 0 && dir.x === 0) setDir({ x: -20, y: 0 }); // Left swipe
+      } else { // Vertical movement
+        if (deltaY > 0 && dir.y === 0) setDir({ x: 0, y: 20 }); // Down swipe
+        else if (deltaY < 0 && dir.y === 0) setDir({ x: 0, y: -20 }); // Up swipe
+      }
+      touchStartRef.current = null; // Reset start position after determining the swipe direction
+      e.preventDefault();
+    };
+  
+    const gameCanvas = canvasRef.current;
+    if (gameCanvas) {
+      gameCanvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+      gameCanvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+    }
+  
+    return () => {
+      // Cleanup
+      if (gameCanvas) {
+        gameCanvas.removeEventListener("touchstart", handleTouchStart);
+        gameCanvas.removeEventListener("touchmove", handleTouchMove);
+      }
+    };
+  }, [dir, setDir]);
+  
+  
   useEffect(() => {
     if (gameOver) {
       alert("Game Over. Click to restart.");
@@ -116,6 +160,7 @@ const SnakeGame: React.FC = () => {
           const newSegment = { x: lastSegment.x, y: lastSegment.y };
           newSnake.push(newSegment);
         }
+        setScore(score + 1); // Increment score
         spawnApple();
       }
 
@@ -163,10 +208,11 @@ const SnakeGame: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.game}>
-        <canvas ref={canvasRef} className={styles.gameCanvas} />
-      </div>
-    </div>
+  <div className={styles.game}>
+    <div className={styles.score}>Apples Eaten: {score}</div>
+    <canvas ref={canvasRef} className={styles.gameCanvas} />
+  </div>
+</div>
   );
 };
 
