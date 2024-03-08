@@ -1,0 +1,16 @@
+.container {
+    height: 80px;
+    background-color: transparent;
+    position: relative; /* Adjusted from 'flex' to 'relative' */
+    top: 0;
+    left: 0;
+    color: var(--text-color-dark);
+    display: flex;
+    margin-right: 100px;
+    justify-content: flex-end; /* Adjusted to space between items */
+    align-items: center;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 0;
+  }

@@ -15,6 +15,7 @@
   padding-left: 95px;
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
 }
 
 .logoutButton {
@@ -26,6 +27,7 @@
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
+  z-index: 999;
 }
 
 .logoutButton:hover {
@@ -41,6 +43,8 @@
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
+  z-index: 999;
+
 }
 
 .loginButton:hover {

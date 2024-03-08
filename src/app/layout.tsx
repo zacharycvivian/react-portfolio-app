@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import SessionProvider from "@/components/SessionProvider";
 import { Providers } from "./providers.jsx";
+import { ModeToggle } from "@/components/ModeToggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <Providers>
             <Header />
+            <ModeToggle />
             <Sidebar />
             {children}
             <Footer />

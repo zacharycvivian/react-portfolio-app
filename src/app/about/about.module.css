@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding-top: 100px;
+  padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: var(--secondary-color);
@@ -14,6 +14,7 @@
   color: var(--text-color-light);
   font-size: 24px;
   font-weight: bold;
+  padding-bottom: 10px;
 }
 
 .section {
@@ -55,7 +56,7 @@
 }
 
 .buttonContainer {
-  padding-top: 20px;
+  padding-top: 30px;
   display: flex;
   justify-content: center; 
   align-items: center; 
