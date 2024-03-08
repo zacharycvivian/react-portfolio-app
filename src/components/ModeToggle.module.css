@@ -6,11 +6,32 @@
     left: 0;
     color: var(--text-color-dark);
     display: flex;
-    margin-right: 100px;
+    margin-right: 105px;
     justify-content: flex-end; /* Adjusted to space between items */
     align-items: center;
     text-shadow: 2px 2px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 0;
-  }
+}
+
+.iconButton {
+    border-radius: 50%; /* Makes the button's border circular */
+    border: 1px solid var(--border-color, #ccc); /* Optional: Adjust the border color */
+    background-color: var(--third-color);
+    color: var(--text-color-light);
+
+}
+
+.iconButton:hover{
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+}
+
+.dropdownContent {
+    background-color: var(--third-color);
+    color: var(--text-color-light);
+    border-radius: 8px;
+    border-color: var(--text-color-light)
+
+}
