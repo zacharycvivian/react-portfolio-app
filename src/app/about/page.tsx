@@ -127,7 +127,6 @@ const AboutPage = () => {
           ))}
         </div>
       </div>
-
       <h2 className={styles.sectionTitle}>Experience:</h2>
       <div className={styles.section}>
         <div className={styles.card}>

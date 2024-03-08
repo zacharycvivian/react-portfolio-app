@@ -235,6 +235,16 @@ const SnakeGame: React.FC = () => {
     });
   }, [snake, apple, gameSize]);
 
+  useEffect(() => {
+    // Automatically scroll down 80 pixels to ensure the game is in full view
+    window.scrollTo({
+      top: 80,
+      left: 0,
+      behavior: 'smooth' // Optional: Adds a smooth scrolling effect
+    });
+  }, []);
+
+
   return (
     <div className={styles.container}>
       <div className={styles.game}>
