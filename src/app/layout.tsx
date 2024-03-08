@@ -4,7 +4,6 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Home from "@/app/page";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import SessionProvider from "@/components/SessionProvider";
@@ -27,10 +26,12 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <Header />
-          <Sidebar />
-          {children}
-          <Footer />
+          <Providers>
+            <Header />
+            <Sidebar />
+            {children}
+            <Footer />
+          </Providers>
         </SessionProvider>
       </body>
     </html>
