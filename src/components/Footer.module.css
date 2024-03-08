@@ -20,7 +20,15 @@
 
 .wordleButton {
   padding: 10px 20px;
-  background-color: var(--primary-color); 
+  background-color: var(--button-color-light); 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wordleButton:hover {
+  padding: 10px 20px;
+  background-color: var(--button-hover-light); 
   border: none;
   border-radius: 5px;
   cursor: pointer;

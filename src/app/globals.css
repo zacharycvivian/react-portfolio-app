@@ -7,19 +7,32 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 
-  --primary-color: #001233;
-  --secondary-color: #b6ccfe;
-  --third-color: #abc4ffeb;
-  --text-color-light: #03071e;
-  --text-color-dark: #ffffff;
-  --button-color-light: #d7e3fc;
-  --button-hover-light: #edf2fb;
-  --card-color-light: #c0c9df;
-  --card-hover-light: #e2eafc;
-  --footer-color: #3a3f68;
+  --primary-color: #212529;
+  --secondary-color: #CED4DA;
+  --third-color: #CED4DA;
+  --text-color-light: #343A40;
+  --text-color-dark: #fcfcfc;
+  --button-color-light: #6C757D;
+  --button-hover-light: #8d9398;
+  --card-color-light: #ADB5BD;
+  --card-hover-light: #c9d1d9;
+  --footer-color: #2c3035;
 }
 
 [data-theme="dark"] {
+  --primary-color: #212529;
+  --secondary-color: #3b3f42;
+  --third-color: #828a91;
+  --text-color-light: #dcdcdc;
+  --text-color-dark: #c5c5c5;
+  --button-color-light: #6C757D;
+  --button-hover-light: #8d9398;
+  --card-color-light: #6a7075;
+  --card-hover-light: #787d81;
+  --footer-color: #2c3035;
+}
+
+[data-theme="blueberry"] {
   --primary-color: #001233;
   --secondary-color: #002c7c;
   --third-color: #074081ec;
@@ -30,6 +43,32 @@
   --card-color-light: #1563b6;
   --card-hover-light: #33415c;
   --footer-color: #131a50;
+}
+
+[data-theme="pomegranate"] {
+  --primary-color: #590D22;
+  --secondary-color: #A4133C;
+  --third-color: #800F2F;
+  --text-color-light: #FFF0F3;
+  --text-color-dark: #fae7ea;
+  --button-color-light: #C9184A;
+  --button-hover-light: #dc3363;
+  --card-color-light: #f03a5b;
+  --card-hover-light: #fc738c;
+  --footer-color: #C9184A;
+}
+
+[data-theme="safari"] {
+  --primary-color: #6B705C;
+  --secondary-color: #A5A58D;
+  --third-color: #B7B7A4;
+  --text-color-light: #fff9f4;
+  --text-color-dark: #fff9f4;
+  --button-color-light: #DDBEA9;
+  --button-hover-light: #e9dad0;
+  --card-color-light: #a07761;
+  --card-hover-light: #b49381;
+  --footer-color: #868d72;
 }
 
 body {

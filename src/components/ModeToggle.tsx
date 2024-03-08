@@ -39,6 +39,15 @@ export function ModeToggle() {
           <DropdownMenuItem onClick={() => setTheme("system")}>
             System
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("blueberry")}> 
+            Bonus: Blueberry
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("pomegranate")}> 
+            Bonus: Pomegranate
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("safari")}> 
+            Bonus: Safari
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
