@@ -2,15 +2,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./snake.module.css"; // Adjust the import path as necessary
 
+// Define a Point interface to type the snake segments and apple position
 interface Point {
   x: number;
   y: number;
 }
 
 const SnakeGame: React.FC = () => {
+  // Ref to access the canvas element
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Effect hook for setting up and updating the game size on window resize
   useEffect(() => {
     const updateGameSize = () => {
+      // Adjust the canvas size to match its parent container's size
       if (canvasRef.current && canvasRef.current.parentElement) {
         const parent = canvasRef.current.parentElement;
         canvasRef.current.width = parent.clientWidth;
@@ -22,6 +26,7 @@ const SnakeGame: React.FC = () => {
       }
     };
 
+    // Listen for window resize, load, and orientation change events
     window.addEventListener("resize", updateGameSize);
     // This call handles initial sizing.
     updateGameSize();
@@ -48,6 +53,7 @@ const SnakeGame: React.FC = () => {
     width: 0,
     height: 0,
   });
+  // State hooks for game mechanics
   const [snake, setSnake] = useState<Point[]>([{ x: 20, y: 20 }]);
   const [dir, setDir] = useState<{ x: number; y: number }>({ x: 20, y: 0 });
   const [apple, setApple] = useState<Point>({ x: 200, y: 200 });
@@ -56,12 +62,13 @@ const SnakeGame: React.FC = () => {
   const [score, setScore] = useState<number>(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-
+  // Effect hook to handle keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (gameOver) return;
+      if (gameOver) return; // Ignore key presses if game is over
       let shouldPreventDefault = true;
       switch (e.key) {
+        // Update direction based on arrow key pressed, preventing reverse movement
         case "ArrowUp":
           if (dir.y === 0) setDir({ x: 0, y: -20 });
           break;
@@ -81,65 +88,81 @@ const SnakeGame: React.FC = () => {
       if (shouldPreventDefault) e.preventDefault();
     };
 
+    // Add and remove the event listener
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [dir, gameOver]);
 
+  // Effect hook to handle touch controls for mobile devices
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
-      // Track start position
-      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      // Record the start position of a touch
+      touchStartRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      };
     };
-  
+
     const handleTouchMove = (e: TouchEvent) => {
       if (!touchStartRef.current) {
         return;
       }
-      // Determine swipe direction
+      // Determine the swipe direction based on the end position
       const deltaX = e.touches[0].clientX - touchStartRef.current.x;
       const deltaY = e.touches[0].clientY - touchStartRef.current.y;
-  
-      if (Math.abs(deltaX) > Math.abs(deltaY)) { // Horizontal movement
+
+      // Set the direction based on the swipe gesture, preventing reverse movement
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal movement
         if (deltaX > 0 && dir.x === 0) setDir({ x: 20, y: 0 }); // Right swipe
         else if (deltaX < 0 && dir.x === 0) setDir({ x: -20, y: 0 }); // Left swipe
-      } else { // Vertical movement
+      } else {
+        // Vertical movement
         if (deltaY > 0 && dir.y === 0) setDir({ x: 0, y: 20 }); // Down swipe
         else if (deltaY < 0 && dir.y === 0) setDir({ x: 0, y: -20 }); // Up swipe
       }
       touchStartRef.current = null; // Reset start position after determining the swipe direction
-      e.preventDefault();
+      e.preventDefault(); // Prevent default to avoid scrolling and zooming
     };
-  
+
     const gameCanvas = canvasRef.current;
+    // Attach event listeners for touch start and move
     if (gameCanvas) {
-      gameCanvas.addEventListener("touchstart", handleTouchStart, { passive: false });
-      gameCanvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+      gameCanvas.addEventListener("touchstart", handleTouchStart, {
+        passive: false,
+      });
+      gameCanvas.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
-  
+
+    // Cleanup by removing event listeners
     return () => {
-      // Cleanup
       if (gameCanvas) {
         gameCanvas.removeEventListener("touchstart", handleTouchStart);
         gameCanvas.removeEventListener("touchmove", handleTouchMove);
       }
     };
   }, [dir, setDir]);
-  
-  
+
+  // Effect hook for the main game loop
   useEffect(() => {
     if (gameOver) {
       alert("Game Over. Click to restart.");
-      window.location.reload();
+      window.location.reload(); // Reload the page to restart the game
       return;
     }
 
     const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) return; // Exit if the canvas context is not available
 
     const moveSnake = () => {
+      // Calculate the new head position based on the current direction
       const newHead = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+      // Create a new snake array with the new head and without the last segment
       const newSnake = [newHead, ...snake.slice(0, -1)];
 
+      // Check for collisions with the game boundaries or itself
       if (
         newHead.x >= gameSize.width ||
         newHead.x < 0 ||
@@ -153,24 +176,26 @@ const SnakeGame: React.FC = () => {
         return;
       }
 
+      // Check if the snake has eaten the apple
       if (newHead.x === apple.x && newHead.y === apple.y) {
+        // Increase the snake's length by adding segments at the end
         for (let i = 0; i < 5; i++) {
-          // Clone the last segment of the snake to create a new segment
           const lastSegment = newSnake[newSnake.length - 1];
           const newSegment = { x: lastSegment.x, y: lastSegment.y };
           newSnake.push(newSegment);
         }
         setScore(score + 1); // Increment score
-        spawnApple();
+        spawnApple(); // Generate a new apple position
       }
 
-      setSnake(newSnake);
+      setSnake(newSnake); // Update the snake's position
     };
 
     const gameLoop = setInterval(moveSnake, speed);
     return () => clearInterval(gameLoop);
   }, [snake, dir, apple, gameOver, gameSize, speed]);
 
+  // Function to randomly place an apple within the game boundaries
   const spawnApple = () => {
     let potentialApple: Point;
     let isOccupied = false;
@@ -192,6 +217,7 @@ const SnakeGame: React.FC = () => {
     setApple(potentialApple);
   };
 
+  // Effect hook to draw the snake and the apple
   useEffect(() => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -208,11 +234,11 @@ const SnakeGame: React.FC = () => {
 
   return (
     <div className={styles.container}>
-  <div className={styles.game}>
-    <div className={styles.score}>Apples Eaten: {score}</div>
-    <canvas ref={canvasRef} className={styles.gameCanvas} />
-  </div>
-</div>
+      <div className={styles.game}>
+        <div className={styles.score}>Apples Eaten: {score}</div>
+        <canvas ref={canvasRef} className={styles.gameCanvas} />
+      </div>
+    </div>
   );
 };
 
