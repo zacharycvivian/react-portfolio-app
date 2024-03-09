@@ -144,7 +144,6 @@
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    padding: 120px 20px 20px;
   }
 
   .section {
