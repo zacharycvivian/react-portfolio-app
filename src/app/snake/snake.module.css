@@ -105,11 +105,11 @@
 @media (max-width: 768px) { /* Adjust the max-width as needed to target your desired range of mobile devices */
   .gameCanvas {
     height: auto;
-    max-height: calc(95vh); /* Example: Reduce height by 50px on mobile devices */
+    max-height: calc(80vh); /* Example: Reduce height by 50px on mobile devices */
   }
   .game {
     background-color: transparent;
-    padding-bottom: 80px;
+    padding-bottom: 120px;
   }
 }
 
