@@ -97,7 +97,7 @@ const AboutPage = () => {
           <p>
             <strong>Hobbies:</strong> In my free time, I love to spend time
             outdoors backpacking alongside my buddies and my dog, Turbo. Some of
-            my other hobbies include photgraphy, longboarding, and spending time
+            my other hobbies include photography, longboarding, and spending time
             on personal projects (such as this website).
           </p>
         </div>
