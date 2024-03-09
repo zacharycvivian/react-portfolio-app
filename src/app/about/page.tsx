@@ -95,11 +95,10 @@ const AboutPage = () => {
         </div>
         <div className={styles.card}>
           <p>
-            <strong>Hobbies:</strong> : In my free time, I love to spend time
-            outdoors hiking and backpacking alongside my buddies and my dog,
-            Turbo. Some of my other hobbies include working on and detailing
-            cars, playing video games with friends, and spending time on
-            personal projects.
+            <strong>Hobbies:</strong> In my free time, I love to spend time
+            outdoors backpacking alongside my buddies and my dog, Turbo. Some of
+            my other hobbies include photgraphy, longboarding, and spending time
+            on personal projects (such as this website).
           </p>
         </div>
         <div className={styles.card}>
