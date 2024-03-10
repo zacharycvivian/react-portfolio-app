@@ -52,6 +52,11 @@ function Sidebar() {
               </Link>
             </Button>
             <Button variant={"outline"} className={styles.link}>
+              <Link className={styles.links} href={"/blog"} onClick={handleCloseAndNavigate}>
+                Blog
+              </Link>
+            </Button>
+            <Button variant={"outline"} className={styles.link}>
               <Link className={styles.links} href={"/testimonials"} onClick={handleCloseAndNavigate}>
                 Testimonials
               </Link>
