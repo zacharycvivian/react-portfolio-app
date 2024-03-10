@@ -9,7 +9,7 @@ import article3 from "@/../public/article3.png";
 const BlogPage = () => {
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>Blog Posts (In Development)</h2>
+      <h2 className={styles.sectionTitle}>Blog Posts</h2>
       <div className={styles.section}>
         <Link
           href="/blog/what-i-learned-developing-website-prompt-engineering"
