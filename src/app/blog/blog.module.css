@@ -76,11 +76,22 @@
   
   @media (max-width: 768px) {
     .container {
-      flex-direction: column;
+      padding-left: 10px;
+      padding-right: 10px;
     }
   
-    .section {
+    .cardContent {
       flex-direction: column;
+      text-align: center;
+    }
+  
+    .cardImage {
+      width: 100%; /* Adjust if necessary to control the size */
+      aspect-ratio: auto; /* You can adjust this or remove it to let the image size naturally */
+    }
+  
+    .card {
+      padding: 10px; /* Adjust padding for smaller screens */
     }
   }
   
