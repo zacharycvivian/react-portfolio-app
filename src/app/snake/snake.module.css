@@ -5,49 +5,12 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: transparent;
   overflow-y: auto; /* Enable vertical scrolling within the container */
   width: 100%;
   z-index: 2;
   width: 100%;
   height: 100%;
   overflow-y: auto; /* Consider if this is necessary, or adjust as needed */
-}
-
-.title {
-  font-size: 32px;
-  text-align: center;
-  color: white;
-  font-weight: bold;
-  /* Ensure this is visible on top of the game */
-}
-
-.game {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh; /* Adjusting for the header and footer */
-  min-width: 100%;
-  min-height: 100%;
-  background-color: #000; /* Optional: Sets the background color */
-  margin: auto;
-}
-
-.gameCanvas {
-  width: 100vw; /* Fill the container width */
-  height: 100vh; /* Adjusted to fill available container height */
-  background-color: #000; /* Background for visibility */
-}
-
-.score {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: white;
-  font-size: 20px;
-  padding: 10px;
-  z-index: 3; /* Ensure it's above the game canvas */
 }
 
 .container {
@@ -57,7 +20,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: transparent;
+  background-color: white;
   overflow-y: auto; /* Enable vertical scrolling within the container */
   width: 100%;
   z-index: 2;
@@ -67,9 +30,10 @@
 }
 
 .title {
+  padding-top: 10px;
   font-size: 32px;
   text-align: center;
-  color: white;
+  color: black;
   font-weight: bold;
   /* Ensure this is visible on top of the game */
 }
@@ -78,34 +42,30 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh; /* Adjusting for the header and footer */
-  min-width: 100%;
-  min-height: 100%;
-  background-color: #000; /* Optional: Sets the background color */
+  width: 100%;
+  height: 100%; /* Adjusting for the header and footer */
+  background-color: transparent; /* Optional: Sets the background color */
   margin: auto;
 }
 
 .gameCanvas {
-  width: 100vw; /* Fill the container width */
-  height: 100vh; /* Adjusted to fill available container height */
-  background-color: #000; /* Background for visibility */
+  width: 80vw; /* Fill the container width */
+  height: 80vh; /* Adjusted to fill available container height */
+  background-color: #000000e1; /* Background for visibility */
 }
 
 .score {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: white;
+  text-align: center;
+  color: black;
   font-size: 20px;
-  padding: 10px;
-  z-index: 3; /* Ensure it's above the game canvas */
+  z-index: 3; 
 }
 
-@media (max-width: 768px) { /* Adjust the max-width as needed to target your desired range of mobile devices */
+@media (max-width: 768px) {
   .gameCanvas {
     height: auto;
-    max-height: calc(80vh); /* Example: Reduce height by 50px on mobile devices */
+    max-height: calc(80vh); 
+    max-width: calc(80vw);
   }
   .game {
     background-color: transparent;

@@ -240,15 +240,16 @@ const SnakeGame: React.FC = () => {
     window.scrollTo({
       top: 80,
       left: 0,
-      behavior: 'smooth' // Optional: Adds a smooth scrolling effect
+      behavior: "smooth" // Optional: Adds a smooth scrolling effect
     });
   }, []);
 
 
   return (
     <div className={styles.container}>
+      <h2 className={styles.title}>Snake</h2>
+      <div className={styles.score}>Apples Eaten: {score}</div>
       <div className={styles.game}>
-        <div className={styles.score}>Apples Eaten: {score}</div>
         <canvas ref={canvasRef} className={styles.gameCanvas} />
       </div>
     </div>
