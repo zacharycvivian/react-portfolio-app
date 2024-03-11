@@ -68,12 +68,14 @@
   font-weight: bold;
   text-align: center;
   padding-bottom:10px;
+  z-index: 2;
 }
 
 .section {
   display: flex;
   flex-direction: column;
   margin-bottom: 40px;
+  z-index: 2;
 }
 
 .card {

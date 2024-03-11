@@ -39,7 +39,7 @@ const BlogPage = () => {
         </Link>
       </div>
       <div className={styles.section}>
-        <Link href="/blog/bolster-your-companies-security-2024" passHref>
+        <Link href="/blog/bolster-your-company-security-2024" passHref>
           <div className={styles.card} style={{ cursor: "pointer" }}>
             <div className={styles.cardContent}>
               <Image
@@ -50,7 +50,7 @@ const BlogPage = () => {
               />
               <div>
                 <h3 className={styles.cardTitle}>
-                  How to Bolster Your Companies Network Security in 2024
+                  How to Bolster Your Company's Network Security in 2024
                 </h3>
                 <p className={styles.cardSubtext}>March 10, 2024</p>
                 <p>
@@ -89,12 +89,6 @@ const BlogPage = () => {
             </div>
           </div>
         </Link>
-      </div>
-      <h2 className={styles.sectionTitle}>X(Twitter) Feed</h2>
-      <div className={styles.section}>
-        <div className={styles.card} style={{ cursor: "pointer" }}>
-          <p>In this card will display my X/Twitter feed using their API (coming soon).</p>
-        </div>
       </div>
     </div>
   );
