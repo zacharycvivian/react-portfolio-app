@@ -1,16 +1,15 @@
-.container {
+.matrixBackground {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  overflow-y: auto; /* Enable vertical scrolling within the container */
-  width: 100%;
-  z-index: 2;
+  z-index: 0; /* Ensure this is behind game content but above the base container background */
+  /* Matrix animation CSS here */
+}
+
+.matrixCanvas,
+.matrixCanvasOverlay {
+  position: absolute;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow-y: auto; /* Consider if this is necessary, or adjust as needed */
 }
 
 .container {
@@ -20,56 +19,67 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: white;
   overflow-y: auto; /* Enable vertical scrolling within the container */
   width: 100%;
   z-index: 2;
   width: 100%;
   height: 100%;
   overflow-y: auto; /* Consider if this is necessary, or adjust as needed */
+  background-color: transparent
 }
 
 .title {
-  padding-top: 10px;
   font-size: 32px;
   text-align: center;
-  color: black;
+  color: white;
   font-weight: bold;
   /* Ensure this is visible on top of the game */
 }
 
-.game {
+.aspectRatioBox {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%; /* Adjusting for the header and footer */
-  background-color: transparent; /* Optional: Sets the background color */
-  margin: auto;
+  width: 80vw; /* Or your preferred width */
+  height: 80vh;
+  aspect-ratio: 1; /* Adjust based on your game's desired aspect ratio, 1 for square */
 }
 
 .gameCanvas {
-  width: 80vw; /* Fill the container width */
-  height: 80vh; /* Adjusted to fill available container height */
-  background-color: #000000e1; /* Background for visibility */
+  width: 100%; /* Fill the container width */
+  height: auto; /* Adjusted to fill available container height */
+  background-color: #0000007b; /* Background for visibility */
+  border: 2px solid white; /* Adds a white border around the canvas */
+  border-radius: 8px;
+  backdrop-filter: blur(10px); /* Apply the blur effect */
+  box-sizing: border-box; /* Ensures the border is included in the element's total width and height */
+  object-fit: contain; /* Ensures the content is scaled properly within the container */
 }
 
 .score {
   text-align: center;
-  color: black;
+  color: white;
   font-size: 20px;
   z-index: 3; 
+  padding-bottom: 10px;
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding-bottom: 140px;
+  }
   .gameCanvas {
     height: auto;
     max-height: calc(80vh); 
     max-width: calc(80vw);
   }
-  .game {
-    background-color: transparent;
-    padding-bottom: 120px;
+  .aspectRatioBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80vw; /* Or your preferred width */
+    height: 80vh;
+    aspect-ratio: 1; /* Adjust based on your game's desired aspect ratio, 1 for square */
   }
 }
 

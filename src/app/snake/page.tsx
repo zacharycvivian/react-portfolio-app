@@ -9,6 +9,115 @@ interface Point {
 }
 
 const SnakeGame: React.FC = () => {
+  //Matrix-style background
+  useEffect(() => {
+    var canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    var ctx = canvas!.getContext("2d")!;
+    var canvas2 = document.getElementById("canvas2") as HTMLCanvasElement;
+    var ctx2 = canvas2!.getContext("2d")!;
+    var cw = window.innerWidth;
+    var ch = window.innerHeight;
+    var charArr = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z",
+    ];
+    var maxCharCount = 100;
+    var fallingCharArr: Point[] = [];
+    var fontSize = 10;
+    var maxColumns = cw / fontSize;
+    canvas.width = canvas2.width = cw;
+    canvas.height = canvas2.height = ch;
+
+    function randomInt(min: number, max: number) {
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function randomFloat(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    class Point {
+      x: number;
+      y: number;
+      value: string;
+      speed: number;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.value = charArr[randomInt(0, charArr.length - 1)].toUpperCase();
+        this.speed = randomFloat(1, 5);
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx2.fillStyle = "rgba(255,255,255,0.8)";
+        ctx2.font = fontSize + "px san-serif";
+        ctx2.fillText(this.value, this.x, this.y);
+
+        ctx.fillStyle = "#c6d6f6";
+        ctx.font = fontSize + "px san-serif";
+        ctx.fillText(this.value, this.x, this.y);
+
+        this.y += this.speed;
+        if (this.y > ch) {
+          this.y = randomFloat(-100, 0);
+          this.speed = randomFloat(2, 5);
+        }
+      }
+    }
+
+    for (var i = 0; i < maxColumns; i++) {
+      fallingCharArr.push(new Point(i * fontSize, randomFloat(-500, 0)));
+    }
+
+    let requestId: number;
+
+    var update = function () {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, cw, ch);
+
+      ctx2.clearRect(0, 0, cw, ch);
+
+      for (let i = fallingCharArr.length - 1; i >= 0; i--) {
+        fallingCharArr[i].draw(ctx);
+      }
+
+      requestId = requestAnimationFrame(update);
+    };
+
+    requestId = requestAnimationFrame(update);
+
+    // Clean up the animation frame when the component unmounts
+    return () => {
+      cancelAnimationFrame(requestId);
+    };
+  }, []);
+
+
   // Ref to access the canvas element
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const segmentSize = 20; // Define segment size as a constant
@@ -246,12 +355,16 @@ const SnakeGame: React.FC = () => {
 
 
   return (
+    <div className={styles.matrixBackground}>
+    <canvas id="canvas" className={styles.matrixCanvas}></canvas>
+    <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
     <div className={styles.container}>
       <h2 className={styles.title}>Snake</h2>
       <div className={styles.score}>Apples Eaten: {score}</div>
-      <div className={styles.game}>
+      <div className={styles.aspectRatioBox}>
         <canvas ref={canvasRef} className={styles.gameCanvas} />
       </div>
+    </div>
     </div>
   );
 };

@@ -4,10 +4,6 @@
   /* Matrix animation CSS here */
 }
 
-.matrixBackground {
-  position: relative;
-}
-
 .matrixCanvas,
 .matrixCanvasOverlay {
   position: absolute;
