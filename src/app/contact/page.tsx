@@ -69,6 +69,20 @@ const ContactPage = () => {
         <div
           className={styles.card}
           onClick={() =>
+            handleExternalNavigation(
+              "https://twitter.com/zacharycvivian"
+            )
+          }
+        >
+          <p>
+            <strong>X (Twitter): </strong>zacharycvivian
+            <br />
+            <span className={styles.subtext}>View My Profile</span>
+          </p>
+        </div>
+        <div
+          className={styles.card}
+          onClick={() =>
             handleExternalNavigation("https://github.com/zacharycvivian")
           }
         >
