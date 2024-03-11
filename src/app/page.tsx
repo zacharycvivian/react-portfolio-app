@@ -31,7 +31,7 @@ export default function Home() {
       <div className={styles.logoContainer}>
         <Image
           src={Logo}
-          alt="Company Logo"
+          alt="Zach Vivian's Logo"
           layout="fill"
           objectFit="contain"
         />
@@ -64,16 +64,16 @@ export default function Home() {
           >
             <CarouselContent>
               <CarouselItem className={styles.image}>
-                <Image src={Mountains} alt="img" />
+                <Image src={Mountains} alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado " />
               </CarouselItem>
               <CarouselItem className={styles.image}>
-                <Image src={Zach} alt="img" />
+                <Image src={Zach} alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado" />
               </CarouselItem>
               <CarouselItem className={styles.image}>
-                <Image src={Squad} alt="img" />
+                <Image src={Squad} alt="Zach Vivian and his buddies on a hike near Nederland, Colorado" />
               </CarouselItem>
               <CarouselItem className={styles.image}>
-                <Image src={Turbo} alt="img" />
+                <Image src={Turbo} alt="Image of Zach Vivian's dog, Turbo" />
               </CarouselItem>
             </CarouselContent>
             <CarouselPrevious />

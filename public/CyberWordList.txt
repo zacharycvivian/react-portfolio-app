@@ -18,7 +18,6 @@ graph
 hertz
 index
 input
-joint
 keyed
 lease
 logic
