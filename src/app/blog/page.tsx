@@ -93,7 +93,7 @@ const BlogPage = () => {
       <h2 className={styles.sectionTitle}>X(Twitter) Feed</h2>
       <div className={styles.section}>
         <div className={styles.card} style={{ cursor: "pointer" }}>
-          <p>In this card will display my X/Twitter feed using their API.</p>
+          <p>In this card will display my X/Twitter feed using their API (coming soon).</p>
         </div>
       </div>
     </div>
