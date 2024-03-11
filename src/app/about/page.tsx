@@ -56,6 +56,7 @@ const AboutPage = () => {
     { skill: "Office 365", level: 90 },
     { skill: "MacOS + Terminal", level: 90 },
     { skill: "Kali Linux + Tools", level: 80 },
+    { skill: "GitHub & GitLab", level: 75 },
   ];
   return (
     <div className={styles.container}>
@@ -63,13 +64,20 @@ const AboutPage = () => {
       <div className={styles.section}>
         <div className={styles.card}>
           <p>
-            I am going to be graduating University of Wisconsin - Platteville
-            May 2024 with a degree in Cybersecurity and a minor in Business
-            Administration. I am interested in learning penetration testing or
-            incident response to protect companies from potential threats and
-            vulnerabilities. I am a fast learner and am interested in using
-            intrusion detection and prevention systems to analyze threats and
-            prevent future attacks by implementing security protocols.
+            Set to graduate from the University of Wisconsin-Platteville in May
+            2024, with a Bachelor's degree in Cybersecurity accompanied by a
+            minor in Business Administration. My academic journey has fueled a
+            passion for specializing in either penetration testing or incident
+            response, with the goal of safeguarding your organization against
+            sophisticated cyber threats and vulnerabilities. As a diligent and
+            quick learner, I am keen on employing advanced analytical tools to
+            thoroughly evaluate potential security breaches. Beyond technical
+            defenses, my proficiency in applying cybersecurity frameworks and
+            conducting comprehensive risk assessments enables me to develop
+            strategic approaches to bolster your cybersecurity posture. My
+            ambition is to contribute to your team by not only preempting and
+            mitigating cyber attacks through robust security protocols but also
+            ensuring a resilient and adaptive security infrastructure.
           </p>
         </div>
         <div className={styles.card}>
@@ -81,24 +89,28 @@ const AboutPage = () => {
         </div>
         <div className={styles.card}>
           <p>
-            <strong>Senior Project:</strong> Throughout my last year at
-            Platteville, we worked on a real-life development scenario creating
-            a CyberLabs environment for the department to use to make
-            cybersecurity labs available to students. Professors are able to
-            create custom lab instructions alongside attaching one of our
-            already pre-configured virtual machines, which automatically get
-            graded upon completion and post the student's grade to Canvas.
-            Combining all of our previous knowledge on the software development
-            life cycle, we had to collaborate and communicate effectively to
-            meet sprint deadlines.
+            <strong>Senior Project:</strong> Our senior project integrates our
+            cumulative knowledge of the software development lifecycle, focusing
+            on creating virtual labs for educational use. My team's role
+            involves developing scalable containers and pre-configured virtual
+            machines for Windows and Linux, utilizing Proxmox VE. This allows
+            professors to effortlessly assign and auto-grade lab assignments,
+            providing a practical, hands- on learning experience for students.
+            This initiative highlights our capability to apply theoretical
+            concepts to real-world challenges, enhancing the educational toolkit
+            for future academic use.
           </p>
         </div>
         <div className={styles.card}>
           <p>
-            <strong>Hobbies:</strong> In my free time, I love to spend time
-            outdoors backpacking alongside my buddies and my dog, Turbo. Some of
-            my other hobbies include photography, longboarding, and spending time
-            on personal projects (such as this website).
+            <strong>Hobbies:</strong> In my leisure hours, I'm passionate about
+            exploring the great outdoors, often found backpacking with my
+            friends and my dog, Turbo, by my side. Beyond these
+            adventures, I have a keen interest in photography and longboarding,
+            which allows me to appreciate the world's beauty from different
+            perspectives. Additionally, I dedicate time to personal projects,
+            like developing this website, which not only fuels my creativity but
+            also sharpens my technical skills.
           </p>
         </div>
         <div className={styles.card}>
@@ -130,11 +142,14 @@ const AboutPage = () => {
       <div className={styles.section}>
         <div className={styles.card}>
           <p>
-            While I may not yet have much experience in the professional
-            cybersecurity industry, I am fast at learning new technologies and
-            software. I have a desire for learning more about intrusion
-            detection and prevention systems to analze threats and potential
-            vulnerabilities to prevent future cyber attacks.
+            Although my professional experience in the cybersecurity sector is
+            in its early stages, my ability to quickly master new technologies
+            and software sets me apart. My keen interest in expanding my
+            knowledge of intrusion detection and prevention systems underscores
+            my commitment to analyzing threats and identifying potential
+            vulnerabilities. This proactive approach is aimed at fortifying
+            defenses against future cyber attacks, demonstrating my dedication
+            to contributing meaningfully to the field.
           </p>
         </div>
         <div className={styles.card}>
