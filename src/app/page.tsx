@@ -39,7 +39,7 @@ export default function Home() {
       <div className="container flex justify-center align-middle">
         <div className={styles.homeContainer}>
           <h1 className={styles.welcomeMessage}>
-            Hello, {session?.user?.name || "Guest"}
+            <strong>Hello, {session?.user?.name || "Guest"}</strong>
           </h1>
           <p className={styles.instructions}>
             Click the icon on the top left to learn more about me and download a copy of my resume!
@@ -47,11 +47,7 @@ export default function Home() {
           <div className={styles.infoContainer}>
             <h2>Welcome to my Personal Website!</h2>
             <p>
-              My name is Zachary Vivian, I'm graduating the University of
-              Wisconsin - Platteville in May 2024 with a degree in
-              Cybersecurity. On this website, you can find out more about myself
-              and leave a testimonial if you'd like to help me out by being a
-              reference for potential future employers.
+            Welcome! My name is Zachary Vivian, and I am set to graduate from the University of Wisconsin-Platteville in May 2024, with a degree specializing in Cybersecurity. This website serves as a digital portfolio where you can delve into my professional journey, discover more about my passions and projects, and understand the skills I bring to the cybersecurity domain. If we've had the opportunity to collaborate or if you're familiar with my work and dedication, I warmly invite you to leave a testimonial. Your support as a reference could greatly assist me in connecting with future employers and opportunities.
             </p>
           </div>
           <Carousel
