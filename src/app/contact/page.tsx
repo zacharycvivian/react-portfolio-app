@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./contact.module.css";
+import { useSession, signIn } from 'next-auth/react';
 import Link from "next/link";
 
 const downloadVCard = () => {
@@ -13,6 +14,36 @@ const downloadVCard = () => {
 };
 
 const ContactPage = () => {
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session) {
+      signIn();
+    }
+  }, [session, status]);
+
+  if (status === 'loading' || !session) {
+    // Using inline styles for troubleshooting
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100vw',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        backgroundColor: '#fff',
+        color: '#000', 
+        fontSize: '24px',
+        zIndex: 1000, 
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
   const handleExternalNavigation = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };

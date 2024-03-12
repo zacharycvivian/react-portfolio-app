@@ -14,7 +14,7 @@
   position: fixed;
   width: 30px;
   height: 30px;
-  background-image: url('/apple.png'); /* Make sure to have an apple image in your public directory */
+  background-image: url('/apple.png'); 
   background-size: cover;
   cursor: pointer;
   animation: float 25s infinite ease-in-out, infinite ease-in-out, spin 5s infinite linear;
