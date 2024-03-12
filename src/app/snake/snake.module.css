@@ -61,6 +61,19 @@
   color: white;
   font-size: 20px;
   z-index: 3; 
+  margin-bottom: 10px;
+}
+
+.restartButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--button-color-light);
+  color: var(--text-color-dark);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  margin-top:10px;
 }
 
 @media (max-width: 768px) {

@@ -117,7 +117,6 @@ const SnakeGame: React.FC = () => {
     };
   }, []);
 
-
   // Ref to access the canvas element
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const segmentSize = 20; // Define segment size as a constant
@@ -127,8 +126,10 @@ const SnakeGame: React.FC = () => {
       // Adjust the canvas size to match its parent container's size
       if (canvasRef.current && canvasRef.current.parentElement) {
         const parent = canvasRef.current.parentElement;
-        const width = Math.floor(parent.clientWidth / segmentSize) * segmentSize;
-        const height = Math.floor(parent.clientHeight / segmentSize) * segmentSize;
+        const width =
+          Math.floor(parent.clientWidth / segmentSize) * segmentSize;
+        const height =
+          Math.floor(parent.clientHeight / segmentSize) * segmentSize;
         canvasRef.current.width = width;
         canvasRef.current.height = height;
         setGameSize({
@@ -173,6 +174,7 @@ const SnakeGame: React.FC = () => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [showRestartButton, setShowRestartButton] = useState(false);
 
   // Effect hook to handle keyboard controls
   useEffect(() => {
@@ -259,12 +261,6 @@ const SnakeGame: React.FC = () => {
 
   // Effect hook for the main game loop
   useEffect(() => {
-    if (gameOver) {
-      alert("Game Over. Click to restart.");
-      window.location.reload(); // Reload the page to restart the game
-      return;
-    }
-
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return; // Exit if the canvas context is not available
 
@@ -285,6 +281,7 @@ const SnakeGame: React.FC = () => {
           .some((segment) => segment.x === newHead.x && segment.y === newHead.y)
       ) {
         setGameOver(true);
+        setShowRestartButton(true);
         return;
       }
 
@@ -329,6 +326,15 @@ const SnakeGame: React.FC = () => {
     setApple(potentialApple);
   };
 
+  const restartGame = () => {
+    setSnake([{ x: 20, y: 20 }]);
+    setDir({ x: 20, y: 0 });
+    spawnApple();
+    setScore(0);
+    setGameOver(false);
+    setShowRestartButton(false);
+  };
+
   // Effect hook to draw the snake and the apple
   useEffect(() => {
     const ctx = canvasRef.current?.getContext("2d");
@@ -349,22 +355,26 @@ const SnakeGame: React.FC = () => {
     window.scrollTo({
       top: 80,
       left: 0,
-      behavior: "smooth" // Optional: Adds a smooth scrolling effect
+      behavior: "smooth", // Optional: Adds a smooth scrolling effect
     });
   }, []);
 
-
   return (
     <div className={styles.matrixBackground}>
-    <canvas id="canvas" className={styles.matrixCanvas}></canvas>
-    <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
-    <div className={styles.container}>
-      <h2 className={styles.title}>Snake</h2>
-      <div className={styles.score}>Apples Eaten: {score}</div>
-      <div className={styles.aspectRatioBox}>
-        <canvas ref={canvasRef} className={styles.gameCanvas} />
+      <canvas id="canvas" className={styles.matrixCanvas}></canvas>
+      <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
+      <div className={styles.container}>
+        <h2 className={styles.title}>Snake</h2>
+        <div className={styles.score}>Apples Eaten: {score}</div>
+        <div className={styles.aspectRatioBox}>
+          <canvas ref={canvasRef} className={styles.gameCanvas} />
+        </div>
+        {showRestartButton && (
+        <button className={styles.restartButton} onClick={restartGame}>
+          Restart Game
+        </button>
+      )}
       </div>
-    </div>
     </div>
   );
 };
