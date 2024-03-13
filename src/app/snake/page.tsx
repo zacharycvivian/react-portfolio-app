@@ -218,7 +218,7 @@ const SnakeGame: React.FC = () => {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!touchStartRef.current) {
+      if (!touchStartRef.current || gameOver) {
         return;
       }
       // Determine the swipe direction based on the end position
@@ -269,6 +269,8 @@ const SnakeGame: React.FC = () => {
       const newHead = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
       // Create a new snake array with the new head and without the last segment
       const newSnake = [newHead, ...snake.slice(0, -1)];
+      if (gameOver) return; // Add this line to ensure no game logic runs after game over
+
 
       // Check for collisions with the game boundaries or itself
       if (
