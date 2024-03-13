@@ -26,6 +26,7 @@
 }
 
 .iconButton {
+  position: relative; /* Add this line to your existing .iconButton styles */
   border-radius: 50%; /* Makes the button's border circular */
   border: 1px solid var(--border-color, #ccc); /* Optional: Adjust the border color */
   background-color: var(--third-color);
@@ -35,6 +36,29 @@
 .iconButton img {
   width: 55px; /* Increase width as needed */
   height: 55px; /* Increase height as needed */
+}
+
+@keyframes glintEffect {
+  0% {
+    background-position: -200%;
+  }
+  100% {
+    background-position: 200%;
+  }
+}
+
+.glintButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  background-repeat: no-repeat;
+  background-size: 50% 100%;
+  animation: glintEffect 2s infinite;
+  border-radius: 50%;
 }
 
 

@@ -31,13 +31,14 @@ function Header() {
       <h2>Zachary Vivian</h2>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className={styles.iconButton}>
-            <img
-              src={userImageURL}
-              alt="Profile"
-              className="h-[1.2rem] w-[1.2rem] rounded-full" // Adjust styles as needed
-            />
-          </button>
+        <button className={`${styles.iconButton} ${!session && styles.glintButton}`}>
+  <img
+    src={userImageURL}
+    alt="Profile"
+    className="h-[1.2rem] w-[1.2rem] rounded-full"
+  />
+</button>
+
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className={styles.dropdownContent}>
           <DropdownMenuItem onClick={handleAuthAction}>
