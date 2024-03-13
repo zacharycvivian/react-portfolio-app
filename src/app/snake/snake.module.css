@@ -25,7 +25,9 @@
   width: 100%;
   height: 100%;
   overflow-y: auto; /* Consider if this is necessary, or adjust as needed */
-  background-color: transparent
+  background-color: transparent;
+  padding-top: 90px;
+
 }
 
 .title {

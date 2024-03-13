@@ -6,8 +6,8 @@
   padding-left: 20px;
   padding-right: 20px;
   background-color: var(--secondary-color);
-  z-index: 10000;
-  height: 100%;
+  height: calc(100vh + 100px);
+  padding-top: 100px;
 }
 
 .sectionTitle {

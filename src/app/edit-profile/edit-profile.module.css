@@ -2,7 +2,8 @@
   background-color: var(--third-color);
   padding-top: 10px;
   padding-bottom: 10px;
-  height: calc(100vh - 80px)
+  height: 100vh;
+  padding-top: 100px;
 }
 
 .editProfileContainer {
@@ -12,7 +13,6 @@
   padding-left: 20px;
   padding-right: 20px;
   background-color: var(--secondary-color);
-  z-index: 10000;
   height: 100%;
   max-width: 97.5%;
   width: 80%;

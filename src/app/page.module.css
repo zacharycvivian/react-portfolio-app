@@ -4,8 +4,9 @@
   align-items: center;
   width: 100%;
   background-color: var(--secondary-color);
-  height: 100vh;
+  height: calc(100vh + 100px);
   overflow-y: auto;
+  padding-top: 100px;
 }
 
 .logoContainer {

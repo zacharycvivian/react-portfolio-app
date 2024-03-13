@@ -29,7 +29,6 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <Providers>
             <Header />
-            <ModeToggle />
             <Sidebar />
             {children}
             <Footer />
