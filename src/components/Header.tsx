@@ -44,9 +44,11 @@ function Header() {
           <DropdownMenuItem onClick={handleAuthAction}>
             {session ? "Logout" : "Google Login"}
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/edit-profile">Edit Profile</Link>
-          </DropdownMenuItem>
+          {session && (
+            <DropdownMenuItem>
+              <Link href="/edit-profile">Edit Profile</Link>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

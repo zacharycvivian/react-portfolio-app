@@ -1,140 +1,222 @@
-"use client"
-import React, { useState, useEffect } from 'react';
+"use client";
+import React, { useState, useEffect } from "react";
 import { db } from "@/../firebase";
-import { useSession } from 'next-auth/react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import styles from './edit-profile.module.css'; // Adjust the path to where your CSS module is saved
+import { useSession } from "next-auth/react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import styles from "./edit-profile.module.css";
+import VerifiedLabel from "@/../public/verified.png";
+
 interface UserProfile {
-    name: string;
-    email: string;
-    phone?: string;
-    occupation?: string;
-    employer?: string;
-    profileImageUrl?: string; // Assuming this is the field for the profile image URL
-    isVerified?: boolean;
-  }
-  
-  const EditProfilePage = () => {
-    const { data: session } = useSession();
-    const [profile, setProfile] = useState<UserProfile | null>(null);
-  
-    // Fetch user profile from Firestore
-    useEffect(() => {
-        const fetchProfile = async () => {
-          if (session?.user?.email) {
-            const docRef = doc(db, "users", session.user.email);
-            const docSnap = await getDoc(docRef);
-      
-            if (docSnap.exists()) {
-              setProfile(docSnap.data() as UserProfile);
-            } else {
-              // Handle case where there is no profile (e.g., new user)
-              setProfile({
-                name: session.user.name ?? "",
-                email: session.user.email,
-                profileImageUrl: session.user.image ?? "",
-                isVerified: false, // Default to false until manually verified
-              });
-            }
-          }
-        };
-  
-      fetchProfile();
-    }, [session]);
-  
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setProfile((currentProfile) => (currentProfile ? { ...currentProfile, [name]: value } : null));
+  name: string;
+  email: string;
+  phone?: string;
+  occupation?: string;
+  employer?: string;
+  profileImageUrl?: string;
+  isVerified?: boolean;
+}
+
+const EditProfilePage = () => {
+  const { data: session } = useSession();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [phonePart1, setPhonePart1] = useState("");
+  const [phonePart2, setPhonePart2] = useState("");
+  const [phonePart3, setPhonePart3] = useState("");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (session?.user?.email) {
+        const docRef = doc(db, "users", session.user.email);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setProfile(docSnap.data() as UserProfile);
+        } else {
+          setProfile({
+            name: session.user.name ?? "",
+            email: session.user.email,
+            profileImageUrl: session.user.image ?? "",
+            isVerified: false,
+          });
+        }
+      }
     };
-  
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!profile || !session?.user?.email) return;
-      
-        const userProfileUpdate = {
-          ...profile,
-          profileImageUrl: session.user.image ?? "", // Include the profile image URL
-          // Do not update `isVerified` here to prevent users from modifying it
-        };
-      
-        // Update Firestore document, but exclude isVerified from direct update
-        await setDoc(doc(db, "users", session.user.email), userProfileUpdate);
-        alert("Profile updated successfully!");
-      };
-      
-  
-    if (!session) {
-      return <div>Please sign in to edit your profile.</div>;
+
+    fetchProfile();
+  }, [session]);
+
+  useEffect(() => {
+    if (profile?.phone) {
+      const parts = profile.phone.match(/(\d{3})(\d{3})(\d{4})/);
+      if (parts) {
+        setPhonePart1(parts[1]);
+        setPhonePart2(parts[2]);
+        setPhonePart3(parts[3]);
+      }
     }
-  
-    return (
-        <div className={styles.editProfileContainer}>
-          <h2 className={styles.sectionTitle}>Edit Profile</h2>
-          {profile ? (
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Name</label>
+  }, [profile]);
+
+  const handlePhoneChange = (value: string, part: number) => {
+    const updatedValue = value
+      .replace(/\D/g, "")
+      .substring(0, part === 3 ? 4 : 3);
+    if (part === 1) setPhonePart1(updatedValue);
+    if (part === 2) setPhonePart2(updatedValue);
+    if (part === 3) setPhonePart3(updatedValue);
+
+    // Attempting to auto-focus the next or previous input
+    if (updatedValue.length === 3 && part !== 3) {
+      const nextElement = document.getElementById(`phonePart${part + 1}`);
+      if (nextElement instanceof HTMLInputElement) {
+        nextElement.focus();
+      }
+    } else if (updatedValue.length === 0 && part !== 1) {
+      const prevElement = document.getElementById(`phonePart${part - 1}`);
+      if (prevElement instanceof HTMLInputElement) {
+        prevElement.focus();
+      }
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfile((currentProfile) =>
+      currentProfile ? { ...currentProfile, [name]: value } : null
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!profile || !session?.user?.email) return;
+    const phone = `${phonePart1}${phonePart2}${phonePart3}`;
+    const userProfileUpdate = {
+      ...profile,
+      profileImageUrl: session.user.image ?? "",
+    };
+
+    await setDoc(doc(db, "users", session.user.email), userProfileUpdate);
+    alert("Profile updated successfully!");
+  };
+
+  if (!session) {
+    return <div>Please sign in to edit your profile.</div>;
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.editProfileContainer}>
+        <h2 className={styles.sectionTitle}>Edit Profile</h2>
+        {session && profile ? (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Name</label>
+              <div className={styles.nameWithVerification}>
                 <input
                   type="text"
                   value={profile.name}
                   className={styles.input}
                   disabled
                 />
+                {profile.isVerified ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    <img
+                      src={VerifiedLabel.src}
+                      alt="Verified"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                    <span>Verified</span>
+                  </div>
+                ) : (
+                  <span>(Unverified)</span>
+                )}
               </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Email</label>
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Email</label>
+              <input
+                type="email"
+                value={profile.email}
+                className={styles.input}
+                disabled
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Phone</label>
+              <div className={styles.phoneInputContainer}>
                 <input
-                  type="email"
-                  value={profile.email}
-                  className={styles.input}
-                  disabled
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Phone</label>
-                <input
+                  id="phonePart1"
                   type="text"
-                  name="phone"
-                  value={profile.phone || ''}
-                  onChange={handleInputChange}
-                  className={styles.input}
+                  maxLength={3}
+                  value={phonePart1}
+                  onChange={(e) => handlePhoneChange(e.target.value, 1)}
+                  className={styles.phoneInput}
                 />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Occupation</label>
+                -
                 <input
+                  id="phonePart2"
                   type="text"
-                  name="occupation"
-                  value={profile.occupation || ''}
-                  onChange={handleInputChange}
-                  className={styles.input}
+                  maxLength={3}
+                  value={phonePart2}
+                  onChange={(e) => handlePhoneChange(e.target.value, 2)}
+                  className={styles.phoneInput}
                 />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Employer</label>
+                -
                 <input
+                  id="phonePart3"
                   type="text"
-                  name="employer"
-                  value={profile.employer || ''}
-                  onChange={handleInputChange}
-                  className={styles.input}
+                  maxLength={4}
+                  value={phonePart3}
+                  onChange={(e) => handlePhoneChange(e.target.value, 3)}
+                  className={styles.phoneInput}
                 />
               </div>
-              <div className={styles.verificationStatus}>
-                {profile.isVerified ? 'Verified' : 'Not Yet Verified'}
-              </div>
-              <div className={styles.buttonContainer}>
-                <button type="submit" className={styles.submitButton}>Save Profile</button>
-              </div>
-            </form>
-          ) : (
-            <p>Loading...</p>
-          )}
-          <p className={styles.disclaimer}>
-            Disclaimer: I prioritize your privacy and security, entrusting your data to Google Firebase for safekeeping (your password is unavailable to me). Please note that your occupation and employer will be visible to others on the testimonials page. Your phone number is requested solely for the purposes of adding you to my contact list and verifying your authenticity as a user. Feel free to leave a review on my testimonials page, if you’d like a verified badge please contact me so I can review your information!
-          </p>
-        </div>
-      );
-          }
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Occupation</label>
+              <input
+                type="text"
+                name="occupation"
+                value={profile.occupation || ""}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Employer</label>
+              <input
+                type="text"
+                name="employer"
+                value={profile.employer || ""}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.buttonContainer}>
+              <button type="submit" className={styles.submitButton}>
+                Save Profile
+              </button>
+            </div>
+          </form>
+        ) : null}
+        <p className={styles.disclaimer}>
+          <strong>Disclaimer:</strong> I prioritize your privacy and security,
+          entrusting your data to Google Firebase for safekeeping (your password
+          is unavailable to me). Please note that your occupation and employer
+          will be visible to others on the testimonials page. Your phone number
+          is requested solely for the purposes of adding you to my contact list
+          and verifying your authenticity as a user. Feel free to leave a review
+          on my testimonials page, if you’d like a verified badge please contact
+          me so I can review your information!
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default EditProfilePage;

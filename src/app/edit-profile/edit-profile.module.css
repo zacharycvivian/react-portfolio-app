@@ -1,85 +1,152 @@
+.container {
+  background-color: var(--third-color);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: calc(100vh - 80px)
+}
+
 .editProfileContainer {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background-color: var(--secondary-color);
-    color: var(--text-color-light);
+  flex-direction: column;
+  border-radius: 8px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: var(--secondary-color);
+  z-index: 10000;
+  height: 100%;
+  max-width: 97.5%;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-y: scroll;
+  border-radius: 10px;
+  border: 1px solid var(--text-color-light);
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sectionTitle {
+  max-width: 80%;
+  margin: 0 auto;
+  color: var(--text-color-light);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 10px;
+  z-index: 2;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--text-color-light);
+}
+
+.input,
+.input[disabled] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: var(--card-color-light);
+  border: 1px solid var(--text-color-light);
+  border-radius: 5px;
+  color: var(--text-color-light);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input[disabled] {
+  background-color: #ccc;
+  color: #777;
+}
+
+.phoneInputContainer {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--text-color-light);
+}
+
+.phoneInput {
+  flex: 1 0 auto;
+  max-width: 80px;
+  padding: 8px;
+  margin-right: 4px;
+  background-color: var(--card-color-light);
+  border: 1px solid var(--text-color-light);
+  border-radius: 5px;
+  color: var(--text-color-light);
+  text-align: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 4px;
+}
+
+.nameWithVerification {
+  color: var(--text-color-light);
+}
+
+.submitButton {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--button-color-light);
+  color: var(--text-color-dark);
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+  background-color: var(--button-hover-light);
+}
+
+.disclaimer {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--text-color-light);
+  padding-bottom: 8px;
+}
+
+.card {
+  margin: 10px 0;
+  padding: 20px;
+  background-color: var(--card-color-light);
+  border-radius: 10px;
+  border: 1px solid var(--text-color-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  color: var(--text-color-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease, width 0.3s ease;
+  max-width: 97.5%;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: var(--card-hover-light);
+}
+
+@media (max-width: 600px) {
+  .phoneInputContainer {
+    gap: 4px;
   }
-  
-  .formGroup {
-    margin-bottom: 20px;
+
+  .phoneInput {
+    padding-right: 10px;
   }
-  
-  .label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .input,
-  .input[disabled] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: var(--card-color-light);
-    border: 1px solid var(--text-color-light);
-    border-radius: 5px;
-    color: var(--text-color-light);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .input[disabled] {
-    background-color: #ccc; /* Light grey to indicate the field is not editable */
-    color: #777; /* Darker grey for contrast */
-  }
-  
-  .verificationStatus {
-    font-style: italic;
-    margin-bottom: 20px;
-  }
-  
-  .submitButton {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: var(--button-color-light);
-    color: var(--text-color-dark);
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-  }
-  
-  .submitButton:hover {
-    background-color: var(--button-hover-light);
-  }
-  
-  .disclaimer {
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: var(--text-color-light);
-  }
-  
-  /* Reusing existing styles for consistency */
-  .card {
-    margin: 10px 0;
-    padding: 20px;
-    background-color: var(--card-color-light);
-    border-radius: 10px;
-    border: 1px solid var(--text-color-light);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    color: var(--text-color-light);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, width 0.3s ease;
-    max-width: 97.5%;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    background-color: var(--card-hover-light);
-  }
-  
+}
