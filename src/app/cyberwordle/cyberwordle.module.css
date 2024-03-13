@@ -44,8 +44,8 @@
   background-color: transparent; /* Making specific elements' backgrounds transparent */
   height: calc(100vh - 120px);
   overflow-y: auto;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   width: 60%;
   border: 2px solid white; /* Adds a white border around the canvas */
   border-radius: 8px;
@@ -142,4 +142,11 @@
 
 .gray {
   background-color: #d3d3d3; /* Example gray, adjust as needed */
+}
+
+@media (max-width: 650px) {
+  .game {
+    width: 90%; /* Increase width on mobile devices */
+    /* Optionally, adjust padding, gap, or other properties for better mobile presentation */
+  }
 }
