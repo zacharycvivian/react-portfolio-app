@@ -18,38 +18,26 @@
   
 }
 
-.logoutButton {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4285f4; /* Blue background */
+.dropdownContent {
+  background-color: var(--third-color);
   color: var(--text-color-light);
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  z-index: 999;
+  border-radius: 8px;
+  border-color: var(--text-color-light)
 }
 
-.logoutButton:hover {
-  background-color: rgb(209, 47, 47); /* Red hover effect */
-}
-
-.loginButton {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4285f4; /* Blue background, adjust if you want another color */
+.iconButton {
+  border-radius: 50%; /* Makes the button's border circular */
+  border: 1px solid var(--border-color, #ccc); /* Optional: Adjust the border color */
+  background-color: var(--third-color);
   color: var(--text-color-light);
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  z-index: 999;
-
 }
 
-.loginButton:hover {
-  background-color: rgb(45, 233, 45); /* Green hover effect */
+.iconButton img {
+  width: 55px; /* Increase width as needed */
+  height: 55px; /* Increase height as needed */
 }
+
+
 @media (max-width: 600px) {
   .header h2 {
     white-space: nowrap;
