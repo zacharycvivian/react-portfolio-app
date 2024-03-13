@@ -6,7 +6,6 @@
     padding-right: 20px;
     background-color: var(--secondary-color);
     height: 100vh;
-    z-index: 10000;
     overflow-y: auto;
   }
   
