@@ -32,7 +32,7 @@
   --footer-color: #2c3035;
 }
 
-[data-theme="blueberry"] {
+[data-theme="navy"] {
   --primary-color: #001233;
   --secondary-color: #002c7c;
   --third-color: #074081ec;
@@ -45,7 +45,7 @@
   --footer-color: #131a50;
 }
 
-[data-theme="pomegranate"] {
+[data-theme="crimson"] {
   --primary-color: #590D22;
   --secondary-color: #A4133C;
   --third-color: #800F2F;
@@ -58,16 +58,16 @@
   --footer-color: #C9184A;
 }
 
-[data-theme="safari"] {
-  --primary-color: #6B705C;
-  --secondary-color: #A5A58D;
-  --third-color: #B7B7A4;
-  --text-color-light: #fff9f4;
+[data-theme="forest"] {
+  --primary-color: #344e41;
+  --secondary-color: #3a5a40;
+  --third-color: #588157;
+  --text-color-light: rgb(244, 242, 241);
   --text-color-dark: #fff9f4;
-  --button-color-light: #DDBEA9;
-  --button-hover-light: #e9dad0;
-  --card-color-light: #a07761;
-  --card-hover-light: #b49381;
+  --button-color-light: #dad7cd;
+  --button-hover-light: #e6e5e0;
+  --card-color-light: #a3b18a;
+  --card-hover-light: #b1bc9d;
   --footer-color: #868d72;
 }
 
