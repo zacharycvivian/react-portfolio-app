@@ -24,9 +24,27 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 5px;
 }
 
 .wordleButton:hover {
+  padding: 10px 20px;
+  background-color: var(--button-hover-light); 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.snakeButton {
+  padding: 10px 20px;
+  background-color: var(--button-color-light); 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.snakeButton:hover {
   padding: 10px 20px;
   background-color: var(--button-hover-light); 
   border: none;

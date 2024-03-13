@@ -56,9 +56,6 @@ const ContactPage = () => {
   };
   return (
     <div className={styles.container}>
-      <Link href="/snake" legacyBehavior>
-        <div className={styles.apple}></div>
-      </Link>
       <h2 className={styles.sectionTitle}>
         Contact Me:
         <span className={styles.subtext}>Click a Card to Visit</span>

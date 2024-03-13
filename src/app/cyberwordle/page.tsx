@@ -227,14 +227,23 @@ const CyberWordle: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    // Automatically scroll down 80 pixels to ensure the game is in full view
+    window.scrollTo({
+      top: 80,
+      left: 0,
+      behavior: "smooth", // Optional: Adds a smooth scrolling effect
+    });
+  }, []);
+
   return (
     <div className={styles.matrixBackground}>
       <canvas id="canvas" className={styles.matrixCanvas}></canvas>
       <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
       {/* Your game content here */}
       <div className={styles.container}>
+      <h1 className={styles.title}>Cyber Wordle</h1>
         <div className={styles.game}>
-          <h1 className={styles.title}>Cyber Wordle</h1>
           <div className={styles.inputBoxes}>{renderInputBoxes()}</div>
           <button
             className={styles.submitButton}

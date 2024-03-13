@@ -28,11 +28,18 @@ const Footer = () => {
       <p className={styles["unique-visitors"]}>
         <strong>Total Site Visitors:</strong> {sessionCount} 
       </p>
+      <div>
       <Button variant={"outline"} className={styles.wordleButton}>
         <Link className={styles.links} href={"/cyberwordle"}>
           Play CyberWordle
         </Link>
       </Button>
+      <Button variant={"outline"} className={styles.snakeButton}>
+        <Link className={styles.links} href={"/snake"}>
+          Play Snake
+        </Link>
+      </Button>
+      </div>
       <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
     </footer>
   );

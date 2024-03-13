@@ -20,9 +20,8 @@
   justify-content: center;
   min-height: 100vh;
   background-color: transparent;
-  padding-top: 120px; /* Adjusted to 120px to account for the header height */
   height: calc(
-    100vh - 120px
+    100vh - 80px
   ); /* Full viewport height minus the header height */
   overflow-y: auto; /* Enable vertical scrolling within the container */
   width: 100%;
@@ -34,6 +33,7 @@
   text-align: center;
   color: white;
   font-weight: bold;
+  padding-bottom: 10px;
 }
 
 .game {
@@ -44,7 +44,12 @@
   background-color: transparent; /* Making specific elements' backgrounds transparent */
   height: calc(100vh - 120px);
   overflow-y: auto;
-  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 60%;
+  border: 2px solid white; /* Adds a white border around the canvas */
+  border-radius: 8px;
+  backdrop-filter: blur(10px); /* Apply the blur effect */
 }
 
 .inputBoxes {
