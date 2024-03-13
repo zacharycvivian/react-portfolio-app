@@ -271,7 +271,6 @@ const SnakeGame: React.FC = () => {
       const newSnake = [newHead, ...snake.slice(0, -1)];
       if (gameOver) return; // Add this line to ensure no game logic runs after game over
 
-
       // Check for collisions with the game boundaries or itself
       if (
         newHead.x >= gameSize.width ||
@@ -371,11 +370,16 @@ const SnakeGame: React.FC = () => {
         <div className={styles.aspectRatioBox}>
           <canvas ref={canvasRef} className={styles.gameCanvas} />
         </div>
-        {showRestartButton && (
-        <button className={styles.restartButton} onClick={restartGame}>
-          Restart Game
-        </button>
-      )}
+        {gameOver && (
+          <div className={styles.gameOverOverlay}>
+            <div className={styles.gameOverMessage}>
+            GAME OVER! YOU ATE {score} APPLES. PLAY AGAIN?
+            </div>
+            <button className={styles.restartButton} onClick={restartGame}>
+              Restart Game
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
