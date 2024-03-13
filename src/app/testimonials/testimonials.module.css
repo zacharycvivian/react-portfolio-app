@@ -148,6 +148,22 @@
   z-index: 1000;
 }
 
+.verifiedContainer {
+  display: flex;
+  align-items: center;
+}
+
+.verifiedLabel {
+  margin-left: 8px;
+  width: 20px;
+  height: 20px;
+}
+
+.unverifiedText {
+  margin-left: 8px;
+  font-size: .6em;
+}
+
 .occupation,
 .employer {
   font-style: italic;

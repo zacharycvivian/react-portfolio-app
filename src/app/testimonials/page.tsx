@@ -14,9 +14,9 @@ import {
 } from "firebase/firestore";
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
+import VerifiedLabel from "@/../public/verified.png";
 import { useSession } from "next-auth/react";
 import { db } from "@/../firebase";
-
 
 //Interfaces for type declarations
 interface Testimonial {
@@ -28,6 +28,7 @@ interface Testimonial {
   userImageUrl: string;
   occupation: string;
   employer: string;
+  isVerified: boolean;
 }
 
 interface Timestamp {
@@ -127,6 +128,7 @@ const TestimonialsPage = () => {
         userImageUrl: doc.data().userImageUrl,
         occupation: doc.data().occupation,
         employer: doc.data().employer,
+        isVerified: doc.data().isVerified,
       }));
       setTestimonials(testimonialsData);
       setFilteredTestimonials(
@@ -173,64 +175,65 @@ const TestimonialsPage = () => {
   };
 
   // Handle form submission and add a new testimonial
-// Handle form submission and add a new testimonial
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
+  // Handle form submission and add a new testimonial
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  // Early return if review or stars not provided
-  if (formData.stars === 0 || formData.review.trim() === "") {
-    window.alert("Please enter a rating and a review before submitting.");
-    return;
-  }
+    // Early return if review or stars not provided
+    if (formData.stars === 0 || formData.review.trim() === "") {
+      window.alert("Please enter a rating and a review before submitting.");
+      return;
+    }
 
-  // Check if user is logged in and has an email
-  if (!session?.user?.email) {
-    console.error("User email not found. User must be logged in.");
-    alert("You must be logged in to submit a testimonial."); // Provide user feedback
-    return;
-  }
+    // Check if user is logged in and has an email
+    if (!session?.user?.email) {
+      console.error("User email not found. User must be logged in.");
+      alert("You must be logged in to submit a testimonial."); // Provide user feedback
+      return;
+    }
 
-  // Fetch user profile from Firestore
-  const userProfileRef = doc(db, "users", session.user.email);
-  const userProfileSnap = await getDoc(userProfileRef);
+    // Fetch user profile from Firestore
+    const userProfileRef = doc(db, "users", session.user.email);
+    const userProfileSnap = await getDoc(userProfileRef);
 
-  if (!userProfileSnap.exists()) {
-    console.error("User profile does not exist.");
-    alert("Your user profile could not be found. Please ensure your profile is complete."); // Provide user feedback
-    return;
-  }
+    if (!userProfileSnap.exists()) {
+      console.error("User profile does not exist.");
+      alert(
+        "Your user profile could not be found. Please ensure your profile is complete."
+      ); // Provide user feedback
+      return;
+    }
 
-  // Extract additional user details
-  const userProfile = userProfileSnap.data();
-  const { occupation, employer } = userProfile;
+    // Extract additional user details
+    const userProfile = userProfileSnap.data();
+    const { occupation, employer, isVerified } = userProfile;
 
-  // Proceed to create testimonial with additional details
-  try {
-    const filteredReview = filterProfanity(formData.review);
-    const testimonialData = {
-      name: session.user.name || '',
-      review: filteredReview,
-      stars: formData.stars,
-      time: serverTimestamp(),
-      userImageUrl: session?.user?.image || "path/to/default/image.png",
-      occupation: occupation || "Occupation not provided", // Include occupation from the profile or default message
-      employer: employer || "Employer not provided", // Include employer from the profile or default message
-    };
+    // Proceed to create testimonial with additional details
+    try {
+      const filteredReview = filterProfanity(formData.review);
+      const testimonialData = {
+        name: session.user.name || "",
+        review: filteredReview,
+        stars: formData.stars,
+        time: serverTimestamp(),
+        userImageUrl: session?.user?.image || "path/to/default/image.png",
+        occupation: occupation || "Occupation not provided", // Include occupation from the profile or default message
+        employer: employer || "Employer not provided", // Include employer from the profile or default message
+        isVerified: isVerified,
+      };
 
-    await addDoc(collection(db, "testimonials"), testimonialData);
+      await addDoc(collection(db, "testimonials"), testimonialData);
 
-    // Reset form data and close modal on successful submission
-    setFormData({ name: '', stars: 0, review: '' });
-    setShowModal(false);
-    alert("Testimonial added successfully!"); // Provide user feedback
-  } catch (error) {
-    console.error("Error adding testimonial: ", error);
-    alert("An error occurred while submitting your testimonial. Please try again."); // Provide user feedback
-  }
-};
-
-  
-  
+      // Reset form data and close modal on successful submission
+      setFormData({ name: "", stars: 0, review: "" });
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error adding testimonial: ", error);
+      alert(
+        "An error occurred while submitting your testimonial. Please try again."
+      ); // Provide user feedback
+    }
+  };
 
   // Cancel button handler to reset form and hide modal
   const handleCancel = () => {
@@ -279,15 +282,28 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               alt={`${testimonial.name}'s testimonial`}
               className={styles.userImage}
             />
-            <p>
+            <div className={styles.verifiedContainer}>
+              {" "}
+              {/* Use this container for flex display */}
               <strong>{testimonial.name}</strong>
-            </p>
+              {testimonial.isVerified ? (
+                <img
+                  src={VerifiedLabel.src}
+                  alt="Verified"
+                  className={styles.verifiedLabel}
+                />
+              ) : (
+                <span className={styles.unverifiedText}>
+                  (Unverified Review)
+                </span>
+              )}
+            </div>
             {testimonial.occupation && (
-            <p className={styles.occupation}>{testimonial.occupation}</p>
-          )}
-          {testimonial.employer && (
-            <p className={styles.employer}>{testimonial.employer}</p>
-          )}
+              <p className={styles.occupation}>{testimonial.occupation}</p>
+            )}
+            {testimonial.employer && (
+              <p className={styles.employer}>{testimonial.employer}</p>
+            )}
             <p>{"★".repeat(testimonial.stars)}</p>
             <p>{testimonial.review}</p>
             <p className={styles.timeText}>{formatDate(testimonial.time)}</p>
