@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import {
   getFirestore,
   collection,
+  doc,
+  getDoc,
+  setDoc,
   addDoc,
   serverTimestamp,
   query,
@@ -14,6 +17,7 @@ import Logo from "@/../public/HeaderLogo.png";
 import { useSession } from "next-auth/react";
 import { db } from "@/../firebase";
 
+
 //Interfaces for type declarations
 interface Testimonial {
   id: string;
@@ -22,6 +26,8 @@ interface Testimonial {
   review: string;
   time: any;
   userImageUrl: string;
+  occupation: string;
+  employer: string;
 }
 
 interface Timestamp {
@@ -119,6 +125,8 @@ const TestimonialsPage = () => {
         review: doc.data().review,
         time: doc.data().time,
         userImageUrl: doc.data().userImageUrl,
+        occupation: doc.data().occupation,
+        employer: doc.data().employer,
       }));
       setTestimonials(testimonialsData);
       setFilteredTestimonials(
@@ -165,47 +173,64 @@ const TestimonialsPage = () => {
   };
 
   // Handle form submission and add a new testimonial
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Validate form input before submission
-    if (formData.stars === 0 || formData.review.trim() === "") {
-      window.alert("Please enter a rating and a review before submitting.");
-      return;
-    }
+// Handle form submission and add a new testimonial
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  // Early return if review or stars not provided
+  if (formData.stars === 0 || formData.review.trim() === "") {
+    window.alert("Please enter a rating and a review before submitting.");
+    return;
+  }
+
+  // Check if user is logged in and has an email
+  if (!session?.user?.email) {
+    console.error("User email not found. User must be logged in.");
+    alert("You must be logged in to submit a testimonial."); // Provide user feedback
+    return;
+  }
+
+  // Fetch user profile from Firestore
+  const userProfileRef = doc(db, "users", session.user.email);
+  const userProfileSnap = await getDoc(userProfileRef);
+
+  if (!userProfileSnap.exists()) {
+    console.error("User profile does not exist.");
+    alert("Your user profile could not be found. Please ensure your profile is complete."); // Provide user feedback
+    return;
+  }
+
+  // Extract additional user details
+  const userProfile = userProfileSnap.data();
+  const { occupation, employer } = userProfile;
+
+  // Proceed to create testimonial with additional details
+  try {
     const filteredReview = filterProfanity(formData.review);
-    // Add testimonial if user is logged in, input is valid, and user image URL is available
-    if (
-      session?.user?.name &&
-      filteredReview &&
-      formData.stars >= 1 &&
-      formData.stars <= 5
-    ) {
-      try {
-        await addDoc(collection(db, "testimonials"), {
-          name: session.user.name,
-          review: filteredReview,
-          stars: formData.stars,
-          time: serverTimestamp(),
-          userImageUrl: session?.user?.image || "path/to/default/image.png", // Use the user's Google Image URL or a default image path
-        });
-        // Reset form data and close modal on successful submission
-        setFormData({
-          ...formData,
-          name: session?.user?.name || "",
-          stars: 0,
-          review: "",
-        });
-        setShowModal(false);
-      } catch (error) {
-        console.error("Error adding document: ", error);
-      }
-    } else {
-      // Handle validation error or case where user information is incomplete
-      console.error(
-        "Submission failed: incomplete user information or validation error."
-      );
-    }
-  };
+    const testimonialData = {
+      name: session.user.name || '',
+      review: filteredReview,
+      stars: formData.stars,
+      time: serverTimestamp(),
+      userImageUrl: session?.user?.image || "path/to/default/image.png",
+      occupation: occupation || "Occupation not provided", // Include occupation from the profile or default message
+      employer: employer || "Employer not provided", // Include employer from the profile or default message
+    };
+
+    await addDoc(collection(db, "testimonials"), testimonialData);
+
+    // Reset form data and close modal on successful submission
+    setFormData({ name: '', stars: 0, review: '' });
+    setShowModal(false);
+    alert("Testimonial added successfully!"); // Provide user feedback
+  } catch (error) {
+    console.error("Error adding testimonial: ", error);
+    alert("An error occurred while submitting your testimonial. Please try again."); // Provide user feedback
+  }
+};
+
+  
+  
 
   // Cancel button handler to reset form and hide modal
   const handleCancel = () => {
@@ -257,6 +282,12 @@ const TestimonialsPage = () => {
             <p>
               <strong>{testimonial.name}</strong>
             </p>
+            {testimonial.occupation && (
+            <p className={styles.occupation}>{testimonial.occupation}</p>
+          )}
+          {testimonial.employer && (
+            <p className={styles.employer}>{testimonial.employer}</p>
+          )}
             <p>{"★".repeat(testimonial.stars)}</p>
             <p>{testimonial.review}</p>
             <p className={styles.timeText}>{formatDate(testimonial.time)}</p>

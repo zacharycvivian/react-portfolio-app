@@ -148,6 +148,13 @@
   z-index: 1000;
 }
 
+.occupation,
+.employer {
+  font-style: italic;
+  font-size: 0.9em; /* Slightly smaller font size */
+  color: var(--text-color-light); /* Assuming you want to use the same text color */
+}
+
 .timeText {
   padding-top: 10px;
   font-style: italic;
