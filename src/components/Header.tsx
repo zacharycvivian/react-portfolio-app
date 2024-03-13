@@ -35,6 +35,7 @@ function Header() {
   return (
     <header className={styles.header}>
       <h2>Zachary Vivian</h2>
+      <div className={styles.profileAndToggleContainer}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className={styles.iconButton}>
@@ -90,6 +91,7 @@ function Header() {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }
