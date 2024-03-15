@@ -28,10 +28,9 @@ const BlogPage = () => {
                   What I’ve Learned From Developing my own Website using Prompt
                   Engineering
                 </h3>
-                <p className={styles.cardSubtext}>March 10, 2024</p>
+                <p className={styles.cardSubtext}>March 16, 2024</p>
                 <p>
-                  Here's a short summary of what this blog post will cover,
-                  giving the reader a glimpse into the content.
+                  In this article, I dive into my process behind creating this website, what I've learned, and what I have planned for the future!
                 </p>
               </div>
             </div>
@@ -52,7 +51,7 @@ const BlogPage = () => {
                 <h3 className={styles.cardTitle}>
                   How to Bolster Your Company's Network Security in 2024
                 </h3>
-                <p className={styles.cardSubtext}>March 10, 2024</p>
+                <p className={styles.cardSubtext}>Coming Soon</p>
                 <p>
                   Here's a short summary of what this blog post will cover,
                   giving the reader a glimpse into the content.
@@ -80,7 +79,7 @@ const BlogPage = () => {
                   How the Future of Cybersecurity Will Change using Artificial
                   Intelligence/LLM’s
                 </h3>
-                <p className={styles.cardSubtext}>March 10, 2024</p>
+                <p className={styles.cardSubtext}>Coming Soon</p>
                 <p>
                   Here's a short summary of what this blog post will cover,
                   giving the reader a glimpse into the content.
