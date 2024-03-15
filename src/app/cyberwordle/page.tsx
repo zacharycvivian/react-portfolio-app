@@ -14,20 +14,6 @@ const CyberWordle: React.FC = () => {
   const [inputValues, setInputValues] = useState(["", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  useEffect(() => {
-    // Check if 'instructionsShown' key exists in sessionStorage
-    if (sessionStorage.getItem("instructionsShown") !== "true") {
-      alert("Welcome to Cyber Wordle! Here's how to play:\n\n" +
-            "- Guess the WORDLE in six tries.\n" +
-            "- Each guess must be a valid five-letter word. Hit the enter button to submit.\n" +
-            "- After each guess, the color of the tiles will change to show how close your guess was to the word.\n\n" +
-            "Good luck!");
-  
-      // Set 'instructionsShown' in sessionStorage
-      sessionStorage.setItem("instructionsShown", "true");
-    }
-  }, []);
-
   //Effect for setting the correct 5-letter word
   useEffect(() => {
     fetch("/CyberWordList.txt")
@@ -276,6 +262,23 @@ const CyberWordle: React.FC = () => {
       left: 0,
       behavior: "smooth", // Optional: Adds a smooth scrolling effect
     });
+  }, []);
+
+  useEffect(() => {
+    // Check if 'instructionsShown' key exists in sessionStorage
+    if (sessionStorage.getItem("instructionsShown") !== "true") {
+      alert("Welcome to Cyber Wordle! Here's how to play:\n\n" +
+            "- Guess the WORDLE in six tries.\n" +
+            "- Each guess must be a valid five-letter word. Hit the enter button to submit.\n" +
+            "- After each guess, the color of the tiles will change to show how close your guess was to the word.\n" +
+            "- YELLOW means the letter is in the word, just not in the correct spot.\n" +
+            "- GREEN means the letter is in the word and in the correct spot.\n\n" +
+
+            "Good luck!");
+  
+      // Set 'instructionsShown' in sessionStorage
+      sessionStorage.setItem("instructionsShown", "true");
+    }
   }, []);
 
   return (
