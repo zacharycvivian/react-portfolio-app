@@ -40,13 +40,6 @@
   margin-right: auto;
 }
 
-.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background-color: var(--card-hover-light);
-  width: 97.5%;
-}
-
 .cardFadeInLeft {
   animation: fadeInLeft 0.5s ease forwards;
 }
