@@ -81,13 +81,13 @@
   padding: 0.7em 1.7em;
   font-size: 18px;
   border-radius: 25px;
-  background: var(button-color-light);
+  background: var(--button-color-light);
   cursor: pointer;
   transition: all 0.3s;
   box-shadow: 6px 6px 12px var(--card-shadow), -6px -6px 12px var(--card-shadow);
 }
 
-.downloadButton:hover {
+.downloadButton:active {
   color: var(--text-color-light);
   box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
 }

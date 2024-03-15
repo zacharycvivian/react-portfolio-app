@@ -8,27 +8,27 @@
   --background-end-rgb: 255, 255, 255;
 
   --primary-color: #212529;
-  --secondary-color: #e2e3e4;
-  --third-color: #CED4DA;
+  --secondary-color: #e1e3e5;
+  --third-color: #ededed;
   --text-color-light: #343A40;
   --text-color-dark: #fcfcfc;
-  --button-color-light: #6C757D;
+  --button-color-light: #eeeeee;
   --button-hover-light: #8d9398;
-  --card-color-light: #e0e0e0;
-  --card-hover-light: #c9d1d9;
-  --card-shadow: white;
+  --card-color-light: #eeeeee;
+  --card-hover-light: #cecece;
+  --card-shadow: rgb(255, 255, 255);
   --footer-color: #2c3035;
 }
 
 [data-theme="dark"] {
   --primary-color: #212529;
   --secondary-color: #4c5155;
-  --third-color: #828a91;
+  --third-color: #596066;
   --text-color-light: #dcdcdc;
-  --text-color-dark: #c5c5c5;
+  --text-color-dark: #dcdcdc;
   --button-color-light: #6C757D;
   --button-hover-light: #8d9398;
-  --card-color-light: #6a7075;
+  --card-color-light: #4c5257;
   --card-hover-light: #787d81;
   --card-shadow: #6a7075;
   --footer-color: #2c3035;
@@ -42,35 +42,24 @@
   --text-color-dark: #d4d7dd;
   --button-color-light: #0353a4;
   --button-hover-light: #0466c8;
-  --card-color-light: #1563b6;
+  --card-color-light: #013594;
   --card-hover-light: #33415c;
+  --card-shadow: #0e55a1cd;
   --footer-color: #131a50;
 }
 
 [data-theme="crimson"] {
   --primary-color: #590D22;
   --secondary-color: #A4133C;
-  --third-color: #800F2F;
+  --third-color: #c31244;
   --text-color-light: #FFF0F3;
   --text-color-dark: #fae7ea;
   --button-color-light: #C9184A;
   --button-hover-light: #dc3363;
-  --card-color-light: #f03a5b;
+  --card-color-light: #A4133C;
   --card-hover-light: #fc738c;
+  --card-shadow: #ca3962ce;
   --footer-color: #C9184A;
-}
-
-[data-theme="forest"] {
-  --primary-color: #344e41;
-  --secondary-color: #3a5a40;
-  --third-color: #588157;
-  --text-color-light: rgb(244, 242, 241);
-  --text-color-dark: #fff9f4;
-  --button-color-light: #dad7cd;
-  --button-hover-light: #e6e5e0;
-  --card-color-light: #a3b18a;
-  --card-hover-light: #b1bc9d;
-  --footer-color: #868d72;
 }
 
 body {

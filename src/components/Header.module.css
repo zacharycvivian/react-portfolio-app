@@ -26,7 +26,6 @@
   background-color: var(--third-color);
   color: var(--text-color-light);
   border-radius: 20px;
-  border-color: var(--text-color-light)
 }
 
 .iconButton {

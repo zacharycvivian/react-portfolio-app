@@ -63,9 +63,6 @@ function Header() {
           <DropdownMenuItem onClick={() => setTheme("crimson")}>
             Crimson
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("forest")}>
-            Forest
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <DropdownMenu>
