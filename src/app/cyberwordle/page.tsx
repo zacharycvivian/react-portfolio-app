@@ -5,9 +5,9 @@ import styles from "./cyberwordle.module.css";
 type WordListType = string[];
 type GuessesType = string[];
 
-
 const CyberWordle: React.FC = () => {
   const [wordList, setWordList] = useState<WordListType>([]);
+  const [validWords, setValidWords] = useState<WordListType>([]);
   const [currentWord, setCurrentWord] = useState<string>("");
   const [guesses, setGuesses] = useState<GuessesType>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -15,7 +15,9 @@ const CyberWordle: React.FC = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    fetch("/CyberWordList.txt")
+    //fetch("/CyberWordList.txt")
+    //uncomment this line if you want to play normal wordle
+    fetch("/wordle-list.txt")
       .then((response) => response.text())
       .then((text) => {
         const words: WordListType = text
@@ -26,6 +28,19 @@ const CyberWordle: React.FC = () => {
         setCurrentWord(
           words[Math.floor(Math.random() * words.length)].toUpperCase()
         );
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("/wordle-list.txt")
+      .then((response) => response.text())
+      // Inside the useEffect hook that loads /wordle-list.txt
+      .then((text) => {
+        const words: WordListType = text
+          .split("\n")
+          .map((word) => word.trim().toUpperCase()) // Make sure to convert to uppercase here
+          .filter((word) => word.length === 5);
+        setValidWords(words); // Populate validWords with the fetched list
       });
   }, []);
 
@@ -138,14 +153,23 @@ const CyberWordle: React.FC = () => {
   }, []);
 
   const handleSubmitGuess = (): void => {
-    const guess = inputValues.join("");
-    // Add a check for spaces or non-alphabetic characters
+    const guess = inputValues.join("").toUpperCase();
+    console.log("Guess:", guess); // Log the current guess
+    console.log("Valid Words Loaded:", validWords.length > 0); // Check if valid words are loaded
+
     if (guess.length !== 5 || gameOver || /[^a-zA-Z]/.test(guess)) {
       alert(
         "Each box must contain a single alphabetic letter. No spaces or special characters allowed."
       );
       return;
     }
+
+    if (!validWords.includes(guess)) {
+      console.log("Guess not in valid words:", guess);
+      alert("Your guess is not a valid word. Please try again.");
+      return;
+    }
+
     // Update the guesses state immediately with the new guess
     const newGuesses = [...guesses, guess.toUpperCase()];
     setGuesses(newGuesses);
@@ -242,7 +266,7 @@ const CyberWordle: React.FC = () => {
       <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
       {/* Your game content here */}
       <div className={styles.container}>
-      <h1 className={styles.title}>Cyber Wordle</h1>
+        <h1 className={styles.title}>Cyber Wordle</h1>
         <div className={styles.game}>
           <div className={styles.inputBoxes}>{renderInputBoxes()}</div>
           <button
