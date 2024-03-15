@@ -28,8 +28,15 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
+## Install Packages (in main directory)
+You will need to install all necessary packages before being able to run the application
+
+```bash
+npm install
+```
+
 ## Getting Started
-First, run the development server:
+Then, run the development server:
 
 ```bash
 npm run dev
