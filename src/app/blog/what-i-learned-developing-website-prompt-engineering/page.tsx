@@ -1,10 +1,12 @@
-import React from "react";
+'use client'
+import React, { useState, useEffect } from "react";
 import styles from "./learned.module.css";
 import Image from "next/image";
 import article1 from "@/../public/article1.png";
-import Link from "next/link";
 
 const ArticlePage = () => {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div className={styles.container}>
       <div className={styles.articleImageWrapper}>
