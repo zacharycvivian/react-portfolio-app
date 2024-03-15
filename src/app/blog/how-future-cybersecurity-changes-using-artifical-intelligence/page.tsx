@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./future.module.css";
 import Image from "next/image";
-import article1 from "@/../public/article2.png";
+import article1 from "@/../public/article3.png";
 
 const ArticlePage = () => {
     return (
