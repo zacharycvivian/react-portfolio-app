@@ -96,7 +96,7 @@
   border: none;
   border-radius: 5px;
   background-color: var(--button-color-light);
-  color: var(--text-color-dark);
+  color: var(--text-color-light);
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
