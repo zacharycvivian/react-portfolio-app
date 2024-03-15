@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./bolster.module.css";
 import Image from "next/image";
-import article1 from "@/../public/article1.png";
+import article1 from "@/../public/article2.png";
 
 const ArticlePage = () => {
     return (
