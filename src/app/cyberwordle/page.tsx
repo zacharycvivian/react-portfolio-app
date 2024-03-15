@@ -15,9 +15,24 @@ const CyberWordle: React.FC = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    //fetch("/CyberWordList.txt")
-    //uncomment this line if you want to play normal wordle
-    fetch("/wordle-list.txt")
+    // Check if 'instructionsShown' key exists in sessionStorage
+    if (sessionStorage.getItem("instructionsShown") !== "true") {
+      alert("Welcome to Cyber Wordle! Here's how to play:\n\n" +
+            "- Guess the WORDLE in six tries.\n" +
+            "- Each guess must be a valid five-letter word. Hit the enter button to submit.\n" +
+            "- After each guess, the color of the tiles will change to show how close your guess was to the word.\n\n" +
+            "Good luck!");
+  
+      // Set 'instructionsShown' in sessionStorage
+      sessionStorage.setItem("instructionsShown", "true");
+    }
+  }, []);
+
+  //Effect for setting the correct 5-letter word
+  useEffect(() => {
+    fetch("/CyberWordList.txt")
+    //uncomment this line if you want to play regular wordle
+    //fetch("/wordle-list.txt")
       .then((response) => response.text())
       .then((text) => {
         const words: WordListType = text
@@ -31,6 +46,7 @@ const CyberWordle: React.FC = () => {
       });
   }, []);
 
+  //Effect for checking if a guess is a correct word
   useEffect(() => {
     fetch("/wordle-list.txt")
       .then((response) => response.text())
@@ -154,9 +170,6 @@ const CyberWordle: React.FC = () => {
 
   const handleSubmitGuess = (): void => {
     const guess = inputValues.join("").toUpperCase();
-    console.log("Guess:", guess); // Log the current guess
-    console.log("Valid Words Loaded:", validWords.length > 0); // Check if valid words are loaded
-
     if (guess.length !== 5 || gameOver || /[^a-zA-Z]/.test(guess)) {
       alert(
         "Each box must contain a single alphabetic letter. No spaces or special characters allowed."
@@ -165,8 +178,13 @@ const CyberWordle: React.FC = () => {
     }
 
     if (!validWords.includes(guess)) {
-      console.log("Guess not in valid words:", guess);
       alert("Your guess is not a valid word. Please try again.");
+      // Clear the input fields after showing the alert.
+      setInputValues(["", "", "", "", ""]);
+      // Ensure focus is set back to the first input element.
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
       return;
     }
 
