@@ -22,7 +22,7 @@
   padding: 10px 20px;
   background-color: var(--button-color-light); 
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
   margin-right: 5px;
 }
@@ -31,7 +31,7 @@
   padding: 10px 20px;
   background-color: var(--button-hover-light); 
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
 }
 
@@ -39,7 +39,7 @@
   padding: 10px 20px;
   background-color: var(--button-color-light); 
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
   margin-left: 5px;
 }
@@ -48,7 +48,7 @@
   padding: 10px 20px;
   background-color: var(--button-hover-light); 
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
 }
 

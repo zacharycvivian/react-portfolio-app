@@ -48,23 +48,24 @@
   justify-content: center;
   padding-top: 10px;
   padding-bottom: 30px;
+  gap: 30px;
 
 }
 
 .addButton {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: var(--button-color-light);
   color: var(--text-color-light);
-  text-align: center;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 25px;
+  background: var(button-color-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px var(--card-shadow), -6px -6px 12px var(--card-shadow);
 }
 
 .addButton:hover {
-  background-color: var(--button-hover-light);
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
 }
 
 .modalBackdrop {
@@ -85,7 +86,7 @@
   background-color: var(--card-color-light);
   color: var(--text-color-light);
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 500px;
@@ -104,7 +105,7 @@
   margin-top: 5px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 20px;
   background-color: var(--card-hover-light);
 }
 
@@ -112,7 +113,7 @@
 .cancelButton {
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -183,19 +184,25 @@
   color: rgb(238, 202, 0);
 }
 
-.filterButton {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-left: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
 .filter-controls {
   margin-bottom: 20px;
   padding-bottom: 20px;
+}
+
+.filterButton {
+  color: var(--text-color-light);
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 25px;
+  background: var(button-color-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px var(--card-shadow), -6px -6px 12px var(--card-shadow);
+}
+
+.filterButton:hover {
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
 }
 
 .filter-controls select {
@@ -231,6 +238,11 @@
   align-items: center;
   text-align: center;
 }
+
+.filterDropContainer {
+gap: 20px;
+}
+
 
 .modalButtonContainer {
   display: flex;

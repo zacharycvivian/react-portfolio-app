@@ -77,20 +77,19 @@
 }
 
 .downloadButton {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: var(--button-color-light);
-  color: var(--text-color-dark);
-  text-align: center;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  color: var(--text-color-light);
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 25px;
+  background: var(button-color-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px var(--card-shadow), -6px -6px 12px var(--card-shadow);
 }
 
 .downloadButton:hover {
-  background-color: var(--button-hover-light);
-  color: var(--text-color-dark)
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
 }
 
 @media (max-width: 768px) {
