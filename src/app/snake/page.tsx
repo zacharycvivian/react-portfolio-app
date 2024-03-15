@@ -11,6 +11,23 @@ interface Point {
 const SnakeGame: React.FC = () => {
   //Matrix-style background
   useEffect(() => {
+    // Check if 'instructionsShown' key exists in sessionStorage
+    if (sessionStorage.getItem("snakeInstructionsShown") !== "true") {
+      alert("Welcome to Snake! Here's How to Play:\n\n" +
+            "- You are GREEN.\n" +
+            "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
+            "- 'Eat' apples by colliding with them.\n" +
+            "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
+            "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
+
+            "Good Luck!");
+  
+      // Set 'instructionsShown' in sessionStorage
+      sessionStorage.setItem("snakeInstructionsShown", "true");
+    }
+  }, []);
+
+  useEffect(() => {
     var canvas = document.getElementById("canvas") as HTMLCanvasElement;
     var ctx = canvas!.getContext("2d")!;
     var canvas2 = document.getElementById("canvas2") as HTMLCanvasElement;
