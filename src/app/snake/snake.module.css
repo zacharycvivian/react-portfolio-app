@@ -23,7 +23,7 @@
   width: 100%;
   z-index: 2;
   width: 100%;
-  height: 100%;
+  height: calc(100vh + 80px);
   overflow-y: auto; /* Consider if this is necessary, or adjust as needed */
   background-color: transparent;
   padding-top: 80px;
@@ -53,7 +53,7 @@
   height: auto; /* Adjusted to fill available container height */
   background-color: #0000007b; /* Background for visibility */
   border: 2px solid white; /* Adds a white border around the canvas */
-  border-radius: 8px;
+  border-radius: 20px;
   backdrop-filter: blur(10px); /* Apply the blur effect */
   box-sizing: border-box; /* Ensures the border is included in the element's total width and height */
   object-fit: contain; /* Ensures the content is scaled properly within the container */
