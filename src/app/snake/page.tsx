@@ -9,24 +9,26 @@ interface Point {
 }
 
 const SnakeGame: React.FC = () => {
-  //Matrix-style background
+  // First useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
   useEffect(() => {
     // Check if 'instructionsShown' key exists in sessionStorage
     if (sessionStorage.getItem("snakeInstructionsShown") !== "true") {
-      alert("Welcome to Snake! Here's How to Play:\n\n" +
-            "- You are GREEN.\n" +
-            "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
-            "- 'Eat' apples by colliding with them.\n" +
-            "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
-            "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
+      alert(
+        "Welcome to Snake! Here's How to Play:\n\n" +
+          "- You are GREEN.\n" +
+          "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
+          "- 'Eat' apples by colliding with them.\n" +
+          "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
+          "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
+          "Good Luck!"
+      );
 
-            "Good Luck!");
-  
       // Set 'instructionsShown' in sessionStorage
       sessionStorage.setItem("snakeInstructionsShown", "true");
     }
   }, []);
 
+  // Second useEffect initializes the matrix-style animation background
   useEffect(() => {
     var canvas = document.getElementById("canvas") as HTMLCanvasElement;
     var ctx = canvas!.getContext("2d")!;
@@ -134,10 +136,24 @@ const SnakeGame: React.FC = () => {
     };
   }, []);
 
-  // Ref to access the canvas element
+  // State and refs setup for the game mechanics
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const segmentSize = 20; // Define segment size as a constant
-  // Effect hook for setting up and updating the game size on window resize
+  const [gameSize, setGameSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  // State hooks for game mechanics
+  const [snake, setSnake] = useState<Point[]>([{ x: 20, y: 20 }]);
+  const [dir, setDir] = useState<{ x: number; y: number }>({ x: 20, y: 0 });
+  const [apple, setApple] = useState<Point>({ x: 200, y: 200 });
+  const [speed, setSpeed] = useState<number>(100); // Speed adjusted for better playability
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [showRestartButton, setShowRestartButton] = useState(false);
+
+  // This useEffect is responsible for adjusting the game size to fit the parent container
   useEffect(() => {
     const updateGameSize = () => {
       // Adjust the canvas size to match its parent container's size
@@ -178,20 +194,6 @@ const SnakeGame: React.FC = () => {
       );
     };
   }, []); // Ensure this runs only once when the component mounts.
-
-  const [gameSize, setGameSize] = useState<{ width: number; height: number }>({
-    width: 0,
-    height: 0,
-  });
-  // State hooks for game mechanics
-  const [snake, setSnake] = useState<Point[]>([{ x: 20, y: 20 }]);
-  const [dir, setDir] = useState<{ x: number; y: number }>({ x: 20, y: 0 });
-  const [apple, setApple] = useState<Point>({ x: 200, y: 200 });
-  const [speed, setSpeed] = useState<number>(100); // Speed adjusted for better playability
-  const [gameOver, setGameOver] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const [showRestartButton, setShowRestartButton] = useState(false);
 
   // Effect hook to handle keyboard controls
   useEffect(() => {
@@ -390,7 +392,7 @@ const SnakeGame: React.FC = () => {
         {gameOver && (
           <div className={styles.gameOverOverlay}>
             <div className={styles.gameOverMessage}>
-            GAME OVER! YOU ATE {score} APPLES. PLAY AGAIN?
+              GAME OVER! YOU ATE {score} APPLES. PLAY AGAIN?
             </div>
             <button className={styles.restartButton} onClick={restartGame}>
               Restart Game

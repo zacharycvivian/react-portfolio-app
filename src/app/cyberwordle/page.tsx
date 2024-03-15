@@ -14,11 +14,11 @@ const CyberWordle: React.FC = () => {
   const [inputValues, setInputValues] = useState(["", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  //Effect for setting the correct 5-letter word
+  // Initializes the word list and selects a random word for the game
   useEffect(() => {
     fetch("/CyberWordList.txt")
-    //uncomment this line if you want to play regular wordle
-    //fetch("/wordle-list.txt")
+      //uncomment this line if you want to play regular wordle
+      //fetch("/wordle-list.txt")
       .then((response) => response.text())
       .then((text) => {
         const words: WordListType = text
@@ -32,20 +32,20 @@ const CyberWordle: React.FC = () => {
       });
   }, []);
 
-  //Effect for checking if a guess is a correct word
+  // Loads a list of valid words for the game from an external file
   useEffect(() => {
     fetch("/wordle-list.txt")
       .then((response) => response.text())
-      // Inside the useEffect hook that loads /wordle-list.txt
       .then((text) => {
         const words: WordListType = text
           .split("\n")
-          .map((word) => word.trim().toUpperCase()) // Make sure to convert to uppercase here
+          .map((word) => word.trim().toUpperCase())
           .filter((word) => word.length === 5);
-        setValidWords(words); // Populate validWords with the fetched list
+        setValidWords(words);
       });
   }, []);
 
+  // Creates a matrix-style animation in the background
   useEffect(() => {
     // Cast the elements to HTMLCanvasElement explicitly
     var canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -154,6 +154,7 @@ const CyberWordle: React.FC = () => {
     };
   }, []);
 
+  // Handles the submission and validation of a guess
   const handleSubmitGuess = (): void => {
     const guess = inputValues.join("").toUpperCase();
     if (guess.length !== 5 || gameOver || /[^a-zA-Z]/.test(guess)) {
@@ -193,6 +194,7 @@ const CyberWordle: React.FC = () => {
     inputRefs.current[0]?.focus();
   };
 
+  // Updates the input values based on user input
   const handleInputChange = (index: number, value: string) => {
     setInputValues((values) =>
       values.map((val, i) => (i === index ? value.toUpperCase() : val))
@@ -202,6 +204,7 @@ const CyberWordle: React.FC = () => {
     }
   };
 
+  // Handles the keyboard input for backspace and enter
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && !inputValues[index] && index > 0) {
       setInputValues((values) =>
@@ -213,6 +216,7 @@ const CyberWordle: React.FC = () => {
     }
   };
 
+  // Renders the input boxes for entering guesses
   const renderInputBoxes = () => {
     return inputValues.map((value, index) => (
       <input
@@ -229,6 +233,7 @@ const CyberWordle: React.FC = () => {
     ));
   };
 
+  // Generates feedback for each guess to indicate correct letters and positions
   const renderGuessFeedback = (
     guess: string,
     isCorrectWord: boolean = false
@@ -245,6 +250,7 @@ const CyberWordle: React.FC = () => {
     });
   };
 
+  // Determines the styling for each letter based on its presence and position in the word
   const getLetterStyle = (letter: string, index: number) => {
     if (currentWord[index] === letter) {
       return styles.green;
@@ -264,18 +270,20 @@ const CyberWordle: React.FC = () => {
     });
   }, []);
 
+  // Displays game instructions to the user on their first visit
   useEffect(() => {
     // Check if 'instructionsShown' key exists in sessionStorage
     if (sessionStorage.getItem("wordleInstructionsShown") !== "true") {
-      alert("Welcome to Cyber Wordle! Here's How to Play:\n\n" +
-            "- Guess the WORDLE in six tries.\n" +
-            "- Each guess must be a valid five-letter word. Hit the enter button to submit.\n" +
-            "- After each guess, the color of the tiles will change to show how close your guess was to the word.\n" +
-            "- YELLOW means the letter is in the word, just not in the correct spot.\n" +
-            "- GREEN means the letter is in the word and in the correct spot.\n\n" +
+      alert(
+        "Welcome to Cyber Wordle! Here's How to Play:\n\n" +
+          "- Guess the WORDLE in six tries.\n" +
+          "- Each guess must be a valid five-letter word. Hit the enter button to submit.\n" +
+          "- After each guess, the color of the tiles will change to show how close your guess was to the word.\n" +
+          "- YELLOW means the letter is in the word, just not in the correct spot.\n" +
+          "- GREEN means the letter is in the word and in the correct spot.\n\n" +
+          "Good Luck!"
+      );
 
-            "Good Luck!");
-  
       // Set 'instructionsShown' in sessionStorage
       sessionStorage.setItem("wordleInstructionsShown", "true");
     }

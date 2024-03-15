@@ -1,11 +1,13 @@
 import React from "react";
 import styles from "./about.module.css";
 
+// Define Skill interface to type-check the props in SkillBar component
 interface Skill {
   skill: string;
   level: number;
 }
 
+// Function to map skill levels to descriptive labels
 const getSkillLevelLabel = (level: number): string => {
   if (level <= 40) return "Beginner";
   if (level <= 60) return "Intermediate";
@@ -13,10 +15,12 @@ const getSkillLevelLabel = (level: number): string => {
   return "Skilled";
 };
 
+// SkillBar component displays a skill and its proficiency level visually
 const SkillBar: React.FC<Skill> = ({ skill, level }) => {
   const levelLabel = getSkillLevelLabel(level);
 
   return (
+    // A row for each skill showing the skill name and a visual representation of the level
     <div className={styles.skillRow}>
       <div className={styles.skillName}>{skill}</div>
       <div className={styles.skillLevelInfo}>
@@ -36,6 +40,7 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
   );
 };
 
+// The AboutPage component that houses all content for the about me section
 const AboutPage = () => {
   const professionalSkills = [
     { skill: "Problem Solving", level: 90 },
@@ -105,12 +110,12 @@ const AboutPage = () => {
           <p>
             <strong>Hobbies:</strong> In my leisure hours, I'm passionate about
             exploring the great outdoors, often found backpacking with my
-            friends and my dog, Turbo, by my side. Beyond these
-            adventures, I have a keen interest in photography and longboarding,
-            which allows me to appreciate the world's beauty from different
-            perspectives. Additionally, I dedicate time to personal projects,
-            like developing this website, which not only fuels my creativity but
-            also sharpens my technical skills.
+            friends and my dog, Turbo, by my side. Beyond these adventures, I
+            have a keen interest in photography and longboarding, which allows
+            me to appreciate the world's beauty from different perspectives.
+            Additionally, I dedicate time to personal projects, like developing
+            this website, which not only fuels my creativity but also sharpens
+            my technical skills.
           </p>
         </div>
         <div className={styles.card}>

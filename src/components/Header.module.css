@@ -39,13 +39,11 @@
   height: 55px; /* Increase height as needed */
 }
 
-/* Add to your Header.module.css */
 .profileAndToggleContainer {
   display: flex;
   align-items: center;
   justify-content: center; /* Adjust as needed */
 }
-
 
 @keyframes glintEffect {
   0% {

@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
 import styles from "./contact.module.css";
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 
+// Function to trigger the download of a vCard (.vcf file) for contact information
 const downloadVCard = () => {
   const link = document.createElement("a");
   link.href = "@/../zcvivian_ContactCard.vcf";
@@ -13,32 +14,36 @@ const downloadVCard = () => {
   document.body.removeChild(link);
 };
 
+// The ContactPage component that renders the contact information section of the website
 const ContactPage = () => {
   const { data: session, status } = useSession();
 
+  // Effect hook to redirect unauthenticated users to sign-in page
   useEffect(() => {
-    if (status !== 'loading' && !session) {
+    if (status !== "loading" && !session) {
       signIn();
     }
   }, [session, status]);
 
-  if (status === 'loading' || !session) {
+  if (status === "loading" || !session) {
     // Using inline styles for troubleshooting
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        width: '100vw',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        backgroundColor: '#fff',
-        color: '#000', 
-        fontSize: '24px',
-        zIndex: 1000, 
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          width: "100vw",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          backgroundColor: "#fff",
+          color: "#000",
+          fontSize: "24px",
+          zIndex: 1000,
+        }}
+      >
         Loading...
       </div>
     );
@@ -97,9 +102,7 @@ const ContactPage = () => {
         <div
           className={styles.card}
           onClick={() =>
-            handleExternalNavigation(
-              "https://twitter.com/zacharycvivian"
-            )
+            handleExternalNavigation("https://twitter.com/zacharycvivian")
           }
         >
           <p>

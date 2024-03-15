@@ -46,10 +46,12 @@ export default function Home() {
             copy of my resume!
           </p>
           <div className={styles.infoContainer}>
-            <h2><strong>Welcome to my Personal Website!</strong></h2>
+            <h2>
+              <strong>Welcome to my Personal Website!</strong>
+            </h2>
             <p>
-              My name is Zachary Vivian, and I am set to graduate from
-              the University of Wisconsin-Platteville in May 2024, with a degree
+              My name is Zachary Vivian, and I am set to graduate from the
+              University of Wisconsin-Platteville in May 2024, with a degree
               specializing in Cybersecurity. This website serves as a digital
               portfolio where you can delve into my professional journey,
               discover more about my passions and projects, and understand the

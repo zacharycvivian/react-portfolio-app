@@ -6,11 +6,10 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-
   --primary-color: #212529;
   --secondary-color: #e1e3e5;
   --third-color: #ededed;
-  --text-color-light: #343A40;
+  --text-color-light: #343a40;
   --text-color-dark: #fcfcfc;
   --button-color-light: #eeeeee;
   --button-hover-light: #8d9398;
@@ -26,7 +25,7 @@
   --third-color: #596066;
   --text-color-light: #dcdcdc;
   --text-color-dark: #dcdcdc;
-  --button-color-light: #6C757D;
+  --button-color-light: #6c757d;
   --button-hover-light: #8d9398;
   --card-color-light: #4c5257;
   --card-hover-light: #787d81;
@@ -49,17 +48,17 @@
 }
 
 [data-theme="crimson"] {
-  --primary-color: #590D22;
-  --secondary-color: #A4133C;
+  --primary-color: #590d22;
+  --secondary-color: #a4133c;
   --third-color: #c31244;
-  --text-color-light: #FFF0F3;
+  --text-color-light: #fff0f3;
   --text-color-dark: #fae7ea;
-  --button-color-light: #C9184A;
+  --button-color-light: #c9184a;
   --button-hover-light: #dc3363;
-  --card-color-light: #A4133C;
+  --card-color-light: #a4133c;
   --card-hover-light: #fc738c;
   --card-shadow: #ca3962ce;
-  --footer-color: #C9184A;
+  --footer-color: #c9184a;
 }
 
 body {

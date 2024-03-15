@@ -6,6 +6,7 @@ import article1 from "@/../public/article1.png";
 import article2 from "@/../public/article2.png";
 import article3 from "@/../public/article3.png";
 
+// BlogPage component to display the blog section of the website
 const BlogPage = () => {
   return (
     <div className={styles.container}>
@@ -30,7 +31,9 @@ const BlogPage = () => {
                 </h3>
                 <p className={styles.cardSubtext}>March 16, 2024</p>
                 <p>
-                  In this article, I dive into my process behind creating this website, what I've learned, and what I have planned for the future!
+                  In this article, I dive into my process behind creating this
+                  website, what I've learned, and what I have planned for the
+                  future!
                 </p>
               </div>
             </div>

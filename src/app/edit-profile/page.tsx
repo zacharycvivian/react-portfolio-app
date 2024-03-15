@@ -6,6 +6,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import styles from "./edit-profile.module.css";
 import VerifiedLabel from "@/../public/verified.png";
 
+// Define interface for user profile properties
 interface UserProfile {
   name: string;
   email: string;
@@ -19,10 +20,12 @@ interface UserProfile {
 const EditProfilePage = () => {
   const { data: session } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  // States for managing phone number input parts
   const [phonePart1, setPhonePart1] = useState("");
   const [phonePart2, setPhonePart2] = useState("");
   const [phonePart3, setPhonePart3] = useState("");
 
+  // Fetches the user's profile from Firestore on component mount or when session changes
   useEffect(() => {
     const fetchProfile = async () => {
       if (session?.user?.email) {
@@ -32,6 +35,7 @@ const EditProfilePage = () => {
         if (docSnap.exists()) {
           setProfile(docSnap.data() as UserProfile);
         } else {
+          // Set default profile data if document does not exist
           setProfile({
             name: session.user.name ?? "",
             email: session.user.email,
@@ -45,6 +49,7 @@ const EditProfilePage = () => {
     fetchProfile();
   }, [session]);
 
+  // Splits phone number into parts for separate input fields when profile state changes
   useEffect(() => {
     if (profile?.phone) {
       const parts = profile.phone.match(/(\d{3})(\d{3})(\d{4})/);
@@ -56,10 +61,13 @@ const EditProfilePage = () => {
     }
   }, [profile]);
 
+  // Handles changes in phone number input fields and updates corresponding state
   const handlePhoneChange = (value: string, part: number) => {
+    // Ensure only digits are accepted and limit length
     const updatedValue = value
       .replace(/\D/g, "")
       .substring(0, part === 3 ? 4 : 3);
+    // Update the corresponding part of the phone number
     if (part === 1) setPhonePart1(updatedValue);
     if (part === 2) setPhonePart2(updatedValue);
     if (part === 3) setPhonePart3(updatedValue);
@@ -78,6 +86,7 @@ const EditProfilePage = () => {
     }
   };
 
+  // Generic handler for updating profile state based on form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfile((currentProfile) =>
@@ -85,6 +94,7 @@ const EditProfilePage = () => {
     );
   };
 
+  // Submits the updated profile to Firestore and alerts the user
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!profile || !session?.user?.email) return;
