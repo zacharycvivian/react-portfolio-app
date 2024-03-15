@@ -1,0 +1,85 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: var(--secondary-color);
+    height: 100vh;
+    overflow-y: auto;
+    padding-top: 100px;
+}
+
+.articleCard {
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: hidden;
+    background-color: var(--card-color-light);
+    border-radius: 60px;
+    min-height: calc(100vh - 80px); /* Adjust based on the container's padding */
+  }
+
+  .articleSubtitle {
+    color: var(--text-color-light); /* Adjust if needed */
+    font-size: 20px; /* Smaller than the main title but still significant */
+    font-weight: bold; /* Makes the subtitle stand out */
+    margin-top: 20px; /* Adds space above the subtitle for clear section separation */
+    margin-bottom: 10px; /* Adds a little space before the text starts */
+    margin-left: 8px;
+  }
+  
+  
+  .articleImageWrapper {
+    position: relative;
+    height: 33%; /* Adjust the image size to occupy the top third of the card */
+    width: 100%;
+    min-height: 300px; /* Example of a minimum height */
+
+  }
+  
+  .articleImage {
+    width: 100%;
+    object-fit: cover;
+    border-top-left-radius: 60px; /* Match the card's border-radius */
+    border-top-right-radius: 60px;
+  }
+  
+  .imageGradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--card-color-light));
+  }
+  
+  .articleContent {
+    padding: 10px 10px 20px 10px; /* 10px from each side and extra padding at the bottom */
+  }
+  
+  .articleTitle, .articleDate, .articleAuthor {
+    color: var(--text-color-light);
+    margin-left: 10px; /* Align text with the card's padding */
+  }
+  
+  .articleTitle {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .articleDate {
+    font-size: 16px;
+    font-style: italic;
+  } 
+  
+  .articleAuthor {
+    font-size: 16px;
+  }
+  
+  .articleText {
+    text-align: justify;
+    margin: 10px; /* 10 pixels from each side of the card */
+    color: var(--text-color-light);
+  }
+  
