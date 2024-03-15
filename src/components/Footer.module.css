@@ -8,7 +8,7 @@
   color: var(--text-color-dark);
   padding: 20px;
   box-sizing: border-box;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
 
