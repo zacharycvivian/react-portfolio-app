@@ -8,6 +8,7 @@
   background-color: var(--secondary-color);
   height: calc(100vh + 100px);
   padding-top: 100px;
+  overflow-y:auto;
 }
 
 .sectionTitle {
@@ -24,17 +25,17 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   z-index: 2;
 }
 
 .card {
   margin: 10px 0;
-  padding: 20px;
+  padding: 30px;
   background-color: var(--card-color-light);
-  border-radius: 10px;
-  border: 1px solid var(--text-color-light);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 60px;
+  box-shadow: 10px 10px 30px var(--card-shadow),
+  -10px -10px 30px var(--card-shadow); 
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
@@ -48,7 +49,6 @@
 
 .card:hover {
   transform: scale(1.03);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   background-color: var(--card-hover-light);
   z-index: 2;
 }
@@ -72,8 +72,8 @@
 .buttonContainer {
   display: flex;
   justify-content: center;
-  padding-top: 10px;
   z-index: 2;
+  padding-bottom: 20px;
 }
 
 .downloadButton {

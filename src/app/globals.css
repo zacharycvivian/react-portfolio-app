@@ -8,20 +8,21 @@
   --background-end-rgb: 255, 255, 255;
 
   --primary-color: #212529;
-  --secondary-color: #bdc1c6;
+  --secondary-color: #e2e3e4;
   --third-color: #CED4DA;
   --text-color-light: #343A40;
   --text-color-dark: #fcfcfc;
   --button-color-light: #6C757D;
   --button-hover-light: #8d9398;
-  --card-color-light: #ADB5BD;
+  --card-color-light: ##e0e0e0;
   --card-hover-light: #c9d1d9;
+  --card-shadow: white;
   --footer-color: #2c3035;
 }
 
 [data-theme="dark"] {
   --primary-color: #212529;
-  --secondary-color: #3b3f42;
+  --secondary-color: #4c5155;
   --third-color: #828a91;
   --text-color-light: #dcdcdc;
   --text-color-dark: #c5c5c5;
@@ -29,6 +30,7 @@
   --button-hover-light: #8d9398;
   --card-color-light: #6a7075;
   --card-hover-light: #787d81;
+  --card-shadow: #6a7075;
   --footer-color: #2c3035;
 }
 

@@ -16,20 +16,22 @@
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 3;
-  
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 10px 10px 30px var(--card-shadow),
+  -10px -10px 30px var(--card-shadow);
 }
 
 .dropdownContent {
   background-color: var(--third-color);
   color: var(--text-color-light);
-  border-radius: 8px;
+  border-radius: 20px;
   border-color: var(--text-color-light)
 }
 
 .iconButton {
   position: relative; /* Add this line to your existing .iconButton styles */
   border-radius: 50%; /* Makes the button's border circular */
-  border: 1px solid var(--border-color, #ccc); /* Optional: Adjust the border color */
   background-color: var(--third-color);
   color: var(--text-color-light);
   margin-left: 20px; /* Adjust the space between profile image and mode toggle */

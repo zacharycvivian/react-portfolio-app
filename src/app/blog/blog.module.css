@@ -17,6 +17,7 @@
     font-size: 24px;
     font-weight: bold;
     padding-bottom: 20px;
+    z-index: 2;
   }
   
   .section {
@@ -26,11 +27,11 @@
   }
   
   .card {
-    padding: 20px;
+    padding: 30px;
     background-color: var(--card-color-light);
-    border-radius: 10px;
-    border: 1px solid var(--text-color-light);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 60px;
+    box-shadow: 20px 20px 60px var(--card-shadow),
+    -20px -20px 60px var(--card-shadow);
     backdrop-filter: blur(10px);
     color: var(--text-color-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease,
@@ -43,7 +44,6 @@
   
   .card:hover {
     transform: scale(1.03);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     background-color: var(--card-hover-light);
     width: 95%;
   }
@@ -55,10 +55,9 @@
   }
 
   .cardImage {
-    border: 1px solid var(--text-color-light);
     width: 40%; 
     aspect-ratio: 2 / 1; 
-    border-radius: 10px; 
+    border-radius: 50px; 
     object-fit: cover; 
   }
   

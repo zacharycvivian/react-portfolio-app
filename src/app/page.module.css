@@ -34,15 +34,13 @@
 .instructions {
   font-size: 1.5rem;
   color: var(--text-color-light);
+  z-index: 2;
 }
 
 .infoContainer {
   margin: 10px 0;
   padding: 20px;
   background-color: var(--card-color-light);
-  border-radius: 10px;
-  border: 1px solid var(--text-color-light);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
@@ -51,6 +49,9 @@
   width: 97.5%;
   margin-left: auto;
   margin-right: auto;
+  border-radius: 60px;
+  box-shadow: 20px 20px 60px var(--card-shadow),
+  -20px -20px 60px var(--card-shadow);
 }
 
 .carouselItem {

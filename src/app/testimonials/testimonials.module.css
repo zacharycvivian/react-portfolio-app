@@ -23,23 +23,23 @@
   justify-content: center;
   margin-top: 10px;
   margin-bottom: 20px;
-  gap: 20px;
   overflow-y: auto;
   max-height: 83vh;
 }
 
 .card {
-  margin: 10px;
-  padding: 20px;
+  margin: 30px;
+  padding: 30px;
   background-color: var(--card-color-light);
-  border-radius: 10px;
-  border: 1px solid var(--text-color-light);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 60px;
+  box-shadow: 10px 10px 30px var(--card-shadow),
+  -10px -10px 30px var(--card-shadow);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
   background-color 0.3s ease;
-  width: calc(50% - 40px);
+  width: calc(60% - 10px);
+  z-index: 4;
 }
 
 
@@ -238,7 +238,7 @@
   gap: 20px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .card {
     width: 100%;
   }

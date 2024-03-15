@@ -15,6 +15,7 @@
   font-size: 24px;
   font-weight: bold;
   padding-bottom: 10px;
+  z-index: 2;
 }
 
 .section {
@@ -25,11 +26,11 @@
 
 .card {
   margin: 10px 0;
-  padding: 20px;
+  padding: 30px;
   background-color: var(--card-color-light);
-  border-radius: 10px;
-  border: 1px solid var(--text-color-light);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 60px;
+  box-shadow: 10px 10px 30px var(--card-shadow),
+  -10px -10px 30px var(--card-shadow);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
