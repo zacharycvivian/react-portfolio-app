@@ -41,7 +41,7 @@ const Footer = () => {
       </Button>
       <Button variant={"outline"} className={styles.pongButton}>
         <Link className={styles.links} href={"/pong"}>
-          Pong
+          Play Pong
         </Link>
       </Button>
       </div>
