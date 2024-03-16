@@ -48,6 +48,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    color: white;
   }
   
   .Button {
@@ -62,7 +63,8 @@
     transition: background-color 0.3s;
     margin-right:5px;
     margin-left:5px;
-    margin-bottom:5px;
+    margin-top:10px;
+    margin-bottom:10px;
   }
   
   .Button:hover {
@@ -80,6 +82,8 @@
   
   .score {
     font-size: 20px;
+    color: white;
+    padding-bottom: 20px;
   }
   
 

@@ -302,7 +302,18 @@ const PongGame: React.FC = () => {
       playerPaddleY = Math.max(0, playerPaddleY);
       playerPaddleY = Math.min(gameCanvas.height - paddleHeight, playerPaddleY);
     };
+    const handleTouchMove = (event: TouchEvent) => {
+      if (event.touches.length === 0) return;
+      const touch = event.touches[0];
+      const rect = gameCanvas.getBoundingClientRect();
+      playerPaddleY = touch.clientY - rect.top - paddleHeight / 2;
+      playerPaddleY = Math.max(0, playerPaddleY);
+      playerPaddleY = Math.min(gameCanvas.height - paddleHeight, playerPaddleY);
+      event.preventDefault(); // Prevent scrolling when moving the paddle
+    };
+
     document.addEventListener("mousemove", handleMouseMove);
+    gameCanvas.addEventListener("touchmove", handleTouchMove);
 
     if (gameStatus === "playing") {
       resetBall();
@@ -312,9 +323,19 @@ const PongGame: React.FC = () => {
     // Cleanup
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
+      gameCanvas.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(animationFrameId.current);
     };
   }, [gameStatus]);
+
+  useEffect(() => {
+    // Automatically scroll down 80 pixels to ensure the game is in full view
+    window.scrollTo({
+      top: 80,
+      left: 0,
+      behavior: "smooth", // Optional: Adds a smooth scrolling effect
+    });
+  }, []);
 
   return (
     <div className={styles.matrixBackground}>
@@ -322,7 +343,7 @@ const PongGame: React.FC = () => {
       <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
       <div className={styles.container}>
         <h1 className={styles.title}>Pong</h1>
-        <div className={styles.scoreDisplay}>
+        <div className={styles.score}>
           Player: {playerScore} | Computer: {computerScore}
         </div>
         <div
