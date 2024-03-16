@@ -318,34 +318,48 @@ const PongGame: React.FC = () => {
       <canvas id="canvas" className={styles.matrixCanvas}></canvas>
       <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
       <div className={styles.container}>
-        <h1 className={styles.title}>Pong Game</h1>
-        {gameStatus === "idle" && (
-          <div>
-            {/* Ensure onClick handlers are correctly calling startGame with the difficulty parameter */}
-            <button onClick={() => startGame("easy")}>Easy</button>
-            <button onClick={() => startGame("medium")}>Medium</button>
-            <button onClick={() => startGame("hard")}>Hard</button>
-          </div>
-        )}
-        <div className={styles.scoreContainer}>
-          <span className={styles.score}>Player: {playerScore}</span>
-          <span className={styles.score}>Computer: {computerScore}</span>
+        <h1 className={styles.title}>Pong</h1>
+        <div className={styles.scoreDisplay}>
+          Player: {playerScore} | Computer: {computerScore}
         </div>
-        {gameStatus === "ended" && (
-          <div>
-            <p>Game Over. {playerScore === 5 ? "Player" : "Computer"} Wins!</p>
-            <button
-              onClick={() => {
-                setPlayerScore(0);
-                setComputerScore(0);
-                setGameStatus("idle");
-              }}
-            >
-              Restart Game
-            </button>
-          </div>
-        )}
-        <canvas ref={gameCanvasRef} className={styles.gameCanvas}></canvas>
+        <div
+          className={styles.gameCanvasContainer}
+          style={{ position: "relative" }}
+        >
+          <canvas ref={gameCanvasRef} className={styles.gameCanvas}></canvas>
+
+          {gameStatus === "idle" && (
+            <div className={styles.centeredControls}>
+              <button className={styles.Button} onClick={() => startGame("easy")}>
+                Easy
+              </button>
+              <button className={styles.Button} onClick={() => startGame("medium")}>
+                Medium
+              </button>
+              <button className={styles.Button} onClick={() => startGame("hard")}>
+                Hard
+              </button>
+            </div>
+          )}
+
+          {gameStatus === "ended" && (
+            <div className={styles.centeredMessage}>
+              <p>
+                Game Over. {playerScore === 5 ? "Player" : "Computer"} Wins!
+              </p>
+              <button
+                className={styles.Button}
+                onClick={() => {
+                  setPlayerScore(0);
+                  setComputerScore(0);
+                  setGameStatus("idle");
+                }}
+              >
+                Restart Game
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

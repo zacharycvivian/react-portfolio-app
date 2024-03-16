@@ -28,7 +28,6 @@
     background-color: transparent;
     padding-top: 80px;
     padding-bottom: 10px;
-  
   }
   
   .title {
@@ -38,6 +37,37 @@
     font-weight: bold;
     /* Ensure this is visible on top of the game */
   }
+
+  .gameCanvasContainer {
+    position: relative;
+  }
+  
+  .centeredControls, .centeredMessage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .Button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--button-color-light);
+    color: var(--text-color-light);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-right:5px;
+    margin-left:5px;
+  }
+  
+  .Button:hover {
+    background-color: var(--button-hover-light);
+  }
+  
 
   .scoreContainer {
     color: white;
