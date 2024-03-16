@@ -42,10 +42,29 @@
   border-radius: 20px;
   cursor: pointer;
   margin-left: 5px;
+  margin-right: 2px;
   color: var(--text-color-light);
 }
 
 .snakeButton:hover {
+  padding: 10px 20px;
+  background-color: var(--button-hover-light); 
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.pongButton {
+  padding: 10px 20px;
+  background-color: var(--button-color-light); 
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-left: 5px;
+  color: var(--text-color-light);
+}
+
+.pongButton:hover {
   padding: 10px 20px;
   background-color: var(--button-hover-light); 
   border: none;

@@ -39,6 +39,11 @@ const Footer = () => {
           Play Snake
         </Link>
       </Button>
+      <Button variant={"outline"} className={styles.pongButton}>
+        <Link className={styles.links} href={"/pong"}>
+          Pong
+        </Link>
+      </Button>
       </div>
       <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
     </footer>
