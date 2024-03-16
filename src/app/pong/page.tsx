@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./pong.module.css"; // Adjust the import path as necessary
 
-type Difficulty = 'easy' | 'medium' | 'hard';
+type Difficulty = "easy" | "medium" | "hard";
 
 const PongGame: React.FC = () => {
   // First useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
@@ -14,7 +14,7 @@ const PongGame: React.FC = () => {
           "- Pick a difficulty: Easy, Medium, or Hard.\n" +
           "- Use your cursor, or finger if you're on mobile to move your 'paddle' in that direction.\n" +
           "- Play against the computer, your goal is to prevent the ball from entering your goal.\n" +
-          "- First player to 10 points wins.\n\n" +
+          "- First player to 5 points wins.\n\n" +
           "Good Luck!"
       );
 
@@ -134,7 +134,7 @@ const PongGame: React.FC = () => {
   const [gameStatus, setGameStatus] = useState("idle");
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
-  const [difficulty, setDifficulty] = useState<Difficulty | ''>(''); // Use the Difficulty type for your state
+  const [difficulty, setDifficulty] = useState<Difficulty | "">(""); // Use the Difficulty type for your state
   const gameCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number>(0);
 
@@ -154,15 +154,15 @@ const PongGame: React.FC = () => {
   let ballSpeedX = 5;
   let ballSpeedY = 3;
 
-    // Function to safely set difficulty from a string value
-    const handleSetDifficulty = (value: string) => {
-        if (value === "easy" || value === "medium" || value === "hard") {
-          setDifficulty(value); // TypeScript now knows value is of type Difficulty
-        } else {
-          console.warn("Invalid difficulty level:", value);
-          // Optionally set to a default or do nothing
-        }
-      };
+  // Function to safely set difficulty from a string value
+  const handleSetDifficulty = (value: string) => {
+    if (value === "easy" || value === "medium" || value === "hard") {
+      setDifficulty(value); // TypeScript now knows value is of type Difficulty
+    } else {
+      console.warn("Invalid difficulty level:", value);
+      // Optionally set to a default or do nothing
+    }
+  };
 
   const startGame = (selectedDifficulty: string) => {
     setPlayerScore(0);
@@ -193,51 +193,60 @@ const PongGame: React.FC = () => {
     const gameCanvas = gameCanvasRef.current;
     if (!gameCanvas || !gameCanvas.getContext) return;
 
-    const ctx = gameCanvas.getContext('2d');
+    const ctx = gameCanvas.getContext("2d");
     if (!ctx) return;
 
     gameCanvas.width = 600;
     gameCanvas.height = 400;
 
     const resetBall = () => {
-        ballX = gameCanvas.width / 2;
-        ballY = gameCanvas.height / 2;
-        ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
-        ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
-      };
+      ballX = gameCanvas.width / 2;
+      ballY = gameCanvas.height / 2;
+      ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
+      ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
+    };
 
     const checkCollisionWithPaddles = () => {
       // Player paddle collision
-      if (ballX <= paddleWidth && ballY > playerPaddleY && ballY < playerPaddleY + paddleHeight) {
+      if (
+        ballX <= paddleWidth &&
+        ballY > playerPaddleY &&
+        ballY < playerPaddleY + paddleHeight
+      ) {
         ballSpeedX = -ballSpeedX;
       }
       // Computer paddle collision
-      if (ballX >= gameCanvas.width - paddleWidth - ballSize && ballY > computerPaddleY && ballY < computerPaddleY + paddleHeight) {
+      if (
+        ballX >= gameCanvas.width - paddleWidth - ballSize &&
+        ballY > computerPaddleY &&
+        ballY < computerPaddleY + paddleHeight
+      ) {
         ballSpeedX = -ballSpeedX;
       }
     };
 
     const moveComputerPaddle = () => {
-        const targetY = ballY - (paddleHeight / 2);
-        const computerPaddleSpeed = difficulty ? computerPaddleSpeeds[difficulty] : computerPaddleSpeeds.medium; // Default to medium if not set
-    
-        if (computerPaddleY + paddleHeight / 2 < targetY) {
-          computerPaddleY += computerPaddleSpeed;
-        } else if (computerPaddleY + paddleHeight / 2 > targetY) {
-          computerPaddleY -= computerPaddleSpeed;
-        }
-      };
+      const targetY = ballY - paddleHeight / 2;
+      const computerPaddleSpeed = difficulty
+        ? computerPaddleSpeeds[difficulty]
+        : computerPaddleSpeeds.medium; // Default to medium if not set
+
+      if (computerPaddleY + paddleHeight / 2 < targetY) {
+        computerPaddleY += computerPaddleSpeed;
+      } else if (computerPaddleY + paddleHeight / 2 > targetY) {
+        computerPaddleY -= computerPaddleSpeed;
+      }
+    };
 
     const gameLoop = () => {
-      
-        if (gameStatus !== "playing") {
-            return;
-          }
-      
-          ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
+      if (gameStatus !== "playing") {
+        return;
+      }
 
-          ballX += ballSpeedX;
-          ballY += ballSpeedY;
+      ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
+
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
 
       // Wall collision
       if (ballY <= 0 || ballY >= gameCanvas.height - ballSize) {
@@ -246,10 +255,20 @@ const PongGame: React.FC = () => {
 
       // Score update and ball reset
       if (ballX < 0) {
-        setComputerScore((score) => score + 1);
+        setComputerScore((score) => {
+          if (score + 1 === 5) {
+            setGameStatus("ended");
+          }
+          return score + 1;
+        });
         resetBall();
       } else if (ballX > gameCanvas.width) {
-        setPlayerScore((score) => score + 1);
+        setPlayerScore((score) => {
+          if (score + 1 === 5) {
+            setGameStatus("ended");
+          }
+          return score + 1;
+        });
         resetBall();
       }
 
@@ -259,7 +278,12 @@ const PongGame: React.FC = () => {
       // Draw paddles and ball
       ctx.fillStyle = "white";
       ctx.fillRect(0, playerPaddleY, paddleWidth, paddleHeight);
-      ctx.fillRect(gameCanvas.width - paddleWidth, computerPaddleY, paddleWidth, paddleHeight);
+      ctx.fillRect(
+        gameCanvas.width - paddleWidth,
+        computerPaddleY,
+        paddleWidth,
+        paddleHeight
+      );
       ctx.beginPath();
       ctx.arc(ballX, ballY, ballSize / 2, 0, Math.PI * 2, true);
       ctx.fill();
@@ -275,7 +299,7 @@ const PongGame: React.FC = () => {
       playerPaddleY = Math.max(0, playerPaddleY);
       playerPaddleY = Math.min(gameCanvas.height - paddleHeight, playerPaddleY);
     };
-    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener("mousemove", handleMouseMove);
 
     if (gameStatus === "playing") {
       resetBall();
@@ -284,7 +308,7 @@ const PongGame: React.FC = () => {
 
     // Cleanup
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(animationFrameId.current);
     };
   }, [gameStatus]);
@@ -307,10 +331,24 @@ const PongGame: React.FC = () => {
           <span className={styles.score}>Player: {playerScore}</span>
           <span className={styles.score}>Computer: {computerScore}</span>
         </div>
+        {gameStatus === "ended" && (
+          <div>
+            <p>Game Over. {playerScore === 5 ? "Player" : "Computer"} Wins!</p>
+            <button
+              onClick={() => {
+                setPlayerScore(0);
+                setComputerScore(0);
+                setGameStatus("idle");
+              }}
+            >
+              Restart Game
+            </button>
+          </div>
+        )}
         <canvas ref={gameCanvasRef} className={styles.gameCanvas}></canvas>
       </div>
     </div>
   );
-        }
+};
 
 export default PongGame;
