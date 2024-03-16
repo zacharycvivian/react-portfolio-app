@@ -51,6 +51,7 @@
   border: 2px solid white; /* Adds a white border around the canvas */
   border-radius: 8px;
   backdrop-filter: blur(10px); /* Apply the blur effect */
+  border-radius: 20px;
 }
 
 .inputBoxes {
@@ -143,6 +144,7 @@
 
 .gray {
   background-color: #d3d3d3; /* Example gray, adjust as needed */
+  color:black;
 }
 
 @media (max-width: 650px) {
