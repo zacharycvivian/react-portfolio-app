@@ -7,16 +7,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
-  const [sessionCount, setSessionCount] = useState<number>(0); 
+  const [userCount, setUserCount] = useState<number>(0); 
 
   useEffect(() => {
-    const fetchSessionCount = async () => {
-      const q = query(collection(db, "sessions")); 
+    const fetchUserCount = async () => {
+      const q = query(collection(db, "users")); 
       const querySnapshot = await getDocs(q);
-      setSessionCount(querySnapshot.size); 
+      setUserCount(querySnapshot.size); 
     };
 
-    fetchSessionCount();
+    fetchUserCount();
   }, []);
 
   return (
@@ -26,7 +26,7 @@ const Footer = () => {
         Google Firebase
       </p>
       <p className={styles["unique-visitors"]}>
-        <strong>Total Site Visitors:</strong> {sessionCount} 
+        <strong>Total Registered Users:</strong> {userCount} 
       </p>
       <div>
       <Button variant={"outline"} className={styles.wordleButton}>
