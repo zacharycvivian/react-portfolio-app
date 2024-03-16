@@ -1,5 +1,7 @@
+'use client'
 import React from "react";
 import styles from "./about.module.css";
+import { useSession } from "next-auth/react"; // Import useSession
 
 // Define Skill interface to type-check the props in SkillBar component
 interface Skill {
@@ -42,6 +44,7 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
 
 // The AboutPage component that houses all content for the about me section
 const AboutPage = () => {
+  const { data: session } = useSession(); // Destructure to get the session object
   const professionalSkills = [
     { skill: "Problem Solving", level: 90 },
     { skill: "Communication", level: 95 },
@@ -191,14 +194,22 @@ const AboutPage = () => {
           </p>
         </div>
         <div className={styles.buttonContainer}>
+        {session ? (
+          // If the user is logged in, show the download button
           <a
             href="@/../zcvivian_Resume.pdf"
             download
             className={styles.downloadResumeButton}
           >
-            Download my Resume
+            Download Resume
           </a>
-        </div>
+        ) : (
+          // If the user is not logged in, show a disabled button or message
+          <div className={`${styles.downloadResumeButton} ${styles.linkDisabled}`}>
+            Log In to Download Resume
+          </div>
+        )}
+      </div>
       </div>
     </div>
   );
