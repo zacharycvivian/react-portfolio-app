@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./pong.module.css"; // Adjust the import path as necessary
 
-type Difficulty = "easy" | "medium" | "hard";
+type Difficulty = "easy" | "medium" | "hard" | "impossible";
 
 const PongGame: React.FC = () => {
   // First useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
@@ -137,56 +137,56 @@ const PongGame: React.FC = () => {
   const [difficulty, setDifficulty] = useState<Difficulty | "">(""); // Use the Difficulty type for your state
   const gameCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number>(0);
+  const [paddleHeight, setPaddleHeight] = useState(60); // Initial default value
+
 
   // Constants for game settings
-  const paddleHeight = 60;
-  const paddleWidth = 10;
+  let paddleWidth = 10; 
   const ballSize = 10;
-  const computerPaddleSpeeds = {
-    easy: 2,
-    medium: 4,
-    hard: 6,
-  };
+  
   let playerPaddleY = 50;
   let computerPaddleY = 50;
   let ballX = 50;
   let ballY = 50;
   let ballSpeedX = 5;
   let ballSpeedY = 3;
+  let computerPaddleSpeed = 4; // Set a default value that makes sense for your game
 
-  // Function to safely set difficulty from a string value
-  const handleSetDifficulty = (value: string) => {
-    if (value === "easy" || value === "medium" || value === "hard") {
-      setDifficulty(value); // TypeScript now knows value is of type Difficulty
-    } else {
-      console.warn("Invalid difficulty level:", value);
-      // Optionally set to a default or do nothing
-    }
+  const difficultySettings = {
+    easy: {
+      paddleHeight: 80, // Example size, adjust as needed
+      ballSpeed: { x: 3, y: 2 }, // Example speeds, adjust as needed
+      computerPaddleSpeed: 2, // Example speed, adjust as needed
+    },
+    medium: {
+      paddleHeight: 60, // Example size, adjust as needed
+      ballSpeed: { x: 5, y: 4 }, // Example speeds, adjust as needed
+      computerPaddleSpeed: 4, // Example speed, adjust as needed
+    },
+    hard: {
+      paddleHeight: 40, // Example size, adjust as needed
+      ballSpeed: { x: 7, y: 6 }, // Example speeds, adjust as needed
+      computerPaddleSpeed: 6, // Example speed, adjust as needed
+    },
+    impossible: {
+        paddleHeight: 25, // Example size, adjust as needed
+        ballSpeed: { x: 8, y: 7 }, // Example speeds, adjust as needed
+        computerPaddleSpeed: 10, // Example speed, adjust as needed
+      },
   };
 
-  const startGame = (selectedDifficulty: string) => {
+  const startGame = (selectedDifficulty: Difficulty) => {
     setPlayerScore(0);
     setComputerScore(0);
     setGameStatus("playing");
-
-    // Adjust game settings based on the selected difficulty
-    switch (selectedDifficulty) {
-      case "easy":
-        ballSpeedX = 3;
-        ballSpeedY = 3;
-        break;
-      case "medium":
-        ballSpeedX = 5;
-        ballSpeedY = 4;
-        break;
-      case "hard":
-        ballSpeedX = 7;
-        ballSpeedY = 5;
-        break;
-      default:
-        ballSpeedX = 5;
-        ballSpeedY = 3;
-    }
+    setDifficulty(selectedDifficulty);
+  
+    const settings = difficultySettings[selectedDifficulty];
+    setPaddleHeight(settings.paddleHeight); // Update state to trigger re-render
+    ballSpeedX = settings.ballSpeed.x;    // Valid reassignment
+    ballSpeedY = settings.ballSpeed.y;    // Valid reassignment
+    computerPaddleSpeed = settings.computerPaddleSpeed; // Assuming it's declared with let
+    // Continue with game initialization...
   };
 
   useEffect(() => {
@@ -226,17 +226,20 @@ const PongGame: React.FC = () => {
     };
 
     const moveComputerPaddle = () => {
-      const targetY = ballY - paddleHeight / 2;
-      const computerPaddleSpeed = difficulty
-        ? computerPaddleSpeeds[difficulty]
-        : computerPaddleSpeeds.medium; // Default to medium if not set
-
-      if (computerPaddleY + paddleHeight / 2 < targetY) {
-        computerPaddleY += computerPaddleSpeed;
-      } else if (computerPaddleY + paddleHeight / 2 > targetY) {
-        computerPaddleY -= computerPaddleSpeed;
-      }
-    };
+        const targetY = ballY - (paddleHeight / 2);
+        
+        if (computerPaddleY + paddleHeight / 2 < targetY) {
+          computerPaddleY += computerPaddleSpeed; // Use computerPaddleSpeed directly
+        } else if (computerPaddleY + paddleHeight / 2 > targetY) {
+          computerPaddleY -= computerPaddleSpeed; // Use computerPaddleSpeed directly
+        }
+      
+        // Ensure the computer paddle does not move beyond the canvas boundaries
+        computerPaddleY = Math.max(0, computerPaddleY); // Prevent moving above the canvas
+        computerPaddleY = Math.min(gameCanvas.height - paddleHeight, computerPaddleY); // Prevent moving below the canvas
+      };
+      
+      
 
     const gameLoop = () => {
       if (gameStatus !== "playing") {
@@ -338,6 +341,9 @@ const PongGame: React.FC = () => {
               </button>
               <button className={styles.Button} onClick={() => startGame("hard")}>
                 Hard
+              </button>
+              <button className={styles.Button} onClick={() => startGame("impossible")}>
+                Impossible
               </button>
             </div>
           )}
