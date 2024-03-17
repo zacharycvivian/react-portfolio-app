@@ -29,7 +29,7 @@ const BlogPage = () => {
                   What I’ve Learned From Developing my own Website using Prompt
                   Engineering
                 </h3>
-                <p className={styles.cardSubtext}>March 16, 2024</p>
+                <p className={styles.cardSubtext}>March 15, 2024</p>
                 <p>
                   In this article, I dive into my process behind creating this
                   website, what I've learned, and what I have planned for the
@@ -40,6 +40,7 @@ const BlogPage = () => {
           </div>
         </Link>
       </div>
+      {/*
       <div className={styles.section}>
         <Link href="/blog/bolster-your-company-security-2024" passHref>
           <div className={styles.card} style={{ cursor: "pointer" }}>
@@ -64,6 +65,7 @@ const BlogPage = () => {
           </div>
         </Link>
       </div>
+  */}
       <div className={styles.section}>
         <Link
           href="/blog/how-future-cybersecurity-changes-using-artifical-intelligence"
@@ -82,10 +84,12 @@ const BlogPage = () => {
                   How the Future of Cybersecurity Will Change using Artificial
                   Intelligence/LLM’s
                 </h3>
-                <p className={styles.cardSubtext}>Coming Soon</p>
+                <p className={styles.cardSubtext}>March 17, 2024</p>
                 <p>
-                  Here's a short summary of what this blog post will cover,
-                  giving the reader a glimpse into the content.
+                  In this article, I discuss how the future of cybersecurity
+                  will change with the increase in artifical intelligence based
+                  technologies, and how we can use them to help secure your
+                  business.
                 </p>
               </div>
             </div>

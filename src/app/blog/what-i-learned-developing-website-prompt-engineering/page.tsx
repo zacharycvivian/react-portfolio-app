@@ -24,8 +24,8 @@ const ArticlePage = () => {
           What I’ve Learned From Developing my own Website using Prompt
           Engineering
         </h2>
-        <p className={styles.articleDate}>March 16, 2024</p>
-        <p className={styles.articleAuthor}>By Zachary Vivian</p>
+        <p className={styles.articleDate}>March 15, 2024</p>
+        <p className={styles.articleAuthor}>Author: Zachary Vivian | Read Time: 5-7 Mins.</p>
         {/* Example paragraph */}
         <p className={styles.articleText}>
           In "What I’ve Learned From Developing My Own Website Using Prompt
