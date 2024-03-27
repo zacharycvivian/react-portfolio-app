@@ -1,17 +1,18 @@
 This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Tools
-Frameworks: React/Next.js/Tailwind CSS, Google Firebase
-UI Elements: Shadcn.ui, UIVerse
-Code and Image Generation: ChatGPT, Midjourney
-Resume: Canva
-Hosting: Bought Domain @ Squarespace, Hosted on Vercel
+Frameworks: React/Next.js/Tailwind CSS, 
+Database: Google Firebase
+UI Elements: Shadcn.ui,
+Code and Image Generation: ChatGPT-4/DALLE-3,
+Resume: Canva,
+Hosting: Domain from Squarespace & Hosted on Vercel
 
 ## Note
 This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images, I do not claim those to be of my own work). You are welcome to use my code as a resource for inspirstion, but direct plagiarism will not be tolerated. If you have suggestions for improvements or bug fixes, please message me on Discord @zacharycvivian.
 
 ## Set Up
-Before starting, you will need to create a .env file in your main folder linking these respective details.
+Before starting, you will need to create a .env file in your main folder linking your respective environment variables. (Make sure you don't upload these to your repo!)
 
 ## .env
 GOOGLE_CLIENT_ID=
@@ -35,7 +36,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
-## Install Packages (in main directory)
+## Install Packages (In Main Directory)
 You will need to install all necessary packages before being able to run the application
 
 ```bash
