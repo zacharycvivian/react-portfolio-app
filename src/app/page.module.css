@@ -64,6 +64,8 @@
 .image {
   max-width: 600px !important;
   max-height: 375px !important;
+  border-radius: 40px;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
