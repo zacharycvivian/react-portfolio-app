@@ -34,7 +34,7 @@
 .instructions {
   font-size: 1.5rem;
   color: var(--text-color-light);
-  z-index: 2;
+  z-index: 4;
 }
 
 .infoContainer {
@@ -52,18 +52,20 @@
   border-radius: 60px;
   box-shadow: 20px 20px 60px var(--card-shadow),
   -20px -20px 60px var(--card-shadow);
+  z-index: 3;
 }
 
 .carouselItem {
-  padding-top: 10px;
   max-width: 600px;
-  width: 80vw;
-  padding-bottom: 20px;
+  margin-top: 20px;
+  box-shadow: 20px 20px 30px var(--card-shadow),
+  -20px -20px 30px var(--card-shadow);
+  margin-bottom: 20px;
+  border-radius: 40px;
+  overflow:hidden;
 }
 
 .image {
-  max-width: 600px !important;
-  max-height: 375px !important;
 }
 
 @media (max-width: 768px) {
@@ -88,9 +90,7 @@
   }
 
   .carouselItem {
-    width: 70vw; /* Adjust the width to be less than the viewport width */
-    padding-top: 10px;
-    padding-bottom: 20px;
+    width: 85vw; /* Adjust the width to be less than the viewport width */
   }
 
   .homeContainer, .welcomeMessage, .instructions {

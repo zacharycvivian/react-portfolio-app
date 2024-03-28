@@ -70,7 +70,7 @@ export default function Home() {
             }}
             plugins={[
               Autoplay({
-                delay: 4000,
+                delay: 3000,
               }),
             ]}
           >
