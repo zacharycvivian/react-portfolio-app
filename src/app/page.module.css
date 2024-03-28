@@ -29,6 +29,7 @@
   font-size: 2rem;
   padding-top: 10px;
   color: var(--text-color-light);
+  z-index: 4;
 }
 
 .instructions {
@@ -63,6 +64,7 @@
   margin-bottom: 20px;
   border-radius: 40px;
   overflow:hidden;
+  z-index: 4;
 }
 
 .image {
