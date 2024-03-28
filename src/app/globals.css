@@ -61,6 +61,20 @@
   --footer-color: #660d26;
 }
 
+[data-theme="emerald"] {
+  --primary-color: #0a290f;
+  --secondary-color: #22732c;
+  --third-color: #289135;
+  --text-color-light: #f2fff0;
+  --text-color-dark: #e7fae9;
+  --button-color-light: #37b045;
+  --button-hover-light: #3dc04c;
+  --card-color-light: #4eae59;
+  --card-hover-light: #3eb84c;
+  --card-shadow: #6ab973a2;
+  --footer-color: #0f3615;
+}
+
 body {
   height: 100dvh;
   background-color: var(--primary-color);
