@@ -1,13 +1,29 @@
-'use client'
+"use client";
 import React from "react";
 import styles from "./about.module.css";
-import { useSession } from "next-auth/react"; // Import useSession
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
 // Define Skill interface to type-check the props in SkillBar component
 interface Skill {
   skill: string;
   level: number;
 }
+
+const fadeInVariant = {
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    x: 0, // End at the original position
+    transition: { duration: 0.5 } 
+  },
+  hidden: { 
+    opacity: 0, 
+    scale: 0.85, 
+    x: -150, // Start 100 pixels to the left
+  },
+};
+
 
 // Function to map skill levels to descriptive labels
 const getSkillLevelLabel = (level: number): string => {
@@ -70,7 +86,14 @@ const AboutPage = () => {
     <div className={styles.container}>
       <h2 className={styles.sectionTitle}>About Me:</h2>
       <div className={styles.section}>
-        <div className={styles.card}>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <p>
             Set to graduate from the University of Wisconsin-Platteville in May
             2024, with a Bachelor's degree in Cybersecurity accompanied by a
@@ -87,15 +110,27 @@ const AboutPage = () => {
             mitigating cyber attacks through robust security protocols but also
             ensuring a resilient and adaptive security infrastructure.
           </p>
-        </div>
-        <div className={styles.card}>
-          <p>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >          <p>
             <strong>Education:</strong> The University of Wisconsin -
             Platteville, Bachelor of Science in Cybersecurity, Minor in Business
             Administration.
           </p>
-        </div>
-        <div className={styles.card}>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <p>
             <strong>Senior Project:</strong> Our senior project integrates our
             cumulative knowledge of the software development lifecycle, focusing
@@ -108,8 +143,15 @@ const AboutPage = () => {
             concepts to real-world challenges, enhancing the educational toolkit
             for future academic use.
           </p>
-        </div>
-        <div className={styles.card}>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <p>
             <strong>Hobbies:</strong> In my leisure hours, I'm passionate about
             exploring the great outdoors, often found backpacking with my
@@ -120,9 +162,14 @@ const AboutPage = () => {
             this website, which not only fuels my creativity but also sharpens
             my technical skills.
           </p>
-        </div>
-        <div className={styles.card}>
-          <h3 className={styles.skillSectionTitle}>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >          <h3 className={styles.skillSectionTitle}>
             <strong>Technical Skills:</strong>
           </h3>
           {technicalSkills.map((techSkill) => (
@@ -132,8 +179,15 @@ const AboutPage = () => {
               level={techSkill.level}
             />
           ))}
-        </div>
-        <div className={styles.card}>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <h3 className={styles.skillSectionTitle}>
             <strong>Professional Skills:</strong>
           </h3>
@@ -144,11 +198,18 @@ const AboutPage = () => {
               level={proSkill.level}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
       <h2 className={styles.sectionTitle}>Experience:</h2>
       <div className={styles.section}>
-        <div className={styles.card}>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <p>
             Although my professional experience in the cybersecurity sector is
             in its early stages, my ability to quickly master new technologies
@@ -159,17 +220,27 @@ const AboutPage = () => {
             defenses against future cyber attacks, demonstrating my dedication
             to contributing meaningfully to the field.
           </p>
-        </div>
-        <div className={styles.card}>
-          <p>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >          <p>
             <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
             independently in a fast-paced environment picking orders and sorting
             clothing. Also worked in shipping loading truck trailers with packed
             merchandise.
           </p>
-        </div>
-        <div className={styles.card}>
-          <p>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >          <p>
             <strong>
               Blain's Farm & Fleet -- Automotive Sales Associate (2019-2023):{" "}
             </strong>
@@ -181,9 +252,14 @@ const AboutPage = () => {
             models. Also worked in the Automotive Service Center as an advisor
             to set up vehicle appointments and order tires.
           </p>
-        </div>
-        <div className={styles.card}>
-          <p>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >          <p>
             <strong>
               House on the Rock -- Food Service Worker (2017-2019):{" "}
             </strong>
@@ -192,24 +268,26 @@ const AboutPage = () => {
             well as changing themes for seasonal events. Worked in the pizza
             restaurant and the ice cream shop serving guests.
           </p>
-        </div>
+        </motion.div>
         <div className={styles.buttonContainer}>
-        {session ? (
-          // If the user is logged in, show the download button
-          <a
-            href="@/../zcvivian_Resume.pdf"
-            download
-            className={styles.downloadResumeButton}
-          >
-            Download Resume
-          </a>
-        ) : (
-          // If the user is not logged in, show a disabled button or message
-          <div className={`${styles.downloadResumeButton} ${styles.linkDisabled}`}>
-            Log In to Download Resume
-          </div>
-        )}
-      </div>
+          {session ? (
+            // If the user is logged in, show the download button
+            <a
+              href="@/../zcvivian_Resume.pdf"
+              download
+              className={styles.downloadResumeButton}
+            >
+              Download Resume
+            </a>
+          ) : (
+            // If the user is not logged in, show a disabled button or message
+            <div
+              className={`${styles.downloadResumeButton} ${styles.linkDisabled}`}
+            >
+              Log In to Download Resume
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
