@@ -168,25 +168,17 @@ function Header() {
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              // Correctly type the event target to access form elements
               const form = e.target as HTMLFormElement;
               const feedback = form.elements.namedItem(
                 "feedback"
               ) as HTMLTextAreaElement;
 
-              // Check for session and session.user.email existence
-              if (
-                session &&
-                session.user &&
-                session.user.email &&
-                feedback &&
-                feedback.value
-              ) {
+              if (session?.user?.email && feedback?.value) {
                 await addFeedback(session.user.email, feedback.value);
                 alert("Feedback submitted successfully!");
                 setFeedbackModalOpen(false); // Close the modal
               } else {
-                alert("An unexpected error occurred."); // Handle unexpected case
+                alert("An unexpected error occurred.");
               }
             }}
           >
@@ -196,9 +188,6 @@ function Header() {
               name="feedback"
             ></textarea>
             <div className={styles.formButtons}>
-              <button type="submit" className={styles.submitButton}>
-                Submit
-              </button>
               <button
                 type="button"
                 className={styles.cancelButton}
@@ -206,9 +195,13 @@ function Header() {
               >
                 Cancel
               </button>
+              <button type="submit" className={styles.submitButton}>
+                Submit
+              </button>
             </div>
           </form>
         </Modal>
+
         <Modal
           isOpen={isReportBugModalOpen}
           onClose={() => setReportBugModalOpen(false)}
@@ -217,20 +210,12 @@ function Header() {
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              // Correctly type the event target to access form elements
               const form = e.target as HTMLFormElement;
               const bugDescriptionElement = form.elements.namedItem(
                 "bugDescription"
               ) as HTMLTextAreaElement;
 
-              if (
-                session &&
-                session.user &&
-                session.user.email &&
-                bugDescriptionElement &&
-                bugDescriptionElement.value
-              ) {
-                // Assuming that session.user.email is defined based on the guarded clause above
+              if (session?.user?.email && bugDescriptionElement?.value) {
                 await addBugReport(
                   session.user.email,
                   bugDescriptionElement.value
@@ -238,7 +223,7 @@ function Header() {
                 alert("Bug report submitted successfully!");
                 setReportBugModalOpen(false); // Close the modal
               } else {
-                alert("An unexpected error occurred."); // Handle the unexpected case
+                alert("An unexpected error occurred.");
               }
             }}
           >
@@ -248,15 +233,15 @@ function Header() {
               name="bugDescription"
             ></textarea>
             <div className={styles.formButtons}>
-              <button type="submit" className={styles.submitButton}>
-                Submit
-              </button>
               <button
                 type="button"
                 className={styles.cancelButton}
                 onClick={() => setReportBugModalOpen(false)}
               >
                 Cancel
+              </button>
+              <button type="submit" className={styles.submitButton}>
+                Submit
               </button>
             </div>
           </form>
