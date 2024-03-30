@@ -11,19 +11,18 @@ interface Skill {
 }
 
 const fadeInVariant = {
-  visible: { 
-    opacity: 1, 
-    scale: 1, 
+  visible: {
+    opacity: 1,
+    scale: 1,
     x: 0, // End at the original position
-    transition: { duration: 0.5 } 
+    transition: { duration: 0.5 },
   },
-  hidden: { 
-    opacity: 0, 
-    scale: 0.85, 
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
     x: -150, // Start 100 pixels to the left
   },
 };
-
 
 // Function to map skill levels to descriptive labels
 const getSkillLevelLabel = (level: number): string => {
@@ -84,7 +83,15 @@ const AboutPage = () => {
   ];
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>About Me:</h2>
+      <motion.h2
+        className={styles.sectionTitle}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        About Me:
+      </motion.h2>
       <div className={styles.section}>
         <motion.div
           className={styles.card}
@@ -117,7 +124,9 @@ const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-        >          <p>
+        >
+          {" "}
+          <p>
             <strong>Education:</strong> The University of Wisconsin -
             Platteville, Bachelor of Science in Cybersecurity, Minor in Business
             Administration.
@@ -169,7 +178,9 @@ const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-        >          <h3 className={styles.skillSectionTitle}>
+        >
+          {" "}
+          <h3 className={styles.skillSectionTitle}>
             <strong>Technical Skills:</strong>
           </h3>
           {technicalSkills.map((techSkill) => (
@@ -200,7 +211,15 @@ const AboutPage = () => {
           ))}
         </motion.div>
       </div>
-      <h2 className={styles.sectionTitle}>Experience:</h2>
+      <motion.h2
+        className={styles.sectionTitle}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        Experience:
+      </motion.h2>
       <div className={styles.section}>
         <motion.div
           className={styles.card}
@@ -227,7 +246,9 @@ const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-        >          <p>
+        >
+          {" "}
+          <p>
             <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
             independently in a fast-paced environment picking orders and sorting
             clothing. Also worked in shipping loading truck trailers with packed
@@ -240,7 +261,9 @@ const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-        >          <p>
+        >
+          {" "}
+          <p>
             <strong>
               Blain's Farm & Fleet -- Automotive Sales Associate (2019-2023):{" "}
             </strong>
@@ -259,7 +282,9 @@ const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-        >          <p>
+        >
+          {" "}
+          <p>
             <strong>
               House on the Rock -- Food Service Worker (2017-2019):{" "}
             </strong>
@@ -269,7 +294,13 @@ const AboutPage = () => {
             restaurant and the ice cream shop serving guests.
           </p>
         </motion.div>
-        <div className={styles.buttonContainer}>
+        <motion.div
+          className={styles.buttonContainer}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {session ? (
             // If the user is logged in, show the download button
             <a
@@ -281,13 +312,17 @@ const AboutPage = () => {
             </a>
           ) : (
             // If the user is not logged in, show a disabled button or message
-            <div
+            <motion.div
               className={`${styles.downloadResumeButton} ${styles.linkDisabled}`}
+              variants={fadeInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
             >
               Log In to Download Resume
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
