@@ -82,7 +82,9 @@ function Header() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className={styles.dropdownContent}>
           <DropdownMenuItem onClick={handleAuthAction}>
+            <strong>
             {session ? "Logout" : "Google Login"}
+            </strong>
           </DropdownMenuItem>
           {session && (
             <DropdownMenuItem>

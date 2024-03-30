@@ -2,9 +2,12 @@ BEGIN:VCARD
 VERSION:3.0
 FN:Zachary Vivian
 N:Vivian;Zachary;;;
+NICKNAME: Zach
 TEL;TYPE=MOBILE,VOICE:(608) 574-0816
 EMAIL:zacharycvivian@icloud.com
 BDAY:20010614
+TITLE: Seeking Cybersecurity Analyst Positions
+ORG: Currently Unemployed
 URL;TYPE=LinkedIn:https://www.linkedin.com/in/zacharycvivian
 URL;TYPE=GitHub:https://www.github.com/zacharycvivian
 URL;TYPE=X (Twitter):https://www.twitter.com/zacharycvivian
