@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import styles from "./blog.module.css";
@@ -5,13 +6,42 @@ import Image from "next/image";
 import article1 from "@/../public/article1.png";
 import article2 from "@/../public/article2.png";
 import article3 from "@/../public/article3.png";
+import { motion } from "framer-motion";
+
+const fadeInVariant = {
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0, // End at the original position
+    transition: { duration: 0.5 },
+  },
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+    x: -150, // Start 100 pixels to the left
+  },
+};
 
 // BlogPage component to display the blog section of the website
 const BlogPage = () => {
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>Blog Posts</h2>
-      <div className={styles.section}>
+      <motion.h2
+        className={styles.sectionTitle}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        Blog Posts
+      </motion.h2>
+      <motion.div
+        className={styles.section}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         <Link
           href="/blog/what-i-learned-developing-website-prompt-engineering"
           passHref
@@ -39,7 +69,7 @@ const BlogPage = () => {
             </div>
           </div>
         </Link>
-      </div>
+      </motion.div>
       {/*
       <div className={styles.section}>
         <Link href="/blog/bolster-your-company-security-2024" passHref>
@@ -66,7 +96,13 @@ const BlogPage = () => {
         </Link>
       </div>
   */}
-      <div className={styles.section}>
+      <motion.div
+        className={styles.section}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         <Link
           href="/blog/how-future-cybersecurity-changes-using-artifical-intelligence"
           passHref
@@ -95,7 +131,7 @@ const BlogPage = () => {
             </div>
           </div>
         </Link>
-      </div>
+      </motion.div>
     </div>
   );
 };
