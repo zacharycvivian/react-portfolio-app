@@ -1,8 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import React from "react";
 import { useSession } from "next-auth/react"; // Import useSession
@@ -37,7 +34,7 @@ function Sidebar() {
           onClick={() => setSheetOpen(true)}
         >
           <svg
-            width="60"
+            width="40"
             height="80"
             viewBox="0 0 15 15"
             fill="none"
