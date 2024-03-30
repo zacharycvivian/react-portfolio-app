@@ -19,14 +19,12 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 //Interfaces for type declarations
 interface Feedback {
-  id: string;
   email: string;
   feedback: string;
   time: any;
 }
 
 interface Bugs {
-  id: string;
   email: string;
   bugs: string;
   time: any;
