@@ -4,5 +4,10 @@ FN:Zachary Vivian
 N:Vivian;Zachary;;;
 TEL;TYPE=MOBILE,VOICE:(608) 574-0816
 EMAIL:zacharycvivian@icloud.com
-PHOTO;VALUE=URL;TYPE=JPEG:
+BDAY:20010614
+URL;TYPE=LinkedIn:https://www.linkedin.com/in/zacharycvivian
+URL;TYPE=GitHub:https://www.github.com/zacharycvivian
+URL;TYPE=X (Twitter):https://www.twitter.com/zacharycvivian
+URL;TYPE=Personal Website:https://www.zacharycvivian.com
+PHOTO;VALUE=URL;TYPE=JPEG:https://lh3.googleusercontent.com/a/ACg8ocJNsfB7RsfYk9oPrJWO8v5vw19C5M7gOLjT57wduEu9BKQ=s96-c
 END:VCARD
