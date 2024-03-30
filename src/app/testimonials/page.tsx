@@ -18,6 +18,21 @@ import Logo from "@/../public/HeaderLogo.png";
 import VerifiedLabel from "@/../public/verified.png";
 import { useSession } from "next-auth/react";
 import { db } from "@/../firebase";
+import { motion } from "framer-motion";
+
+const fadeInVariant = {
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0, // End at the original position
+    transition: { duration: 0.5 },
+  },
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+    x: -150, // Start 100 pixels to the left
+  },
+};
 
 //Interfaces for type declarations
 interface Testimonial {
@@ -312,8 +327,22 @@ const TestimonialsPage = () => {
   // Render testimonials page with form and testimonials list
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>Testimonials</h2>
-      <div className={styles.section}>
+      <motion.h2
+        className={styles.sectionTitle}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        Testimonials
+      </motion.h2>
+      <motion.div
+        className={styles.section}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         {testimonials.map((testimonial) => (
           <div className={styles.card} key={testimonial.id}>
             <img
@@ -388,24 +417,38 @@ const TestimonialsPage = () => {
             )}
           </div>
         ))}
-      </div>
+      </motion.div>
       <div className={styles.buttonContainer}>
-        <button
+        <motion.button
           onClick={handleAddTestimonialClick}
           className={styles.addButton}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           Add Testimonial
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => setShowFiltersModal(true)}
           className={styles.filterButton}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           Filters
-        </button>
+        </motion.button>
       </div>
       {showModal && (
         <div className={styles.modalBackdrop}>
-          <div className={styles.modalContent}>
+          <motion.div
+            className={styles.modalContent}
+            variants={fadeInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <form onSubmit={handleSubmit}>
               {/* Combined Name Field */}
               <label className={styles.formLabel}>
@@ -454,12 +497,18 @@ const TestimonialsPage = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
       {showFiltersModal && (
         <div className={styles.filterModalBackdrop}>
-          <div className={styles.modalContent}>
+          <motion.div
+            className={styles.modalContent}
+            variants={fadeInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <h2 className={styles.modalTitle}>Filter Testimonials</h2>
             <div className={styles.filterControls}>
               <select
@@ -501,7 +550,7 @@ const TestimonialsPage = () => {
                 Apply Filters
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>
