@@ -2,7 +2,21 @@
 import React, { useEffect } from "react";
 import styles from "./contact.module.css";
 import { useSession, signIn } from "next-auth/react";
-import Link from "next/link";
+import { motion } from "framer-motion";
+
+const fadeInVariant = {
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0, // End at the original position
+    transition: { duration: 0.5 },
+  },
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+    x: -150, // Start 100 pixels to the left
+  },
+};
 
 // Function to trigger the download of a vCard (.vcf file) for contact information
 const downloadVCard = () => {
@@ -61,14 +75,24 @@ const ContactPage = () => {
   };
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>
+      <motion.h2
+        className={styles.sectionTitle}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         Contact Me:
         <span className={styles.subtext}>Click a Card to Visit</span>
-      </h2>
+      </motion.h2>
       <div className={styles.section}>
-        <div
+        <motion.div
           className={styles.card}
           onClick={() => handleMailTo("zacharycvivian@icloud.com")}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <p>
             <strong>Email:</strong> zacharycvivian@icloud.com
@@ -77,59 +101,84 @@ const ContactPage = () => {
               Personal Email for Job Opportunities Only
             </span>
           </p>
-        </div>
-        <div className={styles.card} onClick={() => handleTel("+16085740816")}>
+        </motion.div>
+        <motion.div
+          className={styles.card}
+          onClick={() => handleTel("+16085740816")}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {" "}
           <p>
             <strong>Phone:</strong> +1 608-574-0816
             <br />
             <span className={styles.subtext}>Personal Cell Phone</span>
           </p>
-        </div>
-        <div
+        </motion.div>
+
+        <motion.div
           className={styles.card}
           onClick={() =>
             handleExternalNavigation(
               "https://www.linkedin.com/in/zacharycvivian"
             )
           }
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <p>
             <strong>LinkedIn: </strong>zacharycvivian
             <br />
             <span className={styles.subtext}>Connect With Me</span>
           </p>
-        </div>
-        <div
+        </motion.div>
+        <motion.div
           className={styles.card}
           onClick={() =>
             handleExternalNavigation("https://twitter.com/zacharycvivian")
           }
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <p>
             <strong>X (Twitter): </strong>zacharycvivian
             <br />
             <span className={styles.subtext}>View My Profile</span>
           </p>
-        </div>
-        <div
+        </motion.div>
+        <motion.div
           className={styles.card}
           onClick={() =>
             handleExternalNavigation("https://github.com/zacharycvivian")
           }
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <p>
             <strong>GitHub:</strong> zacharycvivian
             <br />
             <span className={styles.subtext}>View My Repositories</span>
           </p>
-        </div>
-        <div
+        </motion.div>
+        <motion.div
           className={styles.card}
           onClick={() =>
             handleExternalNavigation(
               "https://chat.openai.com/g/g-N5n358sXE-all-in-one-workflow-assistant"
             )
           }
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <p>
             <strong>ChatGPT:</strong> All-in-One Workflow Assistant
@@ -138,13 +187,20 @@ const ContactPage = () => {
               My AI Assistant (Helped Me Make this Website!)
             </span>
           </p>
-        </div>
+        </motion.div>
       </div>
-      <div className={styles.buttonContainer}>
+      <motion.div
+        className={styles.buttonContainer}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        {" "}
         <button onClick={downloadVCard} className={styles.downloadButton}>
           Add Contact
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 };
