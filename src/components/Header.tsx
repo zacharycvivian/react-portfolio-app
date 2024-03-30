@@ -201,7 +201,6 @@ function Header() {
             </div>
           </form>
         </Modal>
-
         <Modal
           isOpen={isReportBugModalOpen}
           onClose={() => setReportBugModalOpen(false)}
