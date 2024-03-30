@@ -11,8 +11,10 @@
 
 .logo {
   z-index: 10;
+  margin-left: 15px;
   position: fixed;
   top: 0;
+  color: var(--text-color-light);
 }
 
 .link {
