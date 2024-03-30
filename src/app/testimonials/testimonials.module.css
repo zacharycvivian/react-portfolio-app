@@ -68,6 +68,32 @@
   box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
 }
 
+.editDeleteIcons {
+  position: absolute;
+  top: 35px; /* Adjust as needed */
+  right: 35px; /* Adjust as needed */
+  display: flex;
+  gap: 10px; /* Space between icons */
+}
+
+.editIcon,
+.deleteIcon {
+  cursor: pointer;
+  fill: currentColor; /* Use the text color for the icons */
+  width: 15px; /* As defined in your SVG */
+  height: 15px; /* As defined in your SVG */
+}
+
+/* Optional: Add a hover effect to give feedback when icons are interactable */
+.editIcon:hover{
+  opacity: 0.8; /* Adjust as you see fit */
+  color: yellow;
+}
+.deleteIcon:hover {
+  opacity: 0.8; /* Adjust as you see fit */
+  color: red;
+}
+
 .modalBackdrop {
   position: fixed;
   top: 0;

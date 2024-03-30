@@ -11,6 +11,7 @@ import {
   query,
   orderBy,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
@@ -22,6 +23,7 @@ import { db } from "@/../firebase";
 interface Testimonial {
   id: string;
   name: string;
+  email: string;
   stars: number;
   review: string;
   time: any;
@@ -72,6 +74,7 @@ const TestimonialsPage = () => {
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [tempFilter, setTempFilter] = useState(filter); // Initializes with the current filter
   const [formData, setFormData] = useState({
+    id: undefined as string | undefined,
     name: "",
     stars: 0,
     review: "",
@@ -122,6 +125,7 @@ const TestimonialsPage = () => {
       const testimonialsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
+        email: doc.data().email,
         stars: doc.data().stars,
         review: doc.data().review,
         time: doc.data().time,
@@ -208,30 +212,65 @@ const TestimonialsPage = () => {
     const userProfile = userProfileSnap.data();
     const { occupation, employer, isVerified } = userProfile;
 
+    if (!occupation || !employer) {
+      alert(
+        "Please provide your current occupation and employer. Click your profile icon in the top right to edit your profile!"
+      );
+      return; // Prevent submission if either field is missing
+    }
+
     // Proceed to create testimonial with additional details
     try {
       const filteredReview = filterProfanity(formData.review);
       const testimonialData = {
         name: session.user.name || "",
+        email: session.user.email,
         review: filteredReview,
         stars: formData.stars,
         time: serverTimestamp(),
         userImageUrl: session?.user?.image || "path/to/default/image.png",
-        occupation: occupation || "Occupation not provided", // Include occupation from the profile or default message
-        employer: employer || "Employer not provided", // Include employer from the profile or default message
+        occupation: occupation || "Occupation Empty", // Include occupation from the profile or default message
+        employer: employer || "Employer Empty", // Include employer from the profile or default message
         isVerified: isVerified,
       };
 
-      await addDoc(collection(db, "testimonials"), testimonialData);
+      if (formData.id) {
+        // Update existing testimonial
+        const testimonialRef = doc(db, "testimonials", formData.id);
+        await setDoc(testimonialRef, { ...testimonialData }, { merge: true });
+      } else {
+        // Add new testimonial
+        await addDoc(collection(db, "testimonials"), testimonialData);
+      }
 
       // Reset form data and close modal on successful submission
-      setFormData({ name: "", stars: 0, review: "" });
+      setFormData({ id: undefined, name: "", stars: 0, review: "" });
       setShowModal(false);
     } catch (error) {
       console.error("Error adding testimonial: ", error);
       alert(
         "An error occurred while submitting your testimonial. Please try again."
       ); // Provide user feedback
+    }
+  };
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setFormData({
+      ...formData,
+      id: testimonial.id, // Assume formData is extended to include an optional id
+      name: testimonial.name,
+      stars: testimonial.stars,
+      review: testimonial.review,
+    });
+    setShowModal(true);
+  };
+
+  const handleDeleteTestimonial = async (testimonialId: string) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this testimonial?"
+    );
+    if (isConfirmed) {
+      await deleteDoc(doc(db, "testimonials", testimonialId));
+      // Show feedback to the user, if necessary
     }
   };
 
@@ -307,6 +346,46 @@ const TestimonialsPage = () => {
             <p>{"★".repeat(testimonial.stars)}</p>
             <p>{testimonial.review}</p>
             <p className={styles.timeText}>{formatDate(testimonial.time)}</p>
+            {session?.user?.email === testimonial.email && (
+              <div className={styles.editDeleteIcons}>
+                <span
+                  onClick={() => handleEditTestimonial(testimonial)}
+                  className={styles.editIcon}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11.8536 1.14645C11.6583 0.951184 11.3417 0.951184 11.1465 1.14645L3.71455 8.57836C3.62459 8.66832 3.55263 8.77461 3.50251 8.89155L2.04044 12.303C1.9599 12.491 2.00189 12.709 2.14646 12.8536C2.29103 12.9981 2.50905 13.0401 2.69697 12.9596L6.10847 11.4975C6.2254 11.4474 6.3317 11.3754 6.42166 11.2855L13.8536 3.85355C14.0488 3.65829 14.0488 3.34171 13.8536 3.14645L11.8536 1.14645ZM4.42166 9.28547L11.5 2.20711L12.7929 3.5L5.71455 10.5784L4.21924 11.2192L3.78081 10.7808L4.42166 9.28547Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                </span>
+                <span
+                  onClick={() => handleDeleteTestimonial(testimonial.id)}
+                  className={styles.deleteIcon}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.5 1C5.22386 1 5 1.22386 5 1.5C5 1.77614 5.22386 2 5.5 2H9.5C9.77614 2 10 1.77614 10 1.5C10 1.22386 9.77614 1 9.5 1H5.5ZM3 3.5C3 3.22386 3.22386 3 3.5 3H5H10H11.5C11.7761 3 12 3.22386 12 3.5C12 3.77614 11.7761 4 11.5 4H11V12C11 12.5523 10.5523 13 10 13H5C4.44772 13 4 12.5523 4 12V4L3.5 4C3.22386 4 3 3.77614 3 3.5ZM5 4H10V12H5V4Z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>
