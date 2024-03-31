@@ -41,6 +41,10 @@ export default function Home() {
     };
   }, []);
 
+  const formatUsername = (username: string | null | undefined): string => {
+    return username ? username.toLowerCase().replace(/ /g, "") : "guest";
+  };
+
   return (
     <>
       <button
@@ -58,7 +62,7 @@ export default function Home() {
             top: `${buttonTop - 135}px`,
             right: "20px",
             position: "absolute",
-            zIndex: 1100, 
+            zIndex: 1100,
           }} // Example positioning
         >
           <div className={styles.terminal_toolbar}>
@@ -69,12 +73,17 @@ export default function Home() {
               <button className={styles.btn}></button>
               <button className={styles.btn}></button>
             </div>
-            <p className={styles.user}>{session?.user?.name || "guest"}@chatbot: ~</p>
+            <p className={styles.user}>
+              {formatUsername(session?.user?.name)}@chatbot: ~
+            </p>
+
             <div className={styles.add_tab}>+</div>
           </div>
           <div className={styles.terminal_body}>
             <div className={styles.terminal_prompt}>
-              <span className={styles.terminal_user}>{session?.user?.name || "guest"}@chatbot:</span>
+              <span className={styles.terminal_user}>
+                {formatUsername(session?.user?.name)}@chatbot:
+              </span>
               <span className={styles.terminal_location}>~</span>
               <span className={styles.terminal_bling}>$</span>
               <span className={styles.terminal_cursor}></span>
