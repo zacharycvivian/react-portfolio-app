@@ -16,11 +16,83 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
+  const [buttonTop, setButtonTop] = useState(20);
+  const [isChatVisible, setIsChatVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Keep the button 20px from the bottom of the viewport regardless of scroll position
+      setButtonTop(window.scrollY + window.innerHeight - 70); // Adjust 70px based on your button's size and desired offset
+    };
+
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Initial placement adjust on load
+    handleScroll();
+
+    return () => {
+      // Clean up event listener
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
+    <>
+      <button
+        id="chatbotButton"
+        className={styles.chatbotbutton}
+        style={{ top: `${buttonTop}px` }} // Keep dynamic positioning
+        onClick={() => setIsChatVisible(!isChatVisible)} // Toggle visibility
+      >
+        Chat
+      </button>
+      {isChatVisible && (
+        <div
+          className={styles.container} // Ensure your module CSS includes the styles provided
+          style={{
+            top: `${buttonTop - 135}px`,
+            right: "20px",
+            position: "absolute",
+            zIndex: 1100, 
+          }} // Example positioning
+        >
+          <div className={styles.terminal_toolbar}>
+            <div className={styles.butt}>
+              <button
+                className={`${styles.btn} ${styles["btn-color"]}`}
+              ></button>
+              <button className={styles.btn}></button>
+              <button className={styles.btn}></button>
+            </div>
+            <p className={styles.user}>{session?.user?.name || "guest"}@chatbot: ~</p>
+            <div className={styles.add_tab}>+</div>
+          </div>
+          <div className={styles.terminal_body}>
+            <div className={styles.terminal_prompt}>
+              <span className={styles.terminal_user}>{session?.user?.name || "guest"}@chatbot:</span>
+              <span className={styles.terminal_location}>~</span>
+              <span className={styles.terminal_bling}>$</span>
+              <span className={styles.terminal_cursor}></span>
+            </div>
+            <div className={styles.terminal_output}>
+              <pre className={styles.output_text}>AI Chatbot Assistant</pre>
+            </div>
+            <div className={styles.terminal_input}>
+              <input
+                placeholder="Type your question here...(Coming Soon!)"
+                className={styles.input_text}
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.layoutContainer}>
         <div className={styles.logoContainer}>
           <Image
@@ -97,5 +169,6 @@ export default function Home() {
           </div>
         </div>
       </div>
+    </>
   );
 }
