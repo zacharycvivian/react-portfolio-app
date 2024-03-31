@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
@@ -10,12 +9,6 @@ import SessionProvider from "@/components/SessionProvider";
 import { Providers } from "./providers.jsx";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Zachary Vivian's Personal Website",
-  description:
-    "Here, you're able to find out more about Zachary Vivian's experience, reach out to him, view his blogs, and even leave a testimonial if you've worked with him in the past!",
-};
 
 export default async function RootLayout({
   children,
