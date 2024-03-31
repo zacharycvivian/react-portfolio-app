@@ -16,16 +16,25 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Metadata } from "next";
-
-const metadata: Metadata = {
-  title: "Home",
-  description: "Welcome to my personal website!",
-};
+import { useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
 
+  useEffect(() => {
+    document.title = "Home - Zach Vivian's Personal Website"; // Set title
+    const metaDescription = document.querySelector("meta[name='description']");
+    if (metaDescription && metaDescription instanceof HTMLMetaElement) {
+      metaDescription.content = "Welcome to my personal website!";
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = "Welcome to my personal website!";
+      document.getElementsByTagName('head')[0].appendChild(meta);
+    }
+  }, []);
+  
+  
   return (
     <div className={styles.layoutContainer}>
       <div className={styles.logoContainer}>
