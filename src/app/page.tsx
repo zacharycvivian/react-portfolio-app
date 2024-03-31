@@ -16,22 +16,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import Head from "next/head";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  const pageTitle = "Home - Zachary Vivian's Personal Website";
-  const pageDescription =
-    "Explore Zachary Vivian's professional journey and projects in cybersecurity on this personal website.";
-
   return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-        {/* You can include other metadata tags here as needed */}
-      </Head>
       <div className={styles.layoutContainer}>
         <div className={styles.logoContainer}>
           <Image
@@ -108,6 +97,5 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </>
   );
 }
