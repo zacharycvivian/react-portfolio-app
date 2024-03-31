@@ -3,13 +3,13 @@ import About from "./about";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About - Zachary Vivian's Personal Website",
   description:
-    "Zach Vivian"
+    "Learn more about Zach Vivian's personal experience, education, and passions. Here, you can also download a copy of his resume!"
 };
 
 function page() {
-  return <About />;
+  return <About/>;
 }
 
 export default page;
