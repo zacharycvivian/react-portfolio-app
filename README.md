@@ -16,7 +16,7 @@ This website and its contents are protected under United States Copyright Law (e
 Before starting, you will need to create a .env file in your main folder linking your respective environment variables. (Make sure you don't upload these to your repo!)
 
 ## .env
-GOOGLE_CLIENT_ID=
+```GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
 NEXTAUTH_URL=http://localhost:3000
@@ -36,6 +36,7 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+```
 
 ## Install Packages (In Main Directory)
 You will need to install all necessary packages before being able to run the application
