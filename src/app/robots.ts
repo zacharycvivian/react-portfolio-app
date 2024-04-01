@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://zacharycvivian.com/sitemap.xml",
+    sitemap: "https://www.zacharycvivian.com/sitemap.xml",
   };
 }
