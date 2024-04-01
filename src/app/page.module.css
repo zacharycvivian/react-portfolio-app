@@ -67,6 +67,14 @@
   z-index: 4;
 }
 
+.terminalcontainer {
+  right: 20px;
+  bottom: 70px; /* Distance from the viewport bottom. Adjust based on the chat button's height and desired gap */
+  max-height: 30vh; /* Adjust based on your preference */
+  width: 400px; /* Adjust as necessary */
+  z-index: 1100;
+}
+
 .chatbotbutton {
   position: absolute;
   bottom: 20px;
@@ -155,7 +163,7 @@
 
 .terminal_body {
   background: rgba(0, 0, 0, 0.6);
-  height: calc(100% - 30px);
+  height: 250px;
   width: 400px;
   backdrop-filter: blur(10px);
   padding-top: 2px;
