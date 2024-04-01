@@ -35,12 +35,11 @@ export default function Home() {
         case "/help":
           setTerminalOutput(
             "/help - Show a list of commands\n" +
-              "/ls - Lists all files within the specified directory\n" +
-              "/cat - View the contents of a specified file within the directory\n" +
-              "/cd - Changes the current directory, letting you navigate deeper into this website's files\n" +
+              "/ls - Lists all files within the current directory\n" +
+              "/cat - View the contents of a specified file within the current directory\n" +
+              "/cd - Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
               "/ask - Ask an AI bot a question about this website\n" +
               "/about - Learn more about this website\n" +
-              "/contact - Get contact information\n" +
               "/play - Play a game within the command line\n"
           );
           break;
@@ -54,11 +53,6 @@ export default function Home() {
             "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel.\n" +
               "\n" +
               "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
-          );
-          break;
-        case "/contact":
-          setTerminalOutput(
-            "This command is currently a work in progress. The user must be logged in to be able to use this command, which will display all of my contact information in the terminal window."
           );
           break;
         case "/play":
