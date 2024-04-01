@@ -186,7 +186,7 @@ export default function Home() {
         style={{ top: `${buttonTop}px` }}
         onClick={() => setIsChatVisible(!isChatVisible)}
       >
-        Chat
+        CLI
       </button>
       {isChatVisible && (
         <div
