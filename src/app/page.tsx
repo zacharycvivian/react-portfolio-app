@@ -74,7 +74,7 @@ export default function Home() {
         case "/help":
           setTerminalOutput(
             "/help - Show a list of commands\n" +
-            "/ask - Ask an AI bot a question about this website\n" +
+            "/ask - Ask a Google Gemini AI a question\n" +
             "/about - Learn more about this website's frameworks\n" +
               "/ls - (WIP) Lists all files within the current directory\n" +
               "/cat - (WIP) View the contents of a specified file within the current directory\n" +
@@ -202,6 +202,7 @@ export default function Home() {
             <div className={styles.butt}>
               <button
                 className={`${styles.btn} ${styles["btn-color"]}`}
+                onClick={() => setIsChatVisible(!isChatVisible)}
               ></button>
               <button className={styles.btn}></button>
               <button className={styles.btn}></button>
