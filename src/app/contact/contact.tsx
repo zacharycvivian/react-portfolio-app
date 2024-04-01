@@ -8,13 +8,13 @@ const fadeInVariant = {
   visible: {
     opacity: 1,
     scale: 1,
-    x: 0, // End at the original position
-    transition: { duration: 0.5 },
+    y: 0, // End at the original position
+    transition: { duration: .2 },
   },
   hidden: {
     opacity: 0,
-    scale: 0.85,
-    x: -150, // Start 100 pixels to the left
+    scale: 0.65,
+    y: 50,
   },
 };
 

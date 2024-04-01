@@ -31,7 +31,21 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/../firebase";
+import { motion } from "framer-motion";
 
+const fadeInVariant = {
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0, // End at the original position
+    transition: { duration: 0.2 },
+  },
+  hidden: {
+    opacity: 0,
+    scale: 0.65,
+    y: 50,
+  },
+};
 
 export default function Home() {
   const { data: session } = useSession();
@@ -47,21 +61,20 @@ export default function Home() {
   useEffect(() => {
     let dotCount = 0;
     let intervalId: NodeJS.Timeout | undefined; // Explicitly declare the type
-  
+
     if (isLoading) {
       intervalId = setInterval(() => {
         dotCount = (dotCount % 3) + 1; // Cycle through 1 to 3
         setTerminalOutput("Generating Response" + ".".repeat(dotCount));
       }, 500); // Update every 500 milliseconds
     }
-  
+
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
     };
   }, [isLoading]);
-  
 
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -74,38 +87,41 @@ export default function Home() {
         case "/help":
           setTerminalOutput(
             "/help - Show a list of commands\n" +
-            "/ask - Ask a Google Gemini AI a question\n" +
-            "/about - Learn more about this website's frameworks\n" +
+              "/ask - Ask a Google Gemini AI a question\n" +
+              "/about - Learn more about this website's frameworks\n" +
               "/ls - (WIP) Lists all files within the current directory\n" +
               "/cat - (WIP) View the contents of a specified file within the current directory\n" +
               "/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
               "/play - (WIP) Play a game within the command line\n"
           );
           break;
-          case "/ask":
-            if (prompt) {
-              setIsLoading(true); // Start loading animation
-              const docRef = addDoc(collection(db, "generate"), {
-                prompt: prompt,
-              }).then((ref) => {
-                const unsubscribe = onSnapshot(doc(db, "generate", ref.id), 
-                  (doc) => {
-                    if (doc.exists() && doc.data().response) {
-                      setTerminalOutput("Chatbot: " + doc.data().response);
-                      setIsLoading(false); // Stop loading animation
-                      unsubscribe();
-                    }
-                  }, 
-                  (err) => {
-                    console.error("Error fetching chat response:", err);
-                    setIsLoading(false); // Ensure loading stops on error
+        case "/ask":
+          if (prompt) {
+            setIsLoading(true); // Start loading animation
+            const docRef = addDoc(collection(db, "generate"), {
+              prompt: prompt,
+            }).then((ref) => {
+              const unsubscribe = onSnapshot(
+                doc(db, "generate", ref.id),
+                (doc) => {
+                  if (doc.exists() && doc.data().response) {
+                    setTerminalOutput("Chatbot: " + doc.data().response);
+                    setIsLoading(false); // Stop loading animation
+                    unsubscribe();
                   }
-                );
-              });
-            } else {
-              setTerminalOutput("Please provide a question after '/ask'. For example, '/ask How are you today?'");
-            }
-            break;
+                },
+                (err) => {
+                  console.error("Error fetching chat response:", err);
+                  setIsLoading(false); // Ensure loading stops on error
+                }
+              );
+            });
+          } else {
+            setTerminalOutput(
+              "Please provide a question after '/ask'. For example, '/ask How are you today?'"
+            );
+          }
+          break;
         case "/about":
           setTerminalOutput(
             "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, AI Chatbot: Google Gemini, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel, Other Tools: Google Search Console (Sitemapping)\n" +
@@ -240,24 +256,51 @@ export default function Home() {
       )}
 
       <div className={styles.layoutContainer}>
-        <div className={styles.logoContainer}>
+        <motion.div
+          className={styles.logoContainer}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <Image
             src={Logo}
             alt="Zach Vivian's Logo"
             layout="fill"
             objectFit="contain"
           />
-        </div>
+        </motion.div>
         <div className="container flex justify-center align-middle">
-          <div className={styles.homeContainer}>
-            <h1 className={styles.welcomeMessage}>
+          <motion.div className={styles.homeContainer}             variants={fadeInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}>
+            <motion.h1
+              className={styles.welcomeMessage}
+              variants={fadeInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <strong>Hello, {session?.user?.name || "Guest"}</strong>
-            </h1>
-            <p className={styles.instructions}>
+            </motion.h1>
+            <motion.p
+              className={styles.instructions}
+              variants={fadeInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               Click the icon on the top left to learn more about me and download
               a copy of my resume!
-            </p>
-            <div className={styles.infoContainer}>
+            </motion.p>
+            <motion.div
+              className={styles.infoContainer}
+              variants={fadeInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <h2>
                 <strong>Welcome to my Personal Website!</strong>
               </h2>
@@ -273,7 +316,7 @@ export default function Home() {
                 support as a reference could greatly assist me in connecting
                 with future employers and opportunities.
               </p>
-            </div>
+            </motion.div>
             <Carousel
               className={styles.carouselItem}
               opts={{
@@ -312,7 +355,7 @@ export default function Home() {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
-          </div>
+          </motion.div>
         </div>
       </div>
     </>
