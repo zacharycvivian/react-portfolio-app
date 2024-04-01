@@ -26,31 +26,34 @@ export default function Home() {
   const [currentInput, setCurrentInput] = useState("");
   const [terminalOutput, setTerminalOutput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
-  const terminalHeight = 300; 
-  
+  const terminalHeight = 300;
+
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      setLastCommand(currentInput); 
+      setLastCommand(currentInput);
       switch (currentInput.trim()) {
         case "/help":
           setTerminalOutput(
-            "/help - Show this help message\n" +
-            "/ask - Ask a question\n" +
-            "/about - Learn more about this website\n" +
-            "/contact - Get contact information\n" +
-            "/play - Play a game within the command line\n"
+            "/help - Show a list of commands\n" +
+              "/ls - Lists all files within the specified directory\n" +
+              "/cat - View the contents of a specified file within the directory\n" +
+              "/cd - Changes the current directory, letting you navigate deeper into this website's files\n" +
+              "/ask - Ask an AI bot a question about this website\n" +
+              "/about - Learn more about this website\n" +
+              "/contact - Get contact information\n" +
+              "/play - Play a game within the command line\n"
           );
           break;
         case "/ask":
           setTerminalOutput(
-            "This command is currently a work in progress. Eventually, it will display a custom AI chat model which will let the user ask questions regarding Zach Vivian, his website, and any other basic questions they may have!\n" 
+            "This command is currently a work in progress. Eventually, it will display a custom AI chat model which will let the user ask questions regarding Zach Vivian, his website, and any other basic questions they may have!\n"
           );
           break;
         case "/about":
           setTerminalOutput(
             "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel.\n" +
-            "\n" +
-            "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
+              "\n" +
+              "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
           );
           break;
         case "/contact":
@@ -61,30 +64,55 @@ export default function Home() {
         case "/play":
           setTerminalOutput(
             "Unknown command. Were you trying to play a game?\n" +
-            "\n" +
-            "Correct usage: '/play <game>'\n" +
-            "\n" +
-            "You must specify a game to play (game1, game2, game3). This command is currently a work in progress, eventually it will let the user play text-based games within the CLI, with one game utilizing AI for a decision-based story game."
+              "\n" +
+              "Correct usage: '/play <game>'\n" +
+              "\n" +
+              "You must specify a game to play (game1, game2, game3). This command is currently a work in progress, eventually it will let the user play text-based games within the CLI, with one game utilizing AI for a decision-based story game."
           );
-          break;          
+          break;
+        case "/ls":
+          setTerminalOutput(
+            "This command is currently a work in progress. It will let the user list all the files in the 'main' directory of this website's GitHub repo, or specified directory if they navigate to it first."
+          );
+          break;
+        case "/cat":
+          setTerminalOutput(
+            "Unknown command. Were you trying to see the contents of a file?\n" +
+            "\n" +
+            "Correct usage: '/cat <file>'\n" +
+            "\n" +
+            "This command is currently a work in progress. It will let the user view the code for a specified file in the current directory"
+          );
+          break;
+        case "/cd":
+          setTerminalOutput(
+            "Unknown command. Were you trying to navigate to a new directory?\n" +
+            "\n" +
+            "Correct usage: '/cd <path>'\n" +
+            "\n" +
+            "To go back to the previous directory: '/cd ..'\n" +
+            "\n" +
+            "This command is currently a work in progress. It will let the user change to a new directory from the listed files of the current directory they are in. "
+          );
+          break;
         default:
           setTerminalOutput(
             "Unknown command. Type /help for a list of commands."
           );
       }
 
-      setCurrentInput(""); 
+      setCurrentInput("");
     }
   };
 
   useEffect(() => {
-    const initialPosition = window.innerHeight - 190; 
+    const initialPosition = window.innerHeight - 190;
     setTerminalTop(initialPosition);
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      setButtonTop(window.scrollY + window.innerHeight - 70); 
+      setButtonTop(window.scrollY + window.innerHeight - 70);
     };
     window.addEventListener("scroll", handleScroll);
     handleScroll();
@@ -93,7 +121,7 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
   const formatUsername = (username: string | null | undefined): string => {
     return username ? username.toLowerCase().replace(/ /g, "") : "guest";
   };
@@ -103,21 +131,21 @@ export default function Home() {
       <button
         id="chatbotButton"
         className={styles.chatbotbutton}
-        style={{ top: `${buttonTop}px` }} 
-        onClick={() => setIsChatVisible(!isChatVisible)} 
+        style={{ top: `${buttonTop}px` }}
+        onClick={() => setIsChatVisible(!isChatVisible)}
       >
         Chat
       </button>
       {isChatVisible && (
         <div
-        className={styles.terminalcontainer} 
-        style={{
-          top: `${buttonTop - terminalHeight}px`,
-          right: "20px",
-          position: "fixed",
-          zIndex: 1100,
-        }} 
-      >
+          className={styles.terminalcontainer}
+          style={{
+            top: `${buttonTop - terminalHeight}px`,
+            right: "20px",
+            position: "fixed",
+            zIndex: 1100,
+          }}
+        >
           <div className={styles.terminal_toolbar}>
             <div className={styles.butt}>
               <button
@@ -135,11 +163,11 @@ export default function Home() {
           <div className={styles.terminal_body}>
             <div className={styles.terminal_prompt}>
               <span className={styles.terminal_user}>
-                {formatUsername(session?.user?.name)}@chatbot:
+                {formatUsername(session?.user?.name)}@chatbot/main/:
               </span>
               <span className={styles.terminal_location}>~</span>
               <span className={styles.terminal_bling}>$</span>
-              <span>{lastCommand}</span> 
+              <span>{lastCommand}</span>
             </div>
             <div className={styles.terminal_output}>
               <pre className={styles.output_text}>{terminalOutput}</pre>
