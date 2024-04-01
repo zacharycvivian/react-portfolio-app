@@ -37,7 +37,8 @@ export default function Home() {
             "/help - Show this help message\n" +
             "/ask - Ask a question\n" +
             "/about - Learn more about this website\n" +
-            "/contact - Get contact information\n" 
+            "/contact - Get contact information\n" +
+            "/play - Play a game within the command line\n"
           );
           break;
         case "/ask":
@@ -57,6 +58,15 @@ export default function Home() {
             "This command is currently a work in progress. The user must be logged in to be able to use this command, which will display all of my contact information in the terminal window."
           );
           break;
+        case "/play":
+          setTerminalOutput(
+            "Unknown command. Were you trying to play a game?\n" +
+            "\n" +
+            "Correct usage: '/play <game>'\n" +
+            "\n" +
+            "You must specify a game to play (game1, game2, game3). This command is currently a work in progress, eventually it will let the user play text-based games within the CLI, with one game utilizing AI for a decision-based story game."
+          );
+          break;          
         default:
           setTerminalOutput(
             "Unknown command. Type /help for a list of commands."
