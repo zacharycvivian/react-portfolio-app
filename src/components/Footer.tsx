@@ -21,13 +21,6 @@ const Footer = () => {
 
   return (
     <footer className={styles.footer}>
-      <p className={styles["build-info"]}>
-        <strong>This Website was Built Using:</strong> React, Next.js, and
-        Google Firebase
-      </p>
-      <p className={styles["unique-visitors"]}>
-        <strong>Total Registered Users:</strong> {userCount} 
-      </p>
       <div>
       <Button variant={"outline"} className={styles.wordleButton}>
         <Link className={styles.links} href={"/cyberwordle"}>
@@ -44,6 +37,9 @@ const Footer = () => {
           Play Pong
         </Link>
       </Button>
+        <p className={styles["unique-visitors"]}>
+          <strong>Registered Users:</strong> {userCount} 
+        </p>
       </div>
       <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
     </footer>

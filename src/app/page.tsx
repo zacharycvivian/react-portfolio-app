@@ -39,7 +39,7 @@ export default function Home() {
               "/cat - View the contents of a specified file within the current directory\n" +
               "/cd - Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
               "/ask - Ask an AI bot a question about this website\n" +
-              "/about - Learn more about this website\n" +
+              "/about - Learn more about this website's frameworks\n" +
               "/play - Play a game within the command line\n"
           );
           break;
