@@ -108,7 +108,7 @@ export default function Home() {
             break;
         case "/about":
           setTerminalOutput(
-            "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel.\n" +
+            "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, AI Chatbot: Google Gemini, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel, Other Tools: Google Search Console (Sitemapping)\n" +
               "\n" +
               "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
           );
