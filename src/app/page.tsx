@@ -35,9 +35,26 @@ export default function Home() {
         case "/help":
           setTerminalOutput(
             "/help - Show this help message\n" +
-              "/ask - Ask a question\n" +
-              "/about - Learn more about this website\n" +
-              "/contact - Get contact information\n" 
+            "/ask - Ask a question\n" +
+            "/about - Learn more about this website\n" +
+            "/contact - Get contact information\n" 
+          );
+          break;
+        case "/ask":
+          setTerminalOutput(
+            "This command is currently a work in progress. Eventually, it will display a custom AI chat model which will let the user ask questions regarding Zach Vivian, his website, and any other basic questions they may have!\n" 
+          );
+          break;
+        case "/about":
+          setTerminalOutput(
+            "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel.\n" +
+            "\n" +
+            "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
+          );
+          break;
+        case "/contact":
+          setTerminalOutput(
+            "This command is currently a work in progress. The user must be logged in to be able to use this command, which will display all of my contact information in the terminal window."
           );
           break;
         default:

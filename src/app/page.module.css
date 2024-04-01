@@ -215,7 +215,7 @@
 .terminal_output {
   padding: 4px;
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* Keeps vertical scrolling for overflow */
   z-index: 8;
 }
 
@@ -223,6 +223,8 @@
   margin: 0;
   z-index: 8;
   color: var(--text-color-dark);
+  word-wrap: break-word; /* Ensures words break to prevent horizontal overflow */
+  white-space: pre-wrap; /* Maintains formatting but wraps text */
 }
 
 .terminal_input {
