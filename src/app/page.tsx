@@ -17,6 +17,21 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useState, useEffect } from "react";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  onSnapshot,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "@/../firebase";
+
 
 export default function Home() {
   const { data: session } = useSession();
@@ -27,27 +42,70 @@ export default function Home() {
   const [terminalOutput, setTerminalOutput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
   const terminalHeight = 300;
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let dotCount = 0;
+    let intervalId: NodeJS.Timeout | undefined; // Explicitly declare the type
+  
+    if (isLoading) {
+      intervalId = setInterval(() => {
+        dotCount = (dotCount % 3) + 1; // Cycle through 1 to 3
+        setTerminalOutput("Generating Response" + ".".repeat(dotCount));
+      }, 500); // Update every 500 milliseconds
+    }
+  
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isLoading]);
+  
 
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       setLastCommand(currentInput);
-      switch (currentInput.trim()) {
+      const inputParts = currentInput.trim().split(" ");
+      const command = inputParts[0];
+      const prompt = inputParts.slice(1).join(" ");
+
+      switch (command) {
         case "/help":
           setTerminalOutput(
             "/help - Show a list of commands\n" +
-              "/ls - Lists all files within the current directory\n" +
-              "/cat - View the contents of a specified file within the current directory\n" +
-              "/cd - Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
-              "/ask - Ask an AI bot a question about this website\n" +
-              "/about - Learn more about this website's frameworks\n" +
-              "/play - Play a game within the command line\n"
+            "/ask - Ask an AI bot a question about this website\n" +
+            "/about - Learn more about this website's frameworks\n" +
+              "/ls - (WIP) Lists all files within the current directory\n" +
+              "/cat - (WIP) View the contents of a specified file within the current directory\n" +
+              "/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
+              "/play - (WIP) Play a game within the command line\n"
           );
           break;
-        case "/ask":
-          setTerminalOutput(
-            "This command is currently a work in progress. Eventually, it will display a custom AI chat model which will let the user ask questions regarding Zach Vivian, his website, and any other basic questions they may have!\n"
-          );
-          break;
+          case "/ask":
+            if (prompt) {
+              setIsLoading(true); // Start loading animation
+              const docRef = addDoc(collection(db, "generate"), {
+                prompt: prompt,
+              }).then((ref) => {
+                const unsubscribe = onSnapshot(doc(db, "generate", ref.id), 
+                  (doc) => {
+                    if (doc.exists() && doc.data().response) {
+                      setTerminalOutput("Chatbot: " + doc.data().response);
+                      setIsLoading(false); // Stop loading animation
+                      unsubscribe();
+                    }
+                  }, 
+                  (err) => {
+                    console.error("Error fetching chat response:", err);
+                    setIsLoading(false); // Ensure loading stops on error
+                  }
+                );
+              });
+            } else {
+              setTerminalOutput("Please provide a question after '/ask'. For example, '/ask How are you today?'");
+            }
+            break;
         case "/about":
           setTerminalOutput(
             "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel.\n" +
@@ -72,21 +130,21 @@ export default function Home() {
         case "/cat":
           setTerminalOutput(
             "Unknown command. Were you trying to see the contents of a file?\n" +
-            "\n" +
-            "Correct usage: '/cat <file>'\n" +
-            "\n" +
-            "This command is currently a work in progress. It will let the user view the code for a specified file in the current directory"
+              "\n" +
+              "Correct usage: '/cat <file>'\n" +
+              "\n" +
+              "This command is currently a work in progress. It will let the user view the code for a specified file in the current directory"
           );
           break;
         case "/cd":
           setTerminalOutput(
             "Unknown command. Were you trying to navigate to a new directory?\n" +
-            "\n" +
-            "Correct usage: '/cd <path>'\n" +
-            "\n" +
-            "To go back to the previous directory: '/cd ..'\n" +
-            "\n" +
-            "This command is currently a work in progress. It will let the user change to a new directory from the listed files of the current directory they are in. "
+              "\n" +
+              "Correct usage: '/cd <path>'\n" +
+              "\n" +
+              "To go back to the previous directory: '/cd ..'\n" +
+              "\n" +
+              "This command is currently a work in progress. It will let the user change to a new directory from the listed files of the current directory they are in. "
           );
           break;
         default:
@@ -149,7 +207,7 @@ export default function Home() {
               <button className={styles.btn}></button>
             </div>
             <p className={styles.user}>
-              {formatUsername(session?.user?.name)}@chatbot: ~
+              {formatUsername(session?.user?.name)}@terminal: ~
             </p>
 
             <div className={styles.add_tab}>+</div>
@@ -157,7 +215,7 @@ export default function Home() {
           <div className={styles.terminal_body}>
             <div className={styles.terminal_prompt}>
               <span className={styles.terminal_user}>
-                {formatUsername(session?.user?.name)}@chatbot/main/:
+                {formatUsername(session?.user?.name)}@terminal/main/:
               </span>
               <span className={styles.terminal_location}>~</span>
               <span className={styles.terminal_bling}>$</span>
