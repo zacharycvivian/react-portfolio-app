@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Header.module.css";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,68 @@ function Header() {
   const { data: session } = useSession();
   const [isReportBugModalOpen, setReportBugModalOpen] = useState(false);
   const [isFeedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
+  const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
+  const [showCursor, setShowCursor] = useState(true);
+  const originalName = "Zachary Vivian";
+
+  useEffect(() => {
+    let timeoutId: number;
+
+    // Backspacing for Phase 1 and Phase 3
+    if (animationPhase === 1 || animationPhase === 3) {
+      if (animatedTitle.length > 0) {
+        const backspaceSpeed = Math.random() * (250 - 50) + 50; // Randomize between 50ms and 150ms
+        timeoutId = window.setTimeout(() => {
+          setAnimatedTitle(animatedTitle.slice(0, -1));
+        }, backspaceSpeed);
+      } else {
+        setAnimationPhase(animationPhase + 1); // Proceed to the next phase
+      }
+    }
+    // Encrypting (Phase 2)
+    else if (animationPhase === 2) {
+      if (animatedTitle.length < originalName.length) {
+        timeoutId = window.setTimeout(() => {
+          // Add a random character or space
+          const nextChar = Math.random().toString(36)[2];
+          setAnimatedTitle(
+            (prev) => prev + (prev.length === 6 ? " " : nextChar)
+          );
+        }, 100);
+      } else {
+        setAnimationPhase(animationPhase + 1); // Move to Phase 3
+      }
+    }
+    // Retyping "Zachary Vivian" (Phase 4)
+    else if (animationPhase === 4) {
+      if (animatedTitle.length < originalName.length) {
+        timeoutId = window.setTimeout(() => {
+          setAnimatedTitle(originalName.slice(0, animatedTitle.length + 1));
+        }, 100);
+      } else {
+        // After completing the name, wait for a bit before restarting
+        setAnimationPhase(5); // Move to pause phase
+      }
+    }
+    // Pause (Phase 5)
+    else if (animationPhase === 5) {
+      timeoutId = window.setTimeout(() => {
+        setAnimationPhase(1); // Restart the sequence
+      }, 6000); // Adjust this duration to control the length of the pause
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [animatedTitle, animationPhase]);
+
+  useEffect(() => {
+    // Initiate the sequence after a short delay
+    const delayId = setTimeout(() => {
+      setAnimationPhase(1);
+    }, 2000); // Initial delay before starting
+
+    return () => clearTimeout(delayId);
+  }, []);
 
   const Modal: React.FC<ModalProps> = ({
     isOpen,
@@ -93,7 +155,12 @@ function Header() {
 
   return (
     <header className={styles.header}>
-      <h2>Zachary Vivian</h2>
+      <div className={styles.headertext}>
+      <h2>
+        {animatedTitle}
+        <span className={styles.cursor}>|</span>
+      </h2>
+      </div>
       <div className={styles.profileAndToggleContainer}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
