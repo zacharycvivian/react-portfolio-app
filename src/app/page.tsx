@@ -196,16 +196,20 @@ export default function Home() {
 
   return (
     <>
-      <button
+      <motion.button
         id="chatbotButton"
         className={styles.chatbotbutton}
         style={{ top: `${buttonTop}px` }}
         onClick={() => setIsChatVisible(!isChatVisible)}
+        variants={fadeInVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
       >
         Chat
-      </button>
+      </motion.button>
       {isChatVisible && (
-        <div
+        <motion.div
           className={styles.terminalcontainer}
           style={{
             top: `${buttonTop - terminalHeight}px`,
@@ -213,6 +217,10 @@ export default function Home() {
             position: "fixed",
             zIndex: 1100,
           }}
+          variants={fadeInVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
         >
           <div className={styles.terminal_toolbar}>
             <div className={styles.butt}>
@@ -252,7 +260,7 @@ export default function Home() {
               />
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       <div className={styles.layoutContainer}>

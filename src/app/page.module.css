@@ -170,7 +170,7 @@
   background: rgba(0, 0, 0, 0.6);
   height: 250px;
   width: 400px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(30px);
   padding-top: 2px;
   margin-top: -1px;
   font-size: 12px;
@@ -243,7 +243,7 @@
   background: transparent;
   border: none;
   color: #e6e6e6;
-  caret-color: #1eff8e;
+  caret-color: #ffffff;
   z-index: 8;
 }
 
