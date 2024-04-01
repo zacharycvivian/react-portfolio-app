@@ -26,7 +26,7 @@ export default function Home() {
   const [currentInput, setCurrentInput] = useState("");
   const [terminalOutput, setTerminalOutput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
-  const chatButtonHeight = 300; // Height of the chat button
+  const terminalHeight = 300; 
   
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -85,7 +85,7 @@ export default function Home() {
         <div
         className={styles.terminalcontainer} 
         style={{
-          top: `${buttonTop - chatButtonHeight}px`,
+          top: `${buttonTop - terminalHeight}px`,
           right: "20px",
           position: "fixed",
           zIndex: 1100,
