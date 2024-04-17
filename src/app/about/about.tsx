@@ -70,16 +70,16 @@ const AboutPage = () => {
   ];
 
   const technicalSkills = [
-    { skill: "Proxmox VE and Docker", level: 85 },
-    { skill: "MongoDB/MySQL/Firebase", level: 85 },
     { skill: "C/C++/Java", level: 75 },
     { skill: "Python", level: 65 },
     { skill: "Windows Powershell", level: 70 },
     { skill: "Office 365", level: 90 },
     { skill: "MacOS + Terminal", level: 90 },
     { skill: "Kali Linux + Tools", level: 80 },
+    { skill: "Proxmox VE and Docker", level: 75 },
     { skill: "React/Next.js", level: 60 },
     { skill: "Angular", level: 40 },
+    { skill: "MongoDB/MySQL/Firebase", level: 85 },
     { skill: "GitHub & GitLab", level: 75 },
   ];
   return (
