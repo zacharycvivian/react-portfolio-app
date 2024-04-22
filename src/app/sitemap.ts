@@ -18,9 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://www.zacharycvivian.com/blog/what-i-learned-developing-website-prompt-engineering",
     },
     {
-      url: "https://www.zacharycvivian.com/blog/how-future-cybersecurity-changes-using-artifical-intelligence",
-    },
-    {
       url: "https://www.zacharycvivian.com/testimonials",
     },
     {

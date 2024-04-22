@@ -3,7 +3,7 @@ import Testimonials from "./testimonials";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Testimonials - Zachary Vivian's Personal Website",
+  title: "Testimonials - Zachary Vivian's Portfolio Website",
   description:
     "On this page your're able to view testimonials written by Zach Vivian's peers. Once logged in with a completed profile, you can also leave one of your own!"
 };

@@ -313,7 +313,7 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <h2>
-                <strong>Welcome to my Personal Website!</strong>
+                <strong>Welcome to my Portfolio Website!</strong>
               </h2>
               <p className={styles.infoContainerText}>
                 My name is Zachary Vivian, and I am set to graduate from the

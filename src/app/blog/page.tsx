@@ -3,7 +3,7 @@ import Blog from "./blog";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog - Zachary Vivian's Personal Website",
+  title: "Blog - Zachary Vivian's Portfolio Website",
   description:
     "Here, you can discover the various articles Zach Vivian has written."
 };

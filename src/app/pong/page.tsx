@@ -3,7 +3,7 @@ import Pong from "./pong";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pong - Zachary Vivian's Personal Website",
+  title: "Pong - Zachary Vivian's Portfolio Website",
   description:
     "Play Pong! A throwback to the 70's classic, created in typescript!"
 };

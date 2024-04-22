@@ -3,7 +3,7 @@ import Snake from "./snake";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Snake - Zachary Vivian's Personal Website",
+  title: "Snake - Zachary Vivian's Portfolio Website",
   description:
     "Play Snake! A throwback to the 90's Nokia classic, created in typescript!"
 };
