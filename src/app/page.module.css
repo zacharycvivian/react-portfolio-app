@@ -50,12 +50,19 @@
     background-color 0.3s ease, width 0.3s ease; /* Added width to the transition */
   max-width: 97.5%;
   width: 97.5%;
-  margin-left: auto;
-  margin-right: auto;
   border-radius: 60px;
   box-shadow: 20px 20px 60px var(--card-shadow),
   -20px -20px 60px var(--card-shadow);
   z-index: 3;
+}
+
+.infoContainerText {
+  text-align: justify;
+  text-justify: inter-word;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .carouselItem {

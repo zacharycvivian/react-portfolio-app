@@ -168,26 +168,6 @@ const ContactPage = () => {
             <span className={styles.subtext}>View My Repositories</span>
           </p>
         </motion.div>
-        <motion.div
-          className={styles.card}
-          onClick={() =>
-            handleExternalNavigation(
-              "https://chat.openai.com/g/g-N5n358sXE-all-in-one-workflow-assistant"
-            )
-          }
-          variants={fadeInVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <p>
-            <strong>ChatGPT:</strong> All-in-One Workflow Assistant
-            <br />
-            <span className={styles.subtext}>
-              My AI Assistant (Helped Me Make this Website!)
-            </span>
-          </p>
-        </motion.div>
       </div>
       <motion.div
         className={styles.buttonContainer}

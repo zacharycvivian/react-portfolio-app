@@ -279,10 +279,13 @@ export default function Home() {
           />
         </motion.div>
         <div className="container flex justify-center align-middle">
-          <motion.div className={styles.homeContainer}             variants={fadeInVariant}
+          <motion.div
+            className={styles.homeContainer}
+            variants={fadeInVariant}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}>
+            viewport={{ once: true }}
+          >
             <motion.h1
               className={styles.welcomeMessage}
               variants={fadeInVariant}
@@ -312,17 +315,21 @@ export default function Home() {
               <h2>
                 <strong>Welcome to my Personal Website!</strong>
               </h2>
-              <p>
+              <p className={styles.infoContainerText}>
                 My name is Zachary Vivian, and I am set to graduate from the
                 University of Wisconsin-Platteville in May 2024, with a degree
                 specializing in Cybersecurity. This website serves as a digital
-                portfolio where you can delve into my professional journey,
+                portfolio where you can explore my professional journey,
                 discover more about my passions and projects, and understand the
                 skills I bring to the cybersecurity domain. If we've had the
                 opportunity to collaborate or if you're familiar with my work
-                and dedication, I warmly invite you to leave a testimonial. Your
+                and dedication, I welcome you to leave a testimonial. Your
                 support as a reference could greatly assist me in connecting
-                with future employers and opportunities.
+                with future employers and opportunities! To create a
+                testimonial, click the icon in the top right and log in with
+                your Google account. Then, click your profile icon and add your
+                occupation and employer and head to the testimonials tab to
+                leave a professional reference!
               </p>
             </motion.div>
             <Carousel
