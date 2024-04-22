@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { useSession } from "next-auth/react";
 import styles from "./page.module.css";
 import Zach from "@/../public/Zach.jpg";
@@ -16,7 +15,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   getFirestore,
   collection,

@@ -1,11 +1,10 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
+  padding-top: 100px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: var(--secondary-color);
-  padding-top: 100px;
 }
 
 .sectionTitle {
