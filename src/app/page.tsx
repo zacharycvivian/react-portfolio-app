@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import React, { useState, useEffect } from "react";
-import Head from "next/head";
 import {
   collection,
   doc,
@@ -189,13 +188,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <link rel="preload" href={Logo.src} as="image" />
-        <link rel="auto" href={Zach.src} as="image" />
-        <link rel="auto" href={Turbo.src} as="image" />
-        <link rel="auto" href={Squad.src} as="image" />
-        <link rel="auto" href={Mountains.src} as="image" />
-      </Head>
       <motion.button
         id="chatbotButton"
         className={styles.chatbotbutton}
