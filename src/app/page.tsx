@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import styles from "./page.module.css";
 import Zach from "@/../public/Zach.jpg";
-import Turbo from "@/../public/Turbo.jpeg";
+import Turbo from "@/../public/Turbo.jpg";
 import Squad from "@/../public/Squad.jpg";
 import Mountains from "@/../public/Mountains.jpg";
 import Logo from "@/../public/HeaderLogo.png";
@@ -17,17 +17,10 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import React, { useState, useEffect } from "react";
 import {
-  getFirestore,
   collection,
   doc,
-  getDoc,
-  setDoc,
   addDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-  onSnapshot,
-  deleteDoc,
+  onSnapshot
 } from "firebase/firestore";
 import { db } from "@/../firebase";
 import { motion } from "framer-motion";
@@ -87,11 +80,11 @@ export default function Home() {
           setTerminalOutput(
             "/help - Show a list of commands\n" +
               "/ask - Ask a Google Gemini AI a question\n" +
-              "/about - Learn more about this website's frameworks\n" +
-              "/ls - (WIP) Lists all files within the current directory\n" +
-              "/cat - (WIP) View the contents of a specified file within the current directory\n" +
-              "/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
-              "/play - (WIP) Play a game within the command line\n"
+              "/about - Learn more about this website's frameworks\n" 
+              //"/ls - (WIP) Lists all files within the current directory\n" +
+              //"/cat - (WIP) View the contents of a specified file within the current directory\n" +
+              //"/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
+              //"/play - (WIP) Play a game within the command line\n"
           );
           break;
         case "/ask":
@@ -222,7 +215,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <div className={styles.terminal_toolbar}>
-            <div className={styles.butt}>
+            <div className={styles.close_button}>
               <button
                 className={`${styles.btn} ${styles["btn-color"]}`}
                 onClick={() => setIsChatVisible(!isChatVisible)}
@@ -292,7 +285,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <strong>Hello, {session?.user?.name || "Guest"}</strong>
+              <strong>Hello, {session?.user?.name ?? "Guest"}</strong>
             </motion.h1>
             <motion.p
               className={styles.instructions}
