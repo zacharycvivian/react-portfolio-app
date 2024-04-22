@@ -43,7 +43,6 @@ function Header() {
   const [isFeedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
   const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
-  const [showCursor, setShowCursor] = useState(true);
   const originalName = "Zachary Vivian";
 
   useEffect(() => {
@@ -148,7 +147,7 @@ function Header() {
   };
 
   // Determine the image to use for the DropdownMenuTrigger
-  const userImageURL = session?.user?.image || DefaultImage.src;
+  const userImageURL = session?.user?.image ?? DefaultImage.src;
 
   const { theme, setTheme, resolvedTheme } = useTheme();
   const currentTheme = theme === "system" ? resolvedTheme : theme;
