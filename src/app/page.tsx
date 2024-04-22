@@ -268,6 +268,7 @@ export default function Home() {
             alt="Zach Vivian's Logo"
             layout="fill"
             objectFit="contain"
+            priority
           />
         </motion.div>
         <div className="container flex justify-center align-middle">
