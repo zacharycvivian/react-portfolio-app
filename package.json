@@ -36,6 +36,7 @@
     "react-router-dom": "^6.21.0",
     "react-scroll-motion": "^0.3.3",
     "react-slick": "^0.30.2",
+    "sharp": "^0.33.3",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7"
