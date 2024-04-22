@@ -22,7 +22,7 @@ const ArticlePage = () => {
           What I’ve Learned From Developing my own Website Utilizing Prompt
           Engineering
         </h2>
-        <p className={styles.articleDate}>March 15, 2024</p>
+        <p className={styles.articleDate}>Updated April 22, 2024</p>
         <p className={styles.articleAuthor}>
           Author: Zachary Vivian | Read Time: 5-7 Mins.
         </p>
