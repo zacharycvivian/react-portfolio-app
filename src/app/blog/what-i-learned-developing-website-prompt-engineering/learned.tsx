@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import styles from "./learned.module.css";
 import Image from "next/image";
@@ -19,30 +19,29 @@ const ArticlePage = () => {
       </div>
       <div className={styles.articleContent}>
         <h2 className={styles.articleTitle}>
-          What I’ve Learned From Developing my own Website using Prompt
+          What I’ve Learned From Developing my own Website Utilizing Prompt
           Engineering
         </h2>
         <p className={styles.articleDate}>March 15, 2024</p>
-        <p className={styles.articleAuthor}>Author: Zachary Vivian | Read Time: 5-7 Mins.</p>
+        <p className={styles.articleAuthor}>
+          Author: Zachary Vivian | Read Time: 5-7 Mins.
+        </p>
         {/* Example paragraph */}
         <p className={styles.articleText}>
           In "What I’ve Learned From Developing My Own Website Using Prompt
-          Engineering," I share a candid journey from novice to confident
-          developer, driven by a curiosity for React/Next.js and the innovative
-          use of prompt engineering with ChatGPT. Starting with choosing the
-          right tools and frameworks for a seamless and scalable web
-          application, the narrative delves into overcoming initial hurdles
-          through AI assistance, navigating the complexities of prompt
-          engineering, and leveraging community support for deeper insights. The
-          article emphasizes the critical role of user feedback in optimizing
-          the user experience and outlines strategic practices for
-          future-proofing the project. Reflecting on personal growth, the author
-          appreciates the transformative power of AI in making complex tasks
-          manageable and fostering a newfound confidence in programming. Looking
-          ahead, there's excitement for exploring new technologies and
-          continuing the journey of learning and innovation. This story is not
-          just about building a website but about the personal and professional
-          evolution encountered along the way.
+          Engineering," I share my journey of being a novice to becoming a
+          confident web developer, driven by a curiosity for React/Next.js and
+          the innovative use of prompt engineering with modern day LLM's.
+          Starting with choosing the right tools and frameworks for a seamless
+          and scalable web application, into overcoming initial hurdles through
+          AI assistance, navigating the complexities of prompt engineering, and
+          leveraging community support for deeper insights. This article
+          highlights the critical role of user feedback in optimizing the user
+          experience and outlines strategic practices for future-proofing this
+          project. Looking ahead, there's excitement for exploring new
+          technologies and continuing the journey of learning and innovation.
+          This story is not just about building a website but about my personal
+          and professional evolution along the way.
         </p>
         {/* Subtitle */}
         <h3 className={styles.articleSubtitle}>
@@ -53,14 +52,14 @@ const ArticlePage = () => {
           Embarking on the journey of web development as a Cybersecurity
           professional, I decided to go with React/Next.js for its simplicity
           and well-documented nature, which promised a smooth learning curve. In
-          previous class projects, I had gone with Angular, but had some issues
-          connecting my front and back end together and found React to be a
-          better alternative. UI elements, crafted with the help of shadcn.ui
-          and UIVerse, were chosen for their modern aesthetic and user-friendly
-          interface. Google Firebase served as the backbone for my data storage
-          (primarily user accounts and testimonials), as it's ease of
-          scalibility ensured that my website could grow without constraints and
-          maintain security for protecting user data.
+          previous class projects I had worked with Angular, but found React to
+          be a better alternative for my personal portfolio. UI elements,
+          crafted with the help of shadcn.ui, were chosen for their modern
+          aesthetic and user-friendly interface. Google Firebase served as the
+          backbone for my data storage (primarily user accounts, testimonials,
+          and the AI chatbot on my homepage powered by Google Gemini), as it's
+          ease of scalibility ensured that my website could grow without
+          constraints and maintain security for protecting user data.
         </p>
         {/* Another Subtitle */}
         <h3 className={styles.articleSubtitle}>
@@ -74,10 +73,10 @@ const ArticlePage = () => {
           skills significantly boosted my productivity. ChatGPT, with its vast
           knowledge base, became an invaluable tool, offering solutions and
           guidance that sped up the development process. I was able to create
-          the entirety of this website in a little under two weeks, having no
-          experience at all. I believe ChatGPT and other LLMs(Large-Language
-          Models) have a promising future, but they currently still have some
-          issues.
+          the entirety of this website in a little under two weeks, having
+          little to no web development experience at all. I believe AI tools and
+          other LLMs(Large-Language Models) have a promising future, but they
+          currently still have some issues.
         </p>
         <h3 className={styles.articleSubtitle}>
           3. Difficulties with Prompt Engineering: Navigating the AI Landscape
@@ -96,7 +95,12 @@ const ArticlePage = () => {
           won't know how to help you unless you tell it what frameworks your
           using, languages, databases, etc. All-in-all, I believe LLMs are still
           a long ways away from taking development jobs, but they can be a
-          useful tool to help guide your in the right direction!
+          useful tool to help guide you in the right direction! They have the
+          ability to tailor their response to the specific user and can answer
+          just about any question you have better than a simple Google search
+          can. Instead of wasting time scrolling through forums that may offer a
+          solution, I found this to be a much better alternative and learned a
+          lot about web development during this process.
         </p>
         <h3 className={styles.articleSubtitle}>
           4. Collaboration and Community: Leaning on Experienced Shoulders
@@ -117,12 +121,12 @@ const ArticlePage = () => {
           offering insights that only seasoned developers possess. This
           collaboration underscored the importance of community in the tech
           world—-a space where shared knowledge fosters growth and innovation.
-          As I said before, ChatGPT still isn't perfect and there were a few
+          As I said before, LLM's are far from perfect and there were a few
           issues where we decided to set up a call to work out the problem
-          together--which ended up being much faster that ChatGPT! If you're
-          interested in designing a new website or looking to hire a full-stack
-          developer, please check out his page (click the hyperlink on his
-          name).
+          together--which ended up being much faster than using ChatGPT! If
+          you're interested in designing a new website or looking to hire a
+          full-stack developer, please check out his page (click the hyperlink
+          on his name).
         </p>
         <h3 className={styles.articleSubtitle}>
           5. Optimizing User Experience: The Role of Feedback
@@ -149,7 +153,10 @@ const ArticlePage = () => {
           code commenting. These practices ensured not only a robust foundation
           for the current website but also eased future updates and expansions.
           That being said, if you're interested in viewing the code for this
-          website, please check out my GitHub page!
+          website, please check out my GitHub page! I still have many minor
+          issues I am working on in my free time, with the end goal of crafting
+          a perfect portfolio website I can update and modify with my career
+          growth.
         </p>
         <h3 className={styles.articleSubtitle}>
           7. Personal Growth: Beyond Code
@@ -161,28 +168,28 @@ const ArticlePage = () => {
           revelation, making complex tasks manageable and turning my dream of
           creating a website into reality. This journey was not just about
           building a website but also about building confidence and skills that
-          will last a lifetime. I pride myself in my ability in teaching myself
-          new things, and with my habits of being a perfectionist I'm able to
-          quickly create a great product. This of course doesn't only apply to
-          web development, I'm actually more interested in working with
-          intrusion detection/prevention systems to protect company data. I'm
-          currently learning more about Nessus, with hopes of getting a
-          professional career in the Cybersecurity field.
+          will last a lifetime. Before this year, I had no idea I would ever be
+          able to create my very own website. I pride myself in my ability in
+          teaching myself new things, and with my habits of being a
+          perfectionist I'm able to quickly create a great product. This of
+          course doesn't only apply to web development, I'm actually more
+          interested in working with intrusion detection/prevention systems to
+          protect company data. I'm currently learning more about Nessus, with
+          hopes of getting a professional career in the Cybersecurity field.
         </p>
         <h3 className={styles.articleSubtitle}>
           8. The Road Ahead: Exploring New Horizons
         </h3>
         {/* Another example paragraph for the next subtitle section */}
         <p className={styles.articleText}>
-          Looking forward, I do have a few more things I want to implement in my
-          website (such as a couple more games and a chat bot to help guide the
-          user around my site), but my curiosity drives towards other personal
-          projects involving my Raspberry Pi (creating a USB sanitizer) as well
-          as a Flipper Zero and a HackRF One (to test my own technologies and
-          networks security). These are some simple tools that promise new
-          adventures in programming and hardware. These projects represent not
-          just the next step in my technological journey but also a commitment
-          to lifelong learning and exploration.
+          Looking forward, I do have a few more features I want to implement in
+          my website, but my curiosity currently drives towards other personal
+          projects involving my Raspberry Pi as well as my Flipper Zero and a
+          HackRF One (to test my own technologies and network's security). These
+          are some simple tools that promise new adventures in programming and
+          hardware. These projects represent not just the next step in my
+          technological journey but also a commitment to lifelong learning and
+          exploration.
         </p>
         <h3 className={styles.articleSubtitle}>
           9. Conclusion: A Journey of a Thousand Miles

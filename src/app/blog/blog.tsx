@@ -13,7 +13,7 @@ const fadeInVariant = {
     opacity: 1,
     scale: 1,
     y: 0, // End at the original position
-    transition: { duration: .2 },
+    transition: { duration: 0.2 },
   },
   hidden: {
     opacity: 0,
@@ -56,14 +56,14 @@ const BlogPage = () => {
               />
               <div>
                 <h3 className={styles.cardTitle}>
-                  What I’ve Learned From Developing my own Website using Prompt
-                  Engineering
+                  What I’ve Learned From Developing my own Website Utilizing
+                  Prompt Engineering
                 </h3>
                 <p className={styles.cardSubtext}>March 15, 2024</p>
                 <p>
-                  In this article, I dive into my process behind creating this
-                  website, what I've learned, and what I have planned for the
-                  future!
+                  In this article, I dive into my process behind teaching myself
+                  web development by creating this website, what I've learned,
+                  and what I have planned for the future!
                 </p>
               </div>
             </div>
@@ -96,6 +96,8 @@ const BlogPage = () => {
         </Link>
       </div>
   */}
+      {/*
+
       <motion.div
         className={styles.section}
         variants={fadeInVariant}
@@ -132,6 +134,7 @@ const BlogPage = () => {
           </div>
         </Link>
       </motion.div>
+*/}
     </div>
   );
 };
