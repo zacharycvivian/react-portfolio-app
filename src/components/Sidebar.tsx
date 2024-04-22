@@ -1,21 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react"; // Import useSession
-
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import styles from "./Sidebar.module.css";
-import { useState } from "react";
 
 function Sidebar() {
   const [isSheetOpen, setSheetOpen] = useState(false);

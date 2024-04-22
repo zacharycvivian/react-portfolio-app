@@ -85,6 +85,5 @@ body {
   color: var(--text-color-light);
   margin: 0;
   backdrop-filter: blur(5px);
-  /*font-family: "Ubuntu Mono", monospace !important;*/ 
   font-family: "Manrope", sans-serif !important;
 }

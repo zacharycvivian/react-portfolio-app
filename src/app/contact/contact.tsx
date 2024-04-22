@@ -9,7 +9,7 @@ const fadeInVariant = {
     opacity: 1,
     scale: 1,
     y: 0, // End at the original position
-    transition: { duration: .2 },
+    transition: { duration: 0.2 },
   },
   hidden: {
     opacity: 0,

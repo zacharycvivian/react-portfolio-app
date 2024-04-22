@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  getFirestore,
   collection,
   doc,
   getDoc,
@@ -77,7 +76,7 @@ const TestimonialsPage = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showModal, setShowModal] = useState(false);
   const { data: session } = useSession();
-  const userPhotoURL = session?.user?.image || Logo.src;
+  const userPhotoURL = session?.user?.image ?? Logo.src;
   //Scan testimonials for banned words
   const [bannedWords, setBannedWords] = useState<string[]>([]);
   const [filteredTestimonials, setFilteredTestimonials] = useState<
@@ -161,7 +160,7 @@ const TestimonialsPage = () => {
   // Effect hook to update form name field with session user name
   useEffect(() => {
     if (session) {
-      setFormData({ ...formData, name: session.user?.name || "" });
+      setFormData({ ...formData, name: session.user?.name ?? "" });
     }
   }, [session]);
 
@@ -238,14 +237,14 @@ const TestimonialsPage = () => {
     try {
       const filteredReview = filterProfanity(formData.review);
       const testimonialData = {
-        name: session.user.name || "",
+        name: session.user.name ?? "",
         email: session.user.email,
         review: filteredReview,
         stars: formData.stars,
         time: serverTimestamp(),
-        userImageUrl: session?.user?.image || "path/to/default/image.png",
-        occupation: occupation || "Occupation Empty", // Include occupation from the profile or default message
-        employer: employer || "Employer Empty", // Include employer from the profile or default message
+        userImageUrl: session?.user?.image ?? "path/to/default/image.png",
+        occupation: occupation ?? "Occupation Empty", // Include occupation from the profile or default message
+        employer: employer ?? "Employer Empty", // Include employer from the profile or default message
         isVerified: isVerified,
       };
 
@@ -293,7 +292,7 @@ const TestimonialsPage = () => {
   const handleCancel = () => {
     setFormData({
       ...formData,
-      name: session?.user?.name || "",
+      name: session?.user?.name ?? "",
       stars: 0,
       review: "",
     });
@@ -456,7 +455,7 @@ const TestimonialsPage = () => {
                 <input
                   className={styles.inputField}
                   type="text"
-                  value={`${session?.user?.name || ""}`}
+                  value={`${session?.user?.name ?? ""}`}
                   readOnly
                 />
               </label>
