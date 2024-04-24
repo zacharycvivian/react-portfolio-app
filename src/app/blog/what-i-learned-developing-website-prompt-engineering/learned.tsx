@@ -113,7 +113,7 @@ const ArticlePage = () => {
             href="https://www.jordanready.com"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ textDecoration: "none", color: "blue" }}
+            style={{ textDecoration: "none", color: "teal" }}
           >
             Jordan Ready
           </a>

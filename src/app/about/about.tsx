@@ -130,7 +130,7 @@ const AboutPage = () => {
           <p>
             <strong>Education:</strong> The University of Wisconsin -
             Platteville, Bachelor of Science in Cybersecurity, Minor in Business
-            Administration.
+            Administration <strong>Graduating May 2024</strong>
           </p>
         </motion.div>
         <motion.div
@@ -151,7 +151,25 @@ const AboutPage = () => {
             providing a practical, hands- on learning experience for students.
             This initiative highlights our capability to apply theoretical
             concepts to real-world challenges, enhancing the educational toolkit
-            for future academic use.
+            for future academic use. Due to some difficulties the team had with
+            the UI towards the end of the project, I quickly remade the entire
+            UI with the experience I had gained from making this website. If
+            you'd like to check out the template, visit my GitHub profile from
+            the 'Contact' page or simply click{" "}
+            <a
+              href="https://zacharycvivian.github.io/angular-cyberlabs-app/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none", color: "teal" }}
+            >
+              this link
+            </a>
+            . Login with usernames <strong>student</strong> or{" "}
+            <strong>teacher</strong> and the secure password,{" "}
+            <strong>password</strong>, to view this template built in Angular.
+            This does not have any security implementations, the MySQL database,
+            or the Proxmox VE environment built in with it since it's being
+            deployed on my GitHub profile.
           </p>
         </motion.div>
         <motion.div
