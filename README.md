@@ -1,5 +1,5 @@
 This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
+ 
 ## Tools
 Frameworks: React/Next.js/Tailwind CSS,
 Database: Google Firebase,
