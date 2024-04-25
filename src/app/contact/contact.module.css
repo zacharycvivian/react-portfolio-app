@@ -67,6 +67,15 @@
   display: block; /* To ensure it starts on a new line */
 }
 
+.svgAndTextContainer {
+  display: flex;
+  align-items: center; /* Vertical alignment */
+  gap: 10px; /* Spacing between the SVG and the text */
+}
+
+.svgContainer {
+  flex-shrink: 0; /* Prevent the SVG from shrinking */
+}
 
 .buttonContainer {
   display: flex;
