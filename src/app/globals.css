@@ -18,8 +18,9 @@
   --button-color-light: #eeeeee;
   --button-hover-light: #8d9398;
   --card-color-light: #eeeeee;
-  --card-hover-light: #cecece;
-  --card-shadow: rgb(255, 255, 255);
+  --card-hover-light: #dfdfdf;
+  --card-shadow: #bebebe;
+  --card-shadow-2: #ffffff;
   --footer-color: #2c3035;
 }
 
