@@ -20,7 +20,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .card {
@@ -55,6 +55,16 @@
   display: flex;
   justify-content: center; 
   align-items: center; 
+}
+
+.svgAndTextContainer {
+  display: flex;
+  align-items: center; 
+  gap: 25px; 
+}
+
+.svgContainer {
+  flex-shrink: 0; 
 }
 
 .downloadResumeButton {
