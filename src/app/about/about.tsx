@@ -157,7 +157,7 @@ const AboutPage = () => {
             you'd like to check out the template, visit my GitHub profile from
             the 'Contact' page or simply click{" "}
             <a
-              href="https://zacharycvivian.github.io/angular-cyberlabs-app/login"
+              href="https://angular-cyberlabs-app.vercel.app/login"
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none", color: "teal" }}
