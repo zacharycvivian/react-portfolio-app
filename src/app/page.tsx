@@ -264,6 +264,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <Image
+          className={styles.logoContainer}
             src={Logo}
             alt="Zach Vivian's Logo"
             layout="fill"
