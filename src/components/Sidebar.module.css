@@ -33,9 +33,6 @@
 }
 
 .linkDisabled {
-  background-color: #ccc; /* Greyed-out background */
-  color: #666; /* Darker text color for disabled state */
-  pointer-events: none; /* Prevents clicking on the button */
   opacity: 0.5; /* Make the button look disabled */
 }
 

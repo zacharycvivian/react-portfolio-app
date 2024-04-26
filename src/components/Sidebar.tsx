@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useSession } from "next-auth/react"; // Import useSession
+import { useSession, signIn } from "next-auth/react"; // Import useSession
 import {
   Sheet,
   SheetContent,
@@ -19,6 +19,17 @@ function Sidebar() {
   // Function to close the sheet and navigate
   const handleCloseAndNavigate = () => {
     setSheetOpen(false); // Close the sheet
+  };
+
+  const handleContactClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    if (!session) {
+      e.preventDefault(); // Stop the link from navigating
+      signIn("google", { callbackUrl: "/contact" }); // Redirect to signIn and then to the contact page
+    } else {
+      handleCloseAndNavigate(); // This closes the sheet and allows the navigation
+    }
   };
 
   return (
@@ -119,9 +130,14 @@ function Sidebar() {
               <Link
                 className={styles.links}
                 href={session ? "/contact" : "#"}
-                onClick={
-                  session ? handleCloseAndNavigate : (e) => e.preventDefault()
-                }
+                onClick={(e) => {
+                  if (!session) {
+                    e.preventDefault(); // Stop the link from navigating
+                    signIn("google", { callbackUrl: "/contact" }); // Redirect to signIn and then to the contact page
+                  } else {
+                    handleCloseAndNavigate(); // This closes the sheet and allows the navigation
+                  }
+                }}
               >
                 <div
                   style={{
@@ -145,7 +161,7 @@ function Sidebar() {
                     />
                   </svg>
                   <span className={styles.linkText}>
-                    {session ? "Contact" : "Contact (Log in to View)"}
+                    {session ? "Contact" : "Contact (Requires Login)"}
                   </span>
                 </div>
               </Link>
