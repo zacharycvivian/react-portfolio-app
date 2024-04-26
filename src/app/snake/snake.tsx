@@ -9,26 +9,7 @@ interface Point {
 }
 
 const SnakeGame: React.FC = () => {
-  // First useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
-  useEffect(() => {
-    // Check if 'instructionsShown' key exists in sessionStorage
-    if (sessionStorage.getItem("snakeInstructionsShown") !== "true") {
-      alert(
-        "Welcome to Snake! Here's How to Play:\n\n" +
-          "- You are GREEN.\n" +
-          "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
-          "- 'Eat' apples by colliding with them.\n" +
-          "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
-          "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
-          "Good Luck!"
-      );
-
-      // Set 'instructionsShown' in sessionStorage
-      sessionStorage.setItem("snakeInstructionsShown", "true");
-    }
-  }, []);
-
-  // Second useEffect initializes the matrix-style animation background
+  // First useEffect initializes the matrix-style animation background
   useEffect(() => {
     var canvas = document.getElementById("canvas") as HTMLCanvasElement;
     var ctx = canvas!.getContext("2d")!;
@@ -136,6 +117,25 @@ const SnakeGame: React.FC = () => {
     };
   }, []);
 
+    // Second useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
+    useEffect(() => {
+      // Check if 'instructionsShown' key exists in sessionStorage
+      if (sessionStorage.getItem("snakeInstructionsShown") !== "true") {
+        alert(
+          "Welcome to Snake! Here's How to Play:\n\n" +
+            "- You are GREEN.\n" +
+            "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
+            "- 'Eat' apples by colliding with them.\n" +
+            "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
+            "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
+            "Good Luck!"
+        );
+  
+        // Set 'instructionsShown' in sessionStorage
+        sessionStorage.setItem("snakeInstructionsShown", "true");
+      }
+    }, []);
+
   // State and refs setup for the game mechanics
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const segmentSize = 20; // Define segment size as a constant
@@ -156,6 +156,7 @@ const SnakeGame: React.FC = () => {
   // This useEffect is responsible for adjusting the game size to fit the parent container
   useEffect(() => {
     const updateGameSize = () => {
+      setScore(score);  // This won't change the score but will trigger a re-render
       // Adjust the canvas size to match its parent container's size
       if (canvasRef.current && canvasRef.current.parentElement) {
         const parent = canvasRef.current.parentElement;
