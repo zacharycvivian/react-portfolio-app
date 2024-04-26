@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import SessionProvider from "@/components/SessionProvider";
 import { Providers } from "./providers.jsx";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default async function RootLayout({
             <Header />
             <Sidebar />
             {children}
+            <SpeedInsights />
             <Footer />
           </Providers>
         </SessionProvider>
