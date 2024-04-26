@@ -165,12 +165,10 @@
   font-family: "Fira Code", monospace !important;
 }
 
-
-
 @media (max-width: 600px) {
   .header h2 {
     white-space: nowrap;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     margin-bottom: 4px;
   }
 }
