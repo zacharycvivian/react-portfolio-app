@@ -52,6 +52,11 @@
   z-index: 2;
 }
 
+.card:active {
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+}
+
 .card a {
   color: var(--text-color-light); /* Choose a color that fits your theme */
   text-decoration: none;

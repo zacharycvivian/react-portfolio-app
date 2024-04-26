@@ -51,8 +51,7 @@
   max-width: 97.5%;
   width: 97.5%;
   border-radius: 60px;
-  box-shadow: 20px 20px 60px var(--card-shadow),
-  -20px -20px 60px var(--card-shadow);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   z-index: 3;
 }
 
@@ -68,8 +67,7 @@
 .carouselItem {
   max-width: 600px;
   margin-top: 20px;
-  box-shadow: 20px 20px 30px var(--card-shadow),
-  -20px -20px 30px var(--card-shadow);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   margin-bottom: 20px;
   border-radius: 40px;
   overflow:hidden;
@@ -95,10 +93,20 @@
   border-radius: 50%;
   background-color: var(--button-color-light);
   color: var(--text-color-light);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-  box-shadow: 0px 2px 4px var(--card-shadow),
-  -0px -2px 4px var(--card-shadow); 
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   cursor: pointer;
+}
+
+.chatbotbutton:hover {
+  transform: scale(1.03);
+  background-color: var(--card-hover-light);
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+  z-index: 2;
+}
+
+.chatbotbutton:active {
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
 }
 
 .terminal_toolbar {

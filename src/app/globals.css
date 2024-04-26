@@ -35,6 +35,7 @@
   --card-color-light: #4c5257;
   --card-hover-light: #787d81;
   --card-shadow: #6a7075;
+  --card-shadow-2: #797979;
   --footer-color: #2c3035;
 }
 
@@ -43,12 +44,13 @@
   --secondary-color: #002c7c;
   --third-color: #074081ec;
   --text-color-light: #c6d6f6;
-  --text-color-dark: #d4d7dd;
-  --button-color-light: #0353a4;
+  --text-color-dark: #d4e2ff;
+  --button-color-light: #013594;
   --button-hover-light: #0466c8;
   --card-color-light: #013594;
-  --card-hover-light: #33415c;
+  --card-hover-light: rgb(31, 81, 183);
   --card-shadow: #0e55a1cd;
+  --card-shadow-2: #1066c2cd;
   --footer-color: #131a50;
 }
 
@@ -56,28 +58,15 @@
   --primary-color: #590d22;
   --secondary-color: #a4133c;
   --third-color: #c31244;
-  --text-color-light: #fff0f3;
-  --text-color-dark: #fae7ea;
+  --text-color-light: #ffe7ec;
+  --text-color-dark: #ffd4da;
   --button-color-light: #c9184a;
   --button-hover-light: #dc3363;
   --card-color-light: #a4133c;
-  --card-hover-light: #fc738c;
+  --card-hover-light: #aa1741;
   --card-shadow: #ca3962ce;
+  --card-shadow-2: #e64b77ce;
   --footer-color: #660d26;
-}
-
-[data-theme="emerald"] {
-  --primary-color: #0a290f;
-  --secondary-color: #22732c;
-  --third-color: #289135;
-  --text-color-light: #f2fff0;
-  --text-color-dark: #e7fae9;
-  --button-color-light: #37b045;
-  --button-hover-light: #3dc04c;
-  --card-color-light: #4eae59;
-  --card-hover-light: #3eb84c;
-  --card-shadow: #6ab973a2;
-  --footer-color: #0f3615;
 }
 
 body {

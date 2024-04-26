@@ -28,8 +28,7 @@
   padding: 30px;
   background-color: var(--card-color-light);
   border-radius: 60px;
-  box-shadow: 10px 10px 30px var(--card-shadow),
-  -10px -10px 30px var(--card-shadow);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
@@ -75,13 +74,17 @@
   background: var(--button-color-light);
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 6px 6px 12px var(--card-shadow), -6px -6px 12px var(--card-shadow);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
 }
 
+.downloadResumeButton:hover {
+  background: var(--card-hover-light);
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+}
 
 .downloadResumeButton:active {
   color: var(--text-color-light);
-  box-shadow: inset 4px 4px 12px var(--card-shadow), inset -4px -4px 12px var(--card-shadow);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
 }
 
 @keyframes fadeInLeft {

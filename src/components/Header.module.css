@@ -93,6 +93,9 @@
   background-color: var(--third-color);
   color: var(--text-color-light);
   border-radius: 20px;
+  border-color: transparent;
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+  cursor: pointer;
 }
 
 .iconButton {
@@ -100,13 +103,25 @@
   border-radius: 50%; /* Makes the button's border circular */
   background-color: var(--third-color);
   color: var(--text-color-light);
+  border-color: transparent;
   margin-left: 20px; /* Adjust the space between profile image and mode toggle */
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
 }
 
 .iconButton img {
   width: 55px; /* Increase width as needed */
   height: 55px; /* Increase height as needed */
-  border: 1px solid var(--text-color-light);
+  border-color: transparent;
+}
+
+.iconButton:hover {
+  background: var(--card-hover-light);
+  box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
+}
+
+.iconButton:active {
+  background: var(--card-hover-light);
+  box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
 }
 
 .profileAndToggleContainer {

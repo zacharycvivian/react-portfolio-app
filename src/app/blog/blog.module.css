@@ -29,12 +29,10 @@
     padding: 30px;
     background-color: var(--card-color-light);
     border-radius: 60px;
-    box-shadow: 20px 20px 60px var(--card-shadow),
-    -20px -20px 60px var(--card-shadow);
+    box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
     backdrop-filter: blur(10px);
     color: var(--text-color-light);
-    transition: transform 0.3s ease, box-shadow 0.3s ease,
-      background-color 0.3s ease, width 0.3s ease;
+    transition: all 0.3s;
     max-width: 90%;
     width: 90%;
     margin-left: auto;
@@ -42,9 +40,13 @@
   }
   
   .card:hover {
-    transform: scale(1.03);
-    background-color: var(--card-hover-light);
-    width: 95%;
+    background: var(--card-hover-light);
+    box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+  }
+
+  .card:active {
+    color: var(--text-color-light);
+    box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
   }
 
   .cardContent {

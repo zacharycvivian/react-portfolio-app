@@ -28,8 +28,7 @@
   transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; 
   text-decoration: none; 
   height: 50px; 
-  box-shadow: 5px 5px 10px var(--card-shadow),
-  -5px -5px 10px var(--card-shadow);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
 }
 
 .linkDisabled {
@@ -56,6 +55,11 @@
 }
 
 .link:hover {
-  transform: scale(1.05); 
   background-color: var(--card-hover-light); 
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+}
+
+.link:active {
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
 }
