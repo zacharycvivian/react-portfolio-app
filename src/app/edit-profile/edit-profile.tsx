@@ -101,6 +101,7 @@ const EditProfilePage = () => {
     const phone = `${phonePart1}${phonePart2}${phonePart3}`;
     const userProfileUpdate = {
       ...profile,
+      phone,
       profileImageUrl: session.user.image ?? "",
     };
 
