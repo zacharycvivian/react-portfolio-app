@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import styles from "./about.module.css";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 
 // Define Skill interface to type-check the props in SkillBar component
@@ -60,6 +60,17 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
 // The AboutPage component that houses all content for the about me section
 const AboutPage = () => {
   const { data: session } = useSession(); // Destructure to get the session object
+
+  const handleDownloadClick = () => {
+    if (session) {
+      // Logic for opening the resume in a new tab
+      window.open("@/../zcvivian_Resume.pdf", '_blank');  // Adjust the file path as needed
+    } else {
+      // If the user is not logged in, redirect to the signIn page and then back to the /about page
+      signIn("google", { callbackUrl: `${window.location.origin}/about` });  // Adjust the provider as needed
+    }
+  };
+
   const professionalSkills = [
     { skill: "Problem Solving", level: 90 },
     { skill: "Communication", level: 95 },
@@ -657,27 +668,12 @@ const AboutPage = () => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {session ? (
-            // If the user is logged in, show the download button
-            <a
-              href="@/../zcvivian_Resume.pdf"
-              download
-              className={styles.downloadResumeButton}
-            >
-              Download Resume
-            </a>
-          ) : (
-            // If the user is not logged in, show a disabled button or message
-            <motion.div
-              className={`${styles.downloadResumeButton} ${styles.linkDisabled}`}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              Log In to Download Resume
-            </motion.div>
-          )}
+          <button
+          onClick={handleDownloadClick}
+          className={styles.downloadResumeButton}
+        >
+          {session ? "Download Resume" : "Log In to Download Resume"}
+        </button>
         </motion.div>
       </div>
     </div>
