@@ -341,23 +341,26 @@ export default function Home() {
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Mountains}
+                    priority
                     alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado "
                   />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Zach}
+                    priority
                     alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
                   />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Squad}
+                    priority
                     alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
                   />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Image src={Turbo} alt="Image of Zach Vivian's dog, Turbo" />
+                  <Image src={Turbo} priority alt="Image of Zach Vivian's dog, Turbo" />
                 </CarouselItem>
               </CarouselContent>
               <CarouselPrevious />
