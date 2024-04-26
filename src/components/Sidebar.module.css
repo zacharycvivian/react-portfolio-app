@@ -29,7 +29,7 @@
   text-decoration: none; 
   height: 50px; 
   box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  border: transparent !important;
+  border: transparent;
 }
 
 .linkDisabled {
