@@ -22,4 +22,8 @@ const auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 const functions = getFunctions(app);
 
+if (typeof window !== "undefined") {
+  const analytics = getAnalytics(app);
+}
+
 export { auth, app, db, functions };
