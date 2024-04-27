@@ -141,8 +141,10 @@ function Header() {
   const handleAuthAction = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
+      console.log("string" + (session));
     } else {
       signIn("google", { callbackUrl: "/" });
+      console.log("string" + (session));
     }
   };
 

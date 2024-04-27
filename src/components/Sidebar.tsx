@@ -133,7 +133,7 @@ function Sidebar() {
                 onClick={(e) => {
                   if (!session) {
                     e.preventDefault(); // Stop the link from navigating
-                    signIn("google", { callbackUrl: "/contact" }); // Redirect to signIn and then to the contact page
+                    signIn(); // Redirect to signIn and then to the contact page
                   } else {
                     handleCloseAndNavigate(); // This closes the sheet and allows the navigation
                   }

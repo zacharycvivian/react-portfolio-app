@@ -10,6 +10,7 @@ import SessionProvider from "@/components/SessionProvider";
 import { Providers } from "./providers.jsx";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import FirebaseAuthProvider from "@/components/FirebaseAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SessionProvider session={session}>
+          <FirebaseAuthProvider>
           <Providers>
             <Header />
             <Sidebar />
@@ -37,6 +39,7 @@ export default async function RootLayout({
             <Analytics />
             <Footer />
           </Providers>
+          </FirebaseAuthProvider>
         </SessionProvider>
       </body>
     </html>
