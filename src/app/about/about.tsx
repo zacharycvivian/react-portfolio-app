@@ -64,10 +64,10 @@ const AboutPage = () => {
   const handleDownloadClick = () => {
     if (session) {
       // Logic for opening the resume in a new tab
-      window.open("@/../zcvivian_Resume.pdf", '_blank');  // Adjust the file path as needed
+      window.open("@/../zcvivian_Resume.pdf", "_blank"); // Adjust the file path as needed
     } else {
       // If the user is not logged in, redirect to the signIn page and then back to the /about page
-      signIn("google", { callbackUrl: `${window.location.origin}/about` });  // Adjust the provider as needed
+      signIn("google", { callbackUrl: `${window.location.origin}/about` }); // Adjust the provider as needed
     }
   };
 
@@ -600,18 +600,33 @@ const AboutPage = () => {
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg
-                viewBox="0 0 256 256"
-                width="40" // Adjusted width to match other icons
-                height="40" // Adjusted height to match other icons
                 xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid"
+                viewBox="0 0 256 256"
+                className="h-10 w-10"
               >
-                <path fill="none" d="M0 0h256v256H0z" />
-                <path
-                fill="currentColor" // Using currentColor to adapt to CSS color settings
-                stroke="currentColor"
-                  d="M208 128l-80 80M192 40L40 192"
-                />
+                <rect width="256" height="256" fill="none"></rect>
+                <line
+                  x1="208"
+                  y1="128"
+                  x2="128"
+                  y2="208"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                ></line>
+                <line
+                  x1="192"
+                  y1="40"
+                  x2="40"
+                  y2="192"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                ></line>
               </svg>
             </div>
             <div>
@@ -669,11 +684,11 @@ const AboutPage = () => {
           viewport={{ once: true }}
         >
           <button
-          onClick={handleDownloadClick}
-          className={styles.downloadResumeButton}
-        >
-          {session ? "Download Resume" : "Log In to Download Resume"}
-        </button>
+            onClick={handleDownloadClick}
+            className={styles.downloadResumeButton}
+          >
+            {session ? "Download Resume" : "Log In to Download Resume"}
+          </button>
         </motion.div>
       </div>
     </div>
