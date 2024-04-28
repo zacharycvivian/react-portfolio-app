@@ -37,10 +37,25 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div className={styles.modalBackdrop}>
+      <div className={styles.modalContent}>
+        <h2>{title}</h2>
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
 function Header() {
   const { data: session } = useSession();
   const [isReportBugModalOpen, setReportBugModalOpen] = useState(false);
   const [isFeedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
   const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
   const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
   const originalName = "Zachary Vivian";
@@ -103,25 +118,6 @@ function Header() {
     return () => clearTimeout(delayId);
   }, []);
 
-  const Modal: React.FC<ModalProps> = ({
-    isOpen,
-    onClose,
-    title,
-    children,
-  }) => {
-    if (!isOpen) return null;
-
-    return ReactDOM.createPortal(
-      <div className={styles.modalBackdrop}>
-        <div className={styles.modalContent}>
-          <h2>{title}</h2>
-          {children}
-        </div>
-      </div>,
-      document.body
-    );
-  };
-
   const addFeedback = async (email: string, feedback: string) => {
     await addDoc(collection(db, "feedback"), {
       email,
@@ -141,10 +137,10 @@ function Header() {
   const handleAuthAction = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
-      console.log("string" + (session));
+      console.log("string" + session);
     } else {
       signIn("google", { callbackUrl: "/" });
-      console.log("string" + (session));
+      console.log("string" + session);
     }
   };
 
@@ -157,10 +153,10 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.headertext}>
-      <h2>
-        {animatedTitle}
-        <span className={styles.cursor}>|</span>
-      </h2>
+        <h2>
+          {animatedTitle}
+          <span className={styles.cursor}>|</span>
+        </h2>
       </div>
       <div className={styles.profileAndToggleContainer}>
         <DropdownMenu>
@@ -251,7 +247,15 @@ function Header() {
               className={styles.textareaField}
               placeholder="Your feedback..."
               name="feedback"
+              maxLength={275}
+              onChange={(e) => {
+                const characterCount = e.target.value.length;
+                setCharacterCount(characterCount);
+              }}
             ></textarea>
+            <span className={styles.characterLimit}>
+              {`Limit: ${characterCount} / 275`}
+            </span>
             <div className={styles.formButtons}>
               <button
                 type="button"
@@ -295,7 +299,15 @@ function Header() {
               className={styles.textareaField}
               placeholder="Describe the bug..."
               name="bugDescription"
+              maxLength={275}
+              onChange={(e) => {
+                const characterCount = e.target.value.length;
+                setCharacterCount(characterCount);
+              }}
             ></textarea>
+            <span className={styles.characterLimit}>
+              {`Limit: ${characterCount} / 275`}
+            </span>
             <div className={styles.formButtons}>
               <button
                 type="button"
