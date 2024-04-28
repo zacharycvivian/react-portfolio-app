@@ -24,7 +24,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/../firebase";
 import { motion } from "framer-motion";
-
+ 
 const fadeInVariant = {
   visible: {
     opacity: 1,
