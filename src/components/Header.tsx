@@ -33,19 +33,15 @@ interface Bugs {
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
     <div className={styles.modalBackdrop}>
-      <div className={styles.modalContent}>
-        <h2>{title}</h2>
-        {children}
-      </div>
+      <div className={styles.modalContent}>{children}</div>
     </div>,
     document.body
   );
@@ -224,8 +220,11 @@ function Header() {
         <Modal
           isOpen={isFeedbackModalOpen}
           onClose={() => setFeedbackModalOpen(false)}
-          title="Give Feedback"
         >
+          <h2 className={styles.modalTitle}>
+            <strong>Submit Feedback</strong>
+          </h2>
+
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -273,8 +272,11 @@ function Header() {
         <Modal
           isOpen={isReportBugModalOpen}
           onClose={() => setReportBugModalOpen(false)}
-          title="Report Bugs"
         >
+          <h2 className={styles.modalTitle}>
+            <strong>Submit a Bug Report</strong>
+          </h2>
+
           <form
             onSubmit={async (e) => {
               e.preventDefault();

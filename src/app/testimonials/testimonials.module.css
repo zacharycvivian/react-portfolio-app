@@ -118,15 +118,26 @@
   color: var(--text-color-light);
   padding: 20px;
   border-radius: 30px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
   width: 90%;
   max-width: 500px;
+}
+
+.modalTitle {
+  text-align: center;
+  font-size: 1.2rem;
 }
 
 .formButtons {
   display: flex;
   justify-content: space-around;
   margin-top: 10px;
+}
+
+.characterLimit {
+  text-align: left;
+  font-size: 0.8rem; /* Smaller font size for character limit */
+  color: var(--text-color-light); /* Adjust color based on your theme */
 }
 
 .inputField,
@@ -138,6 +149,8 @@
   border: 1px solid #ddd;
   border-radius: 20px;
   background-color: var(--card-hover-light);
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  backdrop-filter: blur(10px);
 }
 
 .submitButton,
@@ -148,6 +161,8 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  backdrop-filter: blur(10px);
 }
 
 .submitButton {
@@ -162,7 +177,12 @@
 
 .submitButton:hover,
 .cancelButton:hover {
-  opacity: 0.9;
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2) !important; 
+}
+
+.submitButton:active,
+.cancelButton:active {
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2) !important;
 }
 
 .userImage {
@@ -212,7 +232,7 @@
 }
 
 .starRating span.selected {
-  color: rgb(238, 202, 0);
+  color: rgb(255, 220, 21);
 }
 
 .filter-controls {

@@ -448,6 +448,7 @@ const TestimonialsPage = () => {
             whileInView="visible"
             viewport={{ once: true }}
           >
+            <h2 className={styles.modalTitle}><strong>Submit a Testimonial</strong></h2>
             <form onSubmit={handleSubmit}>
               {/* Combined Name Field */}
               <label className={styles.formLabel}>
@@ -470,7 +471,7 @@ const TestimonialsPage = () => {
                 Review:
                 <textarea
                   className={styles.textareaField}
-                  placeholder="Your Review (Max. 275 Characters)"
+                  placeholder="Leave a professional review..."
                   value={formData.review}
                   onChange={(e) =>
                     setFormData({
@@ -481,7 +482,7 @@ const TestimonialsPage = () => {
                   maxLength={275}
                   style={{ resize: "none" }}
                 />
-                <div>{formData.review.length}/275</div>
+                <div className={styles.characterLimit}>Limit: {formData.review.length}/275</div>
               </label>
               <div className={styles.formButtons}>
                 <button
