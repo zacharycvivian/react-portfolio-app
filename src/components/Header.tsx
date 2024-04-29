@@ -37,15 +37,27 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+    return () => {
+      document.body.style.overflow = 'visible'; // Re-enable scrolling
+    };
+  }, [isOpen]); // Depend on isOpen to re-run this effect
+
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className={styles.modalBackdrop}>
-      <div className={styles.modalContent}>{children}</div>
+    <div className={styles.modalBackdrop} onClick={onClose}>
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+        {children}
+      </div>
     </div>,
     document.body
   );
 };
+
 
 function Header() {
   const { data: session } = useSession();

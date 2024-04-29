@@ -132,6 +132,24 @@ const TestimonialsPage = () => {
     setShowFiltersModal(true);
   };
 
+  useEffect(() => {
+    // Function to toggle body overflow
+    const toggleBodyOverflow = (show: boolean) => {
+      document.body.style.overflow = show ? 'hidden' : 'visible';
+    };
+  
+    // Monitor both modals for any open state
+    if (showModal || showFiltersModal) {
+      toggleBodyOverflow(true);
+    } else {
+      toggleBodyOverflow(false);
+    }
+  
+    // Cleanup function to ensure overflow is reset when component unmounts
+    return () => toggleBodyOverflow(false);
+  }, [showModal, showFiltersModal]); // Depend on showModal and showFiltersModal to re-run this effect
+  
+
   // Effect hook to subscribe to testimonials collection updates
   useEffect(() => {
     const q = query(collection(db, "testimonials"), orderBy("time", "desc"));
@@ -192,7 +210,6 @@ const TestimonialsPage = () => {
     return filteredText;
   };
 
-  // Handle form submission and add a new testimonial
   // Handle form submission and add a new testimonial
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
