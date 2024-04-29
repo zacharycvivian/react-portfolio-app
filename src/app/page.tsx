@@ -83,33 +83,38 @@ export default function Home() {
             //"/play - (WIP) Play a game within the command line\n"
           );
           break;
-        case "/ask":
-          if (prompt) {
-            setIsLoading(true); // Start loading animation
-            const docRef = addDoc(collection(db, "generate"), {
-              prompt: prompt,
-            }).then((ref) => {
-              const unsubscribe = onSnapshot(
-                doc(db, "generate", ref.id),
-                (doc) => {
-                  if (doc.exists() && doc.data().response) {
-                    setTerminalOutput("Chatbot: " + doc.data().response);
-                    setIsLoading(false); // Stop loading animation
-                    unsubscribe();
+          case "/ask":
+            if (prompt) {
+              setIsLoading(true); // Start loading animation
+              const docRef = addDoc(collection(db, "generate"), {
+                prompt: prompt,
+              }).then((ref) => {
+                const unsubscribe = onSnapshot(
+                  doc(db, "generate", ref.id),
+                  (doc) => {
+                    if (doc.exists() && doc.data().response) {
+                      setTerminalOutput("Chatbot: " + doc.data().response);
+                      setIsLoading(false); // Stop loading animation
+                      unsubscribe();
+                    } else if (doc.exists() && doc.data().error) {
+                      setTerminalOutput("Error: " + doc.data().error);
+                      setIsLoading(false); // Stop loading animation
+                      unsubscribe();
+                    }
+                  },
+                  (err) => {
+                    console.error("Error fetching chat response:", err);
+                    setTerminalOutput("Error: " + err.message);
+                    setIsLoading(false); // Ensure loading stops on error
                   }
-                },
-                (err) => {
-                  console.error("Error fetching chat response:", err);
-                  setIsLoading(false); // Ensure loading stops on error
-                }
+                );
+              });
+            } else {
+              setTerminalOutput(
+                "Please provide a question after '/ask'. For example, '/ask How are you today?'"
               );
-            });
-          } else {
-            setTerminalOutput(
-              "Please provide a question after '/ask'. For example, '/ask How are you today?'"
-            );
-          }
-          break;
+            }
+            break;
         case "/about":
           setTerminalOutput(
             "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, AI Chatbot: Google Gemini, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel, Other Tools: Google Search Console (Sitemapping)\n" +
