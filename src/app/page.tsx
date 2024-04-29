@@ -16,14 +16,9 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import React, { useState, useEffect } from "react";
-import {
-  collection,
-  doc,
-  addDoc,
-  onSnapshot
-} from "firebase/firestore";
+import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/../firebase";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const fadeInVariant = {
   visible: {
@@ -34,8 +29,9 @@ const fadeInVariant = {
   },
   hidden: {
     opacity: 0,
-    scale: 0.65,
-    y: 50,
+    scale: 1,
+    y: 100,
+    transition: { duration: 0.15 },
   },
 };
 
@@ -80,11 +76,11 @@ export default function Home() {
           setTerminalOutput(
             "/help - Show a list of commands\n" +
               "/ask - Ask a Google Gemini AI a question\n" +
-              "/about - Learn more about this website's frameworks\n" 
-              //"/ls - (WIP) Lists all files within the current directory\n" +
-              //"/cat - (WIP) View the contents of a specified file within the current directory\n" +
-              //"/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
-              //"/play - (WIP) Play a game within the command line\n"
+              "/about - Learn more about this website's frameworks\n"
+            //"/ls - (WIP) Lists all files within the current directory\n" +
+            //"/cat - (WIP) View the contents of a specified file within the current directory\n" +
+            //"/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
+            //"/play - (WIP) Play a game within the command line\n"
           );
           break;
         case "/ask":
@@ -200,60 +196,62 @@ export default function Home() {
       >
         Chat
       </motion.button>
-      {isChatVisible && (
-        <motion.div
-          className={styles.terminalcontainer}
-          style={{
-            top: `${buttonTop - terminalHeight}px`,
-            right: "20px",
-            position: "fixed",
-            zIndex: 1100,
-          }}
-          variants={fadeInVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <div className={styles.terminal_toolbar}>
-            <div className={styles.close_button}>
-              <button
-                className={`${styles.btn} ${styles["btn-color"]}`}
-                onClick={() => setIsChatVisible(!isChatVisible)}
-              ></button>
-              <button className={styles.btn}></button>
-              <button className={styles.btn}></button>
-            </div>
-            <p className={styles.user}>
-              {formatUsername(session?.user?.name)}@terminal: ~
-            </p>
+      <AnimatePresence>
+        {isChatVisible && (
+          <motion.div
+            className={styles.terminalcontainer}
+            style={{
+              top: `${buttonTop - terminalHeight}px`,
+              right: "20px",
+              position: "fixed",
+              zIndex: 1100,
+            }}
+            variants={fadeInVariant}
+            initial="hidden"
+            animate="visible"
+            exit="hidden" // Ensure the terminal animates out when removed
+          >
+            <div className={styles.terminal_toolbar}>
+              <div className={styles.close_button}>
+                <button
+                  className={`${styles.btn} ${styles["btn-color"]}`}
+                  onClick={() => setIsChatVisible(!isChatVisible)}
+                ></button>
+                <button className={styles.btn}></button>
+                <button className={styles.btn}></button>
+              </div>
+              <p className={styles.user}>
+                {formatUsername(session?.user?.name)}@terminal: ~
+              </p>
 
-            <div className={styles.add_tab}>+</div>
-          </div>
-          <div className={styles.terminal_body}>
-            <div className={styles.terminal_prompt}>
-              <span className={styles.terminal_user}>
-                {formatUsername(session?.user?.name)}@terminal/main/:
-              </span>
-              <span className={styles.terminal_location}>~</span>
-              <span className={styles.terminal_bling}>$</span>
-              <span>{lastCommand}</span>
+              <div className={styles.add_tab}>+</div>
             </div>
-            <div className={styles.terminal_output}>
-              <pre className={styles.output_text}>{terminalOutput}</pre>
+            <div className={styles.terminal_body}>
+              <div className={styles.terminal_prompt}>
+                <span className={styles.terminal_user}>
+                  {formatUsername(session?.user?.name)}@terminal/main/:
+                </span>
+                <span className={styles.terminal_location}>~</span>
+                <span className={styles.terminal_bling}>$</span>
+                <span>{lastCommand}</span>
+              </div>
+              <div className={styles.terminal_output}>
+                <pre className={styles.output_text}>{terminalOutput}</pre>
+              </div>
+              <div className={styles.terminal_input}>
+                <input
+                  placeholder="Type '/help' here to get started..."
+                  className={styles.input_text}
+                  type="text"
+                  value={currentInput}
+                  onChange={(e) => setCurrentInput(e.target.value)}
+                  onKeyDown={handleEnterKey}
+                />
+              </div>
             </div>
-            <div className={styles.terminal_input}>
-              <input
-                placeholder="Type '/help' here to get started..."
-                className={styles.input_text}
-                type="text"
-                value={currentInput}
-                onChange={(e) => setCurrentInput(e.target.value)}
-                onKeyDown={handleEnterKey}
-              />
-            </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className={styles.layoutContainer}>
         <motion.div
@@ -264,7 +262,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <Image
-          className={styles.logoContainer}
+            className={styles.logoContainer}
             src={Logo}
             alt="Zach Vivian's Logo"
             layout="fill"
@@ -361,7 +359,11 @@ export default function Home() {
                   />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Image src={Turbo} priority alt="Image of Zach Vivian's dog, Turbo" />
+                  <Image
+                    src={Turbo}
+                    priority
+                    alt="Image of Zach Vivian's dog, Turbo"
+                  />
                 </CarouselItem>
               </CarouselContent>
               <CarouselPrevious />
