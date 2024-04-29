@@ -190,8 +190,7 @@ export default function Home() {
         style={{ top: `${buttonTop}px` }}
         onClick={() => setIsChatVisible(!isChatVisible)}
         variants={fadeInVariant}
-        initial="hidden"
-        whileInView="visible"
+        initial="visible"
         viewport={{ once: true }}
       >
         Chat
