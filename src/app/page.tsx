@@ -111,7 +111,10 @@ export default function Home() {
               });
             } else {
               setTerminalOutput(
-                "Please provide a question after '/ask'. For example, '/ask How are you today?'"
+                "Please provide a question after '/ask'. For example, '/ask How are you able to help me?'\n" +
+                "'/ask How do I leave a testimonial?'\n" +
+                "'/ask Tell me Zach's contact information!'\n" +
+                "'/ask How do I log in to this website?"
               );
             }
             break;
