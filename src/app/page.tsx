@@ -35,6 +35,28 @@ const fadeInVariant = {
   },
 };
 
+const chatBotVariant = {
+  hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 }, // Start small from bottom right
+  visible: { 
+    opacity: 1, 
+    scale: 1,  // Overshoot to create a bounce effect
+    x: 0, 
+    y: 0,
+    transition: {
+      type: 'spring',  // Using spring physics for the bounce
+      stiffness: 400,
+      damping: 20
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.5, 
+    x: 200, 
+    y: 200,  // Move out towards bottom right
+    transition: { duration: 0.5 }  // Smoother exit without bounce
+  }
+}
+
 export default function Home() {
   const { data: session } = useSession();
   const [buttonTop, setButtonTop] = useState(20);
@@ -197,7 +219,7 @@ export default function Home() {
         className={styles.chatbotbutton}
         style={{ top: `${buttonTop}px` }}
         onClick={() => setIsChatVisible(!isChatVisible)}
-        variants={fadeInVariant}
+        variants={chatBotVariant}
         initial="visible"
         viewport={{ once: true }}
       >
@@ -213,7 +235,7 @@ export default function Home() {
               position: "fixed",
               zIndex: 1100,
             }}
-            variants={fadeInVariant}
+            variants={chatBotVariant}
             initial="hidden"
             animate="visible"
             exit="hidden" // Ensure the terminal animates out when removed
