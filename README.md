@@ -12,6 +12,7 @@ UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons),
 Code Help and Image Generation: ChatGPT-4/DALLE-3,
 Hosting: Domain from Squarespace & Hosted on Vercel,
 Other Tools: Google Search Console (Sitemapping)
+
 ![frameworks](https://github.com/zacharycvivian/react-portfolio-app/assets/161660633/60eb1559-0687-4483-a4f3-1e3902e912ae)
 
 ## Note
