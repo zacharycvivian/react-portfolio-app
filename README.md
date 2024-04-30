@@ -1,4 +1,6 @@
 This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![Image of Zachary Vivian's Portfolio](/public/PortfoloReadme.jpg "Portfolio Example")
+
  
 ## Tools
 Frameworks: React/Next.js/Tailwind CSS,
