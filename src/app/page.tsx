@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import styles from "./page.module.css";
 import Zach from "@/../public/Zach.jpg";
 import Turbo from "@/../public/Turbo.jpg";
@@ -7,6 +7,7 @@ import Squad from "@/../public/Squad.jpg";
 import Mountains from "@/../public/Mountains.jpg";
 import Logo from "@/../public/HeaderLogo.png";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
@@ -37,25 +38,62 @@ const fadeInVariant = {
 
 const chatBotVariant = {
   hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 }, // Start small from bottom right
-  visible: { 
-    opacity: 1, 
-    scale: 1,  // Overshoot to create a bounce effect
-    x: 0, 
+  visible: {
+    opacity: 1,
+    scale: 1, // Overshoot to create a bounce effect
+    x: 0,
     y: 0,
     transition: {
-      type: 'spring',  // Using spring physics for the bounce
+      type: "spring", // Using spring physics for the bounce
       stiffness: 400,
-      damping: 20
-    }
+      damping: 20,
+    },
   },
-  exit: { 
-    opacity: 0, 
-    scale: 0.5, 
-    x: 200, 
-    y: 200,  // Move out towards bottom right
-    transition: { duration: 0.5 }  // Smoother exit without bounce
-  }
+  exit: {
+    opacity: 0,
+    scale: 0.5,
+    x: 200,
+    y: 200, // Move out towards bottom right
+    transition: { duration: 0.5 }, // Smoother exit without bounce
+  },
+};
+
+interface Skill {
+  skill: string;
+  level: number;
 }
+
+const getSkillLevelLabel = (level: number): string => {
+  if (level <= 40) return "Beginner";
+  if (level <= 60) return "Intermediate";
+  if (level <= 85) return "Advanced";
+  return "Skilled";
+};
+
+// SkillBar component displays a skill and its proficiency level visually
+const SkillBar: React.FC<Skill> = ({ skill, level }) => {
+  const levelLabel = getSkillLevelLabel(level);
+
+  return (
+    // A row for each skill showing the skill name and a visual representation of the level
+    <div className={styles.skillRow}>
+      <div className={styles.skillName}>{skill}</div>
+      <div className={styles.skillLevelInfo}>
+        <div className={styles.skillBar}>
+          <div
+            className={styles.skillLevel}
+            style={{ width: `${level}%` }}
+            role="progressbar"
+            aria-valuenow={level}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          ></div>
+        </div>
+        <div className={styles.skillLevelLabel}>{levelLabel}</div>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const { data: session } = useSession();
@@ -67,6 +105,47 @@ export default function Home() {
   const [lastCommand, setLastCommand] = useState("");
   const terminalHeight = 300;
   const [isLoading, setIsLoading] = useState(false);
+
+  const texts = [
+    "INCIDENT RESPONSE",
+    "ASSET PROTECTION",
+    "THREAT INTELLIGENCE",
+    "VULNERABILITY ASSESSMENT",
+    "PENETRATION TESTING",
+    "RISK MANAGEMENT",
+    "DATA PROTECTION",
+    "NETWORK SECURITY",
+  ];
+  const [index, setIndex] = useState(0);
+  const [displayWord, setDisplayWord] = useState(texts[0]);
+  const [transitionIndex, setTransitionIndex] = useState(0);
+
+  useEffect(() => {
+    const currentWord = texts[index];
+    const nextWord = texts[(index + 1) % texts.length];
+    const maxTransitionLength = Math.max(currentWord.length, nextWord.length);
+
+    if (transitionIndex <= maxTransitionLength) {
+      const timeoutId = setTimeout(() => {
+        const newChars =
+          nextWord.slice(0, transitionIndex) +
+          currentWord.slice(transitionIndex);
+        setDisplayWord(newChars);
+        setTransitionIndex(transitionIndex + 1);
+      }, 75); // Adjust the speed of the character transitions as needed
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      // After completing the transition to the next word, add a pause
+      const pauseTimeoutId = setTimeout(() => {
+        setIndex((index + 1) % texts.length);
+        setTransitionIndex(0);
+        setDisplayWord(nextWord); // Ensure displayWord is fully transitioned to nextWord
+      }, 2000); // 2-second delay after each word completes its transition
+
+      return () => clearTimeout(pauseTimeoutId);
+    }
+  }, [transitionIndex, index, texts]);
 
   useEffect(() => {
     let dotCount = 0;
@@ -96,89 +175,83 @@ export default function Home() {
       switch (command) {
         case "/help":
           setTerminalOutput(
-            "/help - Show a list of commands\n" +
-              "/ask - Ask a Google Gemini AI a question\n" +
-              "/about - Learn more about this website's frameworks\n"
-            //"/ls - (WIP) Lists all files within the current directory\n" +
-            //"/cat - (WIP) View the contents of a specified file within the current directory\n" +
-            //"/cd - (WIP) Changes the current directory, letting you navigate deeper into this website's files one step at a time\n" +
-            //"/play - (WIP) Play a game within the command line\n"
+            "/help - Shows a list of commands\n" +
+              "/connect - Share a message/job opportunity with me\n" +
+              "/ask <question> - Ask a Chatbot a question about this site\n" +
+              "/play <game> - Play one of my games!\n" +
+              "/bug <report> - Leave notice of a bug you found\n" +
+              "/feedback <suggestion> - Suggest improvements\n"
           );
           break;
-          case "/ask":
-            if (prompt) {
-              setIsLoading(true); // Start loading animation
-              const docRef = addDoc(collection(db, "generate"), {
-                prompt: prompt,
-              }).then((ref) => {
-                const unsubscribe = onSnapshot(
-                  doc(db, "generate", ref.id),
-                  (doc) => {
-                    if (doc.exists() && doc.data().response) {
-                      setTerminalOutput("Chatbot: " + doc.data().response);
-                      setIsLoading(false); // Stop loading animation
-                      unsubscribe();
-                    } else if (doc.exists() && doc.data().error) {
-                      setTerminalOutput("Error: " + doc.data().error);
-                      setIsLoading(false); // Stop loading animation
-                      unsubscribe();
-                    }
-                  },
-                  (err) => {
-                    console.error("Error fetching chat response:", err);
-                    setTerminalOutput("Error: " + err.message);
-                    setIsLoading(false); // Ensure loading stops on error
+        case "/ask":
+          if (prompt) {
+            setIsLoading(true); // Start loading animation
+            const docRef = addDoc(collection(db, "generate"), {
+              prompt: prompt,
+            }).then((ref) => {
+              const unsubscribe = onSnapshot(
+                doc(db, "generate", ref.id),
+                (doc) => {
+                  if (doc.exists() && doc.data().response) {
+                    setTerminalOutput("Chatbot: " + doc.data().response);
+                    setIsLoading(false); // Stop loading animation
+                    unsubscribe();
+                  } else if (doc.exists() && doc.data().error) {
+                    setTerminalOutput("Error: " + doc.data().error);
+                    setIsLoading(false); // Stop loading animation
+                    unsubscribe();
                   }
-                );
-              });
-            } else {
-              setTerminalOutput(
-                "Please provide a question after '/ask'. For example, '/ask How are you able to help me?'\n" +
-                "'/ask How do I leave a testimonial?'\n" +
-                "'/ask Tell me Zach's contact information!'\n" +
-                "'/ask How do I log in to this website?"
+                },
+                (err) => {
+                  console.error("Error fetching chat response:", err);
+                  setTerminalOutput("Error: " + err.message);
+                  setIsLoading(false); // Ensure loading stops on error
+                }
               );
-            }
-            break;
-        case "/about":
-          setTerminalOutput(
-            "This website was built with the following tools--Frameworks: React/Next.js/Tailwind CSS, Database: Google Firebase, AI Chatbot: Google Gemini, UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons), Code Help and Image Generation: ChatGPT-4/DALLE-3, Hosting: Domain from Squarespace & Hosted on Vercel, Other Tools: Google Search Console (Sitemapping)\n" +
-              "\n" +
-              "This website and its contents are protected under United States Copyright Law (except artifical-intelligence generated images and text, Shadcn.ui elements, and Radix-ui icons; I do not claim those to be of my own work). You are welcome to use my code (provided on my GitHub profile) as a resource for inspiration, but direct plagiarism will NOT be tolerated. If you have suggestions for improvements or bug fixes, please log in and submit feedback/report bugs under your profile."
-          );
+            });
+          } else {
+            setTerminalOutput(
+              "Glad you'd like to learn more!\n" +
+                "Please provide a question after '/ask'. For example, \n" +
+                "\n" +
+                "'/ask How do I leave a testimonial?'\n" +
+                "\n" +
+                "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+            );
+          }
           break;
         case "/play":
           setTerminalOutput(
-            "Unknown command. Were you trying to play a game?\n" +
+            "A thrill-seeker I see! I have a few options for you!\n" +
+              "You must specify a game after '/play'. For example,\n" +
               "\n" +
-              "Correct usage: '/play <game>'\n" +
+              "'/play CyberWordle'\n" +
               "\n" +
-              "You must specify a game to play (game1, game2, game3). This command is currently a work in progress, eventually it will let the user play text-based games within the CLI, with one game utilizing AI for a decision-based story game."
+              "CyberWordle, Pong, Snake\n" +
+              "More games coming in the future!"
           );
           break;
-        case "/ls":
+        case "/connect":
+          setTerminalOutput("PROVIDE NAME, EMAIL, MESSAGE--CONFIRM MESSAGE\n");
+          break;
+        case "/bug":
           setTerminalOutput(
-            "This command is currently a work in progress. It will let the user list all the files in the 'main' directory of this website's GitHub repo, or specified directory if they navigate to it first."
+            "Ah! You found a pesky bug, did you?\n" +
+              "Please provide a report after '/bug'. For example, \n" +
+              "\n" +
+              "'/bug Profile information not updating after saving changes'\n" +
+              "\n" +
+              "You submit the report, I'll get to squishing!"
           );
           break;
-        case "/cat":
+        case "/feedback":
           setTerminalOutput(
-            "Unknown command. Were you trying to see the contents of a file?\n" +
+            "Creative genius! You want to suggest improvements?\n" +
+              "Please provide a suggestion after '/feedback'. For example, \n" +
               "\n" +
-              "Correct usage: '/cat <file>'\n" +
+              "'/feedback Add some new games!'\n" +
               "\n" +
-              "This command is currently a work in progress. It will let the user view the code for a specified file in the current directory"
-          );
-          break;
-        case "/cd":
-          setTerminalOutput(
-            "Unknown command. Were you trying to navigate to a new directory?\n" +
-              "\n" +
-              "Correct usage: '/cd <path>'\n" +
-              "\n" +
-              "To go back to the previous directory: '/cd ..'\n" +
-              "\n" +
-              "This command is currently a work in progress. It will let the user change to a new directory from the listed files of the current directory they are in. "
+              "I'm always open to suggestions!"
           );
           break;
         default:
@@ -210,6 +283,40 @@ export default function Home() {
 
   const formatUsername = (username: string | null | undefined): string => {
     return username ? username.toLowerCase().replace(/ /g, "") : "guest";
+  };
+
+  const handleDownloadClick = () => {
+    if (session) {
+      // Logic for opening the resume in a new tab
+      window.open("@/../zcvivian_Resume.pdf", "_blank"); // Adjust the file path as needed
+    } else {
+      // If the user is not logged in, redirect to the signIn page and then back to the /about page
+      signIn("google", { callbackUrl: `${window.location.origin}/` }); // Adjust the provider as needed
+    }
+  };
+
+  const technicalSkills = [
+    { skill: "C/C++/Java", level: 75 },
+    { skill: "Python", level: 65 },
+    { skill: "Windows Powershell", level: 70 },
+    { skill: "Office 365", level: 90 },
+    { skill: "MacOS + Terminal", level: 90 },
+    { skill: "Kali Linux + Tools", level: 80 },
+    { skill: "Proxmox VE and Docker", level: 75 },
+    { skill: "React/Next.js", level: 60 },
+    { skill: "Angular", level: 40 },
+    { skill: "MongoDB/MySQL/Firebase", level: 85 },
+    { skill: "GitHub & GitLab", level: 75 },
+  ];
+
+  const handleContactClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    if (!session) {
+      e.preventDefault(); // Stop the link from navigating
+      signIn("google", { callbackUrl: "/contact" }); // Redirect to signIn and then to the contact page
+    } else {
+    }
   };
 
   return (
@@ -299,7 +406,7 @@ export default function Home() {
             priority
           />
         </motion.div>
-        <div className="container flex justify-center align-middle">
+        <div>
           <motion.div
             className={styles.homeContainer}
             variants={fadeInVariant}
@@ -314,18 +421,8 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <strong>Hello, {session?.user?.name ?? "Guest"}</strong>
+              Hi, I'm <strong>Zachary Vivian</strong>
             </motion.h1>
-            <motion.p
-              className={styles.instructions}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              Click the icon on the top left to learn more about me and download
-              a copy of my resume!
-            </motion.p>
             <motion.div
               className={styles.infoContainer}
               variants={fadeInVariant}
@@ -333,25 +430,38 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <h2>
-                <strong>Welcome to my Portfolio Website!</strong>
-              </h2>
+              <div className={styles.textLoopContainer}>
+                <h2>
+                  <strong>{displayWord}</strong>
+                </h2>
+              </div>
               <p className={styles.infoContainerText}>
-                My name is Zachary Vivian, and I am set to graduate from the
-                University of Wisconsin-Platteville in May 2024, with a degree
-                specializing in Cybersecurity. This website serves as a digital
-                portfolio where you can explore my professional journey,
-                discover more about my passions and projects, and understand the
-                skills I bring to the cybersecurity domain. If we've had the
-                opportunity to collaborate or if you're familiar with my work
-                and dedication, I welcome you to leave a testimonial. Your
-                support as a reference could greatly assist me in connecting
-                with future employers and opportunities! To create a
-                testimonial, click the icon in the top right and log in with
-                your Google account. Then, click your profile icon and add your
-                occupation and employer and head to the testimonials tab to
-                leave a professional reference!
+                I am a cybersecurity professional looking for new opportunities
+                to bolster your business's security. Want to learn more about
+                me? Scroll below!. Questions? Press 'Chat' in the lower right
+                corner.
               </p>
+              <div className={styles.buttonContainer}>
+                <Link
+                  className={styles.button}
+                  href={session ? "/contact" : "#"}
+                  onClick={(e) => {
+                    if (!session) {
+                      e.preventDefault(); // Stop the link from navigating
+                      signIn(); // Redirect to signIn and then to the contact page
+                    } else {
+                    }
+                  }}
+                >
+                  Contact
+                </Link>
+                <Link href="/testimonials" passHref>
+                  <button className={styles.button}>Testimonials</button>
+                </Link>
+                <Link href="/blog" passHref>
+                  <button className={styles.button}>Blog</button>
+                </Link>
+              </div>
             </motion.div>
             <Carousel
               className={styles.carouselItem}
@@ -399,6 +509,201 @@ export default function Home() {
               <CarouselNext />
             </Carousel>
           </motion.div>
+          <div className={styles.secondarySection}>
+            <div className={styles.leftColumn}>
+            <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>Education:</strong> The University of Wisconsin -
+                  Platteville, Bachelor of Science in Cybersecurity, Minor in
+                  Business Administration
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>About Me: </strong>My academic journey has fueled a
+                  passion for specializing in either penetration testing or
+                  incident response, with the goal of safeguarding your
+                  organization against sophisticated cyber threats and
+                  vulnerabilities. As a diligent and quick learner, I am keen on
+                  employing advanced analytical tools to thoroughly evaluate
+                  potential security breaches. My
+                  proficiency in applying cybersecurity frameworks and
+                  conducting comprehensive risk assessments enables me to
+                  develop strategic approaches to bolster your cybersecurity
+                  posture. My ambition is to contribute to your team by not only
+                  preempting and mitigating cyber attacks through robust
+                  security protocols but also ensuring a resilient and adaptive
+                  security infrastructure.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>Senior Project:</strong> Our senior project integrates
+                  our cumulative knowledge of the software development
+                  lifecycle, focusing on creating virtual labs for educational
+                  use. My team's role involves developing scalable containers
+                  and pre-configured virtual machines for Windows and Linux,
+                  utilizing Proxmox VE. This allows professors to effortlessly
+                  assign and auto-grade lab assignments, providing a practical,
+                  hands- on learning experience for students. This initiative
+                  highlights our capability to apply theoretical concepts to
+                  real-world challenges, enhancing the educational toolkit for
+                  future academic use. Due to some difficulties the team had
+                  with the UI towards the end of the project, I quickly remade
+                  the entire UI with the experience I had gained from making
+                  this website. If you'd like to check out the template, visit
+                  my GitHub profile from the 'Contact' page or simply click{" "}
+                  <a
+                    href="https://angular-cyberlabs-app.vercel.app/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: "none", color: "teal" }}
+                  >
+                    this link
+                  </a>
+                  . Login with usernames <strong>student</strong> or{" "}
+                  <strong>teacher</strong> and the secure password,{" "}
+                  <strong>password</strong>, to view this template built in
+                  Angular. This does not have any security implementations, the
+                  MySQL database, or the Proxmox VE environment built in with it
+                  since it's being deployed on my GitHub profile.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>Hobbies:</strong> In my leisure hours, I'm passionate
+                  about exploring the great outdoors, often found backpacking
+                  with my friends and my dog, Turbo, by my side. Beyond these
+                  adventures, I have a keen interest in photography and
+                  longboarding, which allows me to appreciate the world's beauty
+                  from different perspectives. Additionally, I dedicate time to
+                  personal projects, like developing this website, which not
+                  only fuels my creativity but also sharpens my technical
+                  skills.
+                </p>
+              </motion.div>
+            </div>
+            <div className={styles.rightColumn}>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <h3 className={styles.skillSectionTitle}>
+                  <strong>Technical Skills:</strong>
+                </h3>
+                {technicalSkills.map((techSkill) => (
+                  <SkillBar
+                    key={techSkill.skill}
+                    skill={techSkill.skill}
+                    level={techSkill.level}
+                  />
+                ))}
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
+                  independently in a fast-paced environment picking orders and
+                  sorting clothing. Also worked in shipping loading truck
+                  trailers with packed merchandise.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>
+                    Blain's Farm & Fleet -- Automotive Sales Associate
+                    (2019-2023):{" "}
+                  </strong>
+                  Supervised and trained department employees on customer
+                  service, special orders, and planograms. Worked alongside
+                  management to implement a new warehouse management system.
+                  Forklift Certified and DOT Hazards trained, assisted in the
+                  warehouse unloading freight trucks, loading customer vehicles,
+                  and building equipment and floor models. Also worked in the
+                  Automotive Service Center as an advisor to set up vehicle
+                  appointments and order tires.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {" "}
+                <p>
+                  <strong>
+                    House on the Rock -- Food Service Worker (2017-2019):{" "}
+                  </strong>
+                  Worked at the popular tourist attraction directing guests and
+                  answering questions. General housekeeping and cleaning
+                  displays as well as changing themes for seasonal events.
+                  Worked in the pizza restaurant and the ice cream shop serving
+                  guests.
+                </p>
+              </motion.div>
+            </div>
+            <motion.div
+              className={styles.buttonContainer}
+              variants={fadeInVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <button
+                onClick={handleDownloadClick}
+                className={styles.downloadResumeButton}
+              >
+                {session ? "Download Resume" : "Log In to Download Resume"}
+              </button>
+            </motion.div>
+          </div>
         </div>
       </div>
     </>

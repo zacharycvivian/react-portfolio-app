@@ -12,77 +12,53 @@
   text-align: center;
 }
 
-.footer-content,
-.build-info,
-.unique-visitors {
+.aboutButton {
+  padding: 10px 20px;
   margin-bottom: 10px;
-  margin-top: 10px;
-}
-
-.wordleButton {
-  padding: 10px 20px;
   background-color: var(--button-color-light); 
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  margin-right: 5px;
   margin-top: 5px;
   box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
 }
 
-.wordleButton:hover {
+.aboutButton:hover {
   background: var(--card-hover-light);
   box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
 }
 
-.wordleButton:active {
+.aboutButton:active {
   background: var(--card-hover-light);
   box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
 }
 
-.snakeButton {
-  padding: 10px 20px;
-  background-color: var(--button-color-light); 
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-left: 5px;
-  margin-right: 2px;
+.socialButtonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Adjust space between buttons */
+  margin-bottom: 10px; /* Space between these buttons and the 'About Website' button */
+}
+
+.socialButton {
+  display: inline-block;
+  width: 40px; /* Size of the buttons */
+  height: 40px; /* Size of the buttons */
+  border-radius: 50%; /* Makes the buttons circular */
+  overflow: hidden;
+  background-color: var(--button-color-light); /* Background color, adjust as needed */
   color: var(--text-color-light);
-  margin-top: 5px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  transition: transform 0.3s ease-in-out;
 }
 
-.snakeButton:hover {
-  background: var(--card-hover-light);
-  box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
+.socialButton img {
+  width: 100%;
+  height: auto;
 }
 
-.snakeButton:active {
-  background: var(--card-hover-light);
-  box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
-}
-
-.pongButton {
-  padding: 10px 20px;
-  background-color: var(--button-color-light); 
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-left: 5px;
-  color: var(--text-color-light);
-  margin-top: 5px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
-}
-
-.pongButton:hover {
-  background: var(--card-hover-light);
-  box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
-}
-
-.pongButton:active {
-  background: var(--card-hover-light);
-  box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
+.socialButton:hover {
+  transform: scale(1.1); /* Slightly enlarge buttons on hover */
 }
 
 .links {

@@ -8,6 +8,7 @@
   background-color: var(--secondary-color);
   height: auto;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-top: 100px;
 }
 
@@ -40,6 +41,142 @@
   z-index: 4;
 }
 
+.secondarySection {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;  /* Make items stretch to fill the container height */
+  background-color: var(--third-color);
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.leftColumn, .rightColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distributes space between cards */
+  flex: 1 1 48%;  /* Controls the width */
+  max-width: 48%;
+  padding: 20px;
+  height: 100%;  /* Ensure columns stretch to match the height of the section */
+}
+
+.card {
+  background-color: var(--card-color-light);
+  color: var(--text-color-light);
+  margin-bottom: 20px;
+  padding: 30px;
+  border-radius: 60px;
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  flex-grow: 1;  /* Allows each card to grow and fill the space */
+  display: flex;
+  flex-direction: column;
+}
+
+
+.skill {
+  margin-bottom: 10px;
+}
+
+.skillSectionTitle {
+  color: var(--text-color-light);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.skillName {
+  font-size: 16px;
+  color: var(--text-color-light);
+  margin-bottom: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-grow: 1; 
+}
+
+.skillBar {
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-grow: 1; 
+  margin-right: 10px;
+}
+
+.skillLevel {
+  background-color: #4caf50; 
+  height: 20px;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.skillLevelInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 2; 
+  padding-bottom:6px;
+}
+
+.skillLevelLabel {
+  font-size: 0.75em;
+  color: var(--text-color-light);
+  white-space: nowrap;
+  font-style: italic; 
+  align-self: flex-end; 
+  padding-left: 10px; 
+}
+
+.downloadResumeButton {
+  color: var(--text-color-light);
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 25px;
+  background: var(--button-color-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+}
+
+.downloadResumeButton:hover {
+  background: var(--card-hover-light);
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+}
+
+.downloadResumeButton:active {
+  color: var(--text-color-light);
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center; /* Center the buttons in the container */
+  align-items: center;
+  gap: 20px; /* Creates a 20px gap between each button */
+  padding: 20px 0; /* Add some vertical padding */
+}
+
+.button {
+  color: var(--text-color-light);
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 25px;
+  background: var(--button-color-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
+}
+
+.button:hover {
+  background: var(--card-hover-light);
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2);
+}
+
+.button:active {
+  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+}
+
+.buttonText {
+  display: block; /* Ensures text takes up the full width */
+}
+
 .infoContainer {
   margin: 10px 0;
   padding: 20px;
@@ -48,8 +185,7 @@
   color: var(--text-color-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease,
     background-color 0.3s ease, width 0.3s ease; /* Added width to the transition */
-  max-width: 97.5%;
-  width: 97.5%;
+  max-width: 800px;
   border-radius: 60px;
   box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   z-index: 3;
@@ -65,7 +201,7 @@
 }
 
 .carouselItem {
-  max-width: 600px;
+  max-width: 800px;
   margin-top: 20px;
   box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
   margin-bottom: 20px;
@@ -264,6 +400,23 @@
   z-index: 8;
 }
 
+.textLoopContainer {
+  font-size: 2rem; /* Larger font size for better visibility */
+  color: var(--text-color-light);
+  text-align: center;
+  margin: 20px 0;
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for text changes */
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.textLoopItem {
+  animation: fadeInOut 3s linear infinite; /* Fade in and out effect */
+}
+
 @keyframes curbl {
   0% {
     background: #ffffff;
@@ -287,8 +440,31 @@
 }
 
 @media (max-width: 768px) {
+  .secondarySection {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .leftColumn, .rightColumn {
+    flex: 1 1 100%; /* Takes full width */
+    max-width: 100%; /* Maximizes width for mobile */
+    padding: 10px;
+    order: 0; /* Ensures left column is on top if needed */
+  }
+
+  .card {
+    margin: 10px 0; /* Adjust vertical spacing for cards */
+    width: 100%; /* Full width cards on mobile */
+    flex-grow: 0; /* Disables flex-grow to maintain content-based height */
+  }
+  
   .logoContainer {
     height: 160px; /* Adjust height as necessary */
+  }
+
+  .welcomeMessage, .textLoopContainer h2 {
+    font-size: 1.25rem; /* Reduce font size for the title */
   }
 
   .logoContainer img {
@@ -302,9 +478,7 @@
   }
 
   .infoContainer {
-    width: 95%;
-    margin: 10px auto;
-    padding: 15px;
+    width: 85vw; /* Adjust the width to be less than the viewport width */
   }
 
   .carouselItem {
@@ -314,5 +488,15 @@
   .homeContainer, .welcomeMessage, .instructions {
     font-size: 1rem; /* Adjust the font size for smaller screens */
   }
+
+  .button {
+    padding: 0.5em 1em; /* Reduce padding to decrease button size */
+    font-size: 0.9rem; /* Optionally reduce font size */
+  }
+
+  .buttonContainer {
+    gap: 10px; /* Reduce the gap between buttons */
+  }
 }
+
 

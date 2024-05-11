@@ -17,8 +17,6 @@
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 5;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
   font-family: "Fira Code", monospace !important;
 }
 

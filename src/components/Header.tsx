@@ -111,7 +111,7 @@ function Header() {
     else if (animationPhase === 5) {
       timeoutId = window.setTimeout(() => {
         setAnimationPhase(1); // Restart the sequence
-      }, 6000); // Adjust this duration to control the length of the pause
+      }, 12000); // Adjust this duration to control the length of the pause
     }
 
     return () => clearTimeout(timeoutId);
