@@ -17,7 +17,13 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import React, { useState, useEffect } from "react";
-import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "@/../firebase";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -106,6 +112,24 @@ export default function Home() {
   const terminalHeight = 300;
   const [isLoading, setIsLoading] = useState(false);
 
+  const addFeedback = async (feedback: string): Promise<void> => {
+    const email = session?.user?.email || "user not logged in";
+    await addDoc(collection(db, "feedback"), {
+      email,
+      feedback,
+      time: serverTimestamp(),
+    });
+  };
+
+  const addBugReport = async (bugDescription: string): Promise<void> => {
+    const email = session?.user?.email || "user not logged in";
+    await addDoc(collection(db, "bugs"), {
+      email,
+      bugs: bugDescription,
+      time: serverTimestamp(),
+    });
+  };
+
   const texts = [
     "INCIDENT RESPONSE",
     "ASSET PROTECTION",
@@ -171,6 +195,7 @@ export default function Home() {
       const inputParts = currentInput.trim().split(" ");
       const command = inputParts[0];
       const prompt = inputParts.slice(1).join(" ");
+      const argument = inputParts.slice(1).join(" ");
 
       switch (command) {
         case "/help":
@@ -235,24 +260,40 @@ export default function Home() {
           setTerminalOutput("PROVIDE NAME, EMAIL, MESSAGE--CONFIRM MESSAGE\n");
           break;
         case "/bug":
-          setTerminalOutput(
-            "Ah! You found a pesky bug, did you?\n" +
-              "Please provide a report after '/bug'. For example, \n" +
-              "\n" +
-              "'/bug Profile information not updating after saving changes'\n" +
-              "\n" +
-              "You submit the report, I'll get to squishing!"
-          );
+          if (argument) {
+            addBugReport(argument).then(() => {
+              setTerminalOutput(
+                `Bug report submitted! Your report: ${argument}`
+              );
+            });
+          } else {
+            setTerminalOutput(
+              "Ah! You found a pesky bug, did you?\n" +
+                "Please provide a report after '/bug'. For example, \n" +
+                "\n" +
+                "'/bug Profile information not updating after saving changes'\n" +
+                "\n" +
+                "You submit the report, I'll get to squishing!"
+            );
+          }
           break;
         case "/feedback":
-          setTerminalOutput(
-            "Creative genius! You want to suggest improvements?\n" +
-              "Please provide a suggestion after '/feedback'. For example, \n" +
-              "\n" +
-              "'/feedback Add some new games!'\n" +
-              "\n" +
-              "I'm always open to suggestions!"
-          );
+          if (argument) {
+            addFeedback(argument).then(() => {
+              setTerminalOutput(
+                `Feedback submitted! Your suggestion: ${argument}`
+              );
+            });
+          } else {
+            setTerminalOutput(
+              "Creative genius! You want to suggest improvements?\n" +
+                "Please provide a suggestion after '/feedback'. For example, \n" +
+                "\n" +
+                "'/feedback Add some new games!'\n" +
+                "\n" +
+                "I'm always open to suggestions!"
+            );
+          }
           break;
         default:
           setTerminalOutput(
@@ -511,7 +552,7 @@ export default function Home() {
           </motion.div>
           <div className={styles.secondarySection}>
             <div className={styles.leftColumn}>
-            <motion.div
+              <motion.div
                 className={styles.card}
                 variants={fadeInVariant}
                 initial="hidden"
@@ -540,14 +581,13 @@ export default function Home() {
                   organization against sophisticated cyber threats and
                   vulnerabilities. As a diligent and quick learner, I am keen on
                   employing advanced analytical tools to thoroughly evaluate
-                  potential security breaches. My
-                  proficiency in applying cybersecurity frameworks and
-                  conducting comprehensive risk assessments enables me to
-                  develop strategic approaches to bolster your cybersecurity
-                  posture. My ambition is to contribute to your team by not only
-                  preempting and mitigating cyber attacks through robust
-                  security protocols but also ensuring a resilient and adaptive
-                  security infrastructure.
+                  potential security breaches. My proficiency in applying
+                  cybersecurity frameworks and conducting comprehensive risk
+                  assessments enables me to develop strategic approaches to
+                  bolster your cybersecurity posture. My ambition is to
+                  contribute to your team by not only preempting and mitigating
+                  cyber attacks through robust security protocols but also
+                  ensuring a resilient and adaptive security infrastructure.
                 </p>
               </motion.div>
               <motion.div

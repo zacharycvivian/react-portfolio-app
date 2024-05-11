@@ -14,21 +14,6 @@ import Link from "next/link";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import ReactDOM from "react-dom";
-import { db } from "@/../firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-
-//Interfaces for type declarations
-interface Feedback {
-  email: string;
-  feedback: string;
-  time: any;
-}
-
-interface Bugs {
-  email: string;
-  bugs: string;
-  time: any;
-}
 
 interface ModalProps {
   isOpen: boolean;
@@ -126,22 +111,6 @@ function Header() {
     return () => clearTimeout(delayId);
   }, []);
 
-  const addFeedback = async (email: string, feedback: string) => {
-    await addDoc(collection(db, "feedback"), {
-      email,
-      feedback,
-      time: serverTimestamp(),
-    });
-  };
-
-  const addBugReport = async (email: string, bugDescription: string) => {
-    await addDoc(collection(db, "bugs"), {
-      email,
-      bugs: bugDescription,
-      time: serverTimestamp(),
-    });
-  };
-
   const handleAuthAction = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
@@ -219,123 +188,10 @@ function Header() {
                 <DropdownMenuItem>
                   <Link href="/edit-profile">Edit Profile</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setReportBugModalOpen(true)}>
-                  Report Bugs
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFeedbackModalOpen(true)}>
-                  Give Feedback
-                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Modal
-          isOpen={isFeedbackModalOpen}
-          onClose={() => setFeedbackModalOpen(false)}
-        >
-          <h2 className={styles.modalTitle}>
-            <strong>Submit Feedback</strong>
-          </h2>
-
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const form = e.target as HTMLFormElement;
-              const feedback = form.elements.namedItem(
-                "feedback"
-              ) as HTMLTextAreaElement;
-
-              if (session?.user?.email && feedback?.value) {
-                await addFeedback(session.user.email, feedback.value);
-                alert("Feedback submitted successfully!");
-                setFeedbackModalOpen(false); // Close the modal
-              } else {
-                alert("An unexpected error occurred.");
-              }
-            }}
-          >
-            <textarea
-              className={styles.textareaField}
-              placeholder="Your feedback..."
-              name="feedback"
-              maxLength={275}
-              onChange={(e) => {
-                const characterCount = e.target.value.length;
-                setCharacterCount(characterCount);
-              }}
-            ></textarea>
-            <span className={styles.characterLimit}>
-              {`Limit: ${characterCount} / 275`}
-            </span>
-            <div className={styles.formButtons}>
-              <button
-                type="button"
-                className={styles.cancelButton}
-                onClick={() => setFeedbackModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button type="submit" className={styles.submitButton}>
-                Submit
-              </button>
-            </div>
-          </form>
-        </Modal>
-        <Modal
-          isOpen={isReportBugModalOpen}
-          onClose={() => setReportBugModalOpen(false)}
-        >
-          <h2 className={styles.modalTitle}>
-            <strong>Submit a Bug Report</strong>
-          </h2>
-
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const form = e.target as HTMLFormElement;
-              const bugDescriptionElement = form.elements.namedItem(
-                "bugDescription"
-              ) as HTMLTextAreaElement;
-
-              if (session?.user?.email && bugDescriptionElement?.value) {
-                await addBugReport(
-                  session.user.email,
-                  bugDescriptionElement.value
-                );
-                alert("Bug report submitted successfully!");
-                setReportBugModalOpen(false); // Close the modal
-              } else {
-                alert("An unexpected error occurred.");
-              }
-            }}
-          >
-            <textarea
-              className={styles.textareaField}
-              placeholder="Describe the bug..."
-              name="bugDescription"
-              maxLength={275}
-              onChange={(e) => {
-                const characterCount = e.target.value.length;
-                setCharacterCount(characterCount);
-              }}
-            ></textarea>
-            <span className={styles.characterLimit}>
-              {`Limit: ${characterCount} / 275`}
-            </span>
-            <div className={styles.formButtons}>
-              <button
-                type="button"
-                className={styles.cancelButton}
-                onClick={() => setReportBugModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button type="submit" className={styles.submitButton}>
-                Submit
-              </button>
-            </div>
-          </form>
-        </Modal>
       </div>
     </header>
   );
