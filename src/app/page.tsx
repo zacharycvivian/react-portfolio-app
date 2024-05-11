@@ -246,15 +246,33 @@ export default function Home() {
           }
           break;
         case "/play":
-          setTerminalOutput(
-            "A thrill-seeker I see! I have a few options for you!\n" +
-              "You must specify a game after '/play'. For example,\n" +
-              "\n" +
-              "'/play CyberWordle'\n" +
-              "\n" +
-              "CyberWordle, Pong, Snake\n" +
-              "More games coming in the future!"
-          );
+          if (argument) {
+            switch (argument.toLowerCase()) {
+              case "cyberwordle":
+                window.location.href = "/cyberwordle";
+                break;
+              case "snake":
+                window.location.href = "/snake";
+                break;
+              case "pong":
+                window.location.href = "/pong";
+                break;
+              default:
+                setTerminalOutput(
+                  "Unknown game. Available games: CyberWordle, Snake, Pong."
+                );
+            }
+          } else {
+            setTerminalOutput(
+              "A thrill-seeker I see! I have a few options for you!\n" +
+                "You must specify a game after '/play'. For example,\n" +
+                "\n" +
+                "'/play CyberWordle'\n" +
+                "\n" +
+                "CyberWordle, Pong, Snake\n" +
+                "More games coming in the future!"
+            );
+          }
           break;
         case "/connect":
           setTerminalOutput("PROVIDE NAME, EMAIL, MESSAGE--CONFIRM MESSAGE\n");
