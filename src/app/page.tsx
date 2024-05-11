@@ -189,137 +189,225 @@ export default function Home() {
     };
   }, [isLoading]);
 
+  const [messageStep, setMessageStep] = useState(0); // 0 - not in process, 1 - name, 2 - email, 3 - message, 4 - confirm
+  const [messageData, setMessageData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      setLastCommand(currentInput);
-      const inputParts = currentInput.trim().split(" ");
-      const command = inputParts[0];
-      const prompt = inputParts.slice(1).join(" ");
-      const argument = inputParts.slice(1).join(" ");
-
-      switch (command) {
-        case "/help":
-          setTerminalOutput(
-            "/help - Shows a list of commands\n" +
-              "/connect - Share a message/job opportunity with me\n" +
-              "/ask <question> - Ask a Chatbot a question about this site\n" +
-              "/play <game> - Play one of my games!\n" +
-              "/bug <report> - Leave notice of a bug you found\n" +
-              "/feedback <suggestion> - Suggest improvements\n"
-          );
-          break;
-        case "/ask":
-          if (prompt) {
-            setIsLoading(true); // Start loading animation
-            const docRef = addDoc(collection(db, "generate"), {
-              prompt: prompt,
-            }).then((ref) => {
-              const unsubscribe = onSnapshot(
-                doc(db, "generate", ref.id),
-                (doc) => {
-                  if (doc.exists() && doc.data().response) {
-                    setTerminalOutput("Chatbot: " + doc.data().response);
-                    setIsLoading(false); // Stop loading animation
-                    unsubscribe();
-                  } else if (doc.exists() && doc.data().error) {
-                    setTerminalOutput("Error: " + doc.data().error);
-                    setIsLoading(false); // Stop loading animation
-                    unsubscribe();
-                  }
-                },
-                (err) => {
-                  console.error("Error fetching chat response:", err);
-                  setTerminalOutput("Error: " + err.message);
-                  setIsLoading(false); // Ensure loading stops on error
-                }
-              );
-            });
-          } else {
-            setTerminalOutput(
-              "Glad you'd like to learn more!\n" +
-                "Please provide a question after '/ask'. For example, \n" +
-                "\n" +
-                "'/ask How do I leave a testimonial?'\n" +
-                "\n" +
-                "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
-            );
-          }
-          break;
-        case "/play":
-          if (argument) {
-            switch (argument.toLowerCase()) {
-              case "cyberwordle":
-                window.location.href = "/cyberwordle";
-                break;
-              case "snake":
-                window.location.href = "/snake";
-                break;
-              case "pong":
-                window.location.href = "/pong";
-                break;
-              default:
-                setTerminalOutput(
-                  "Unknown game. Available games: CyberWordle, Snake, Pong."
-                );
-            }
-          } else {
-            setTerminalOutput(
-              "A thrill-seeker I see! I have a few options for you!\n" +
-                "You must specify a game after '/play'. For example,\n" +
-                "\n" +
-                "'/play CyberWordle'\n" +
-                "\n" +
-                "CyberWordle, Pong, Snake\n" +
-                "More games coming in the future!"
-            );
-          }
-          break;
-        case "/connect":
-          setTerminalOutput("PROVIDE NAME, EMAIL, MESSAGE--CONFIRM MESSAGE\n");
-          break;
-        case "/bug":
-          if (argument) {
-            addBugReport(argument).then(() => {
-              setTerminalOutput(
-                `Bug report submitted! Your report: ${argument}`
-              );
-            });
-          } else {
-            setTerminalOutput(
-              "Ah! You found a pesky bug, did you?\n" +
-                "Please provide a report after '/bug'. For example, \n" +
-                "\n" +
-                "'/bug Profile information not updating after saving changes'\n" +
-                "\n" +
-                "You submit the report, I'll get to squishing!"
-            );
-          }
-          break;
-        case "/feedback":
-          if (argument) {
-            addFeedback(argument).then(() => {
-              setTerminalOutput(
-                `Feedback submitted! Your suggestion: ${argument}`
-              );
-            });
-          } else {
-            setTerminalOutput(
-              "Creative genius! You want to suggest improvements?\n" +
-                "Please provide a suggestion after '/feedback'. For example, \n" +
-                "\n" +
-                "'/feedback Add some new games!'\n" +
-                "\n" +
-                "I'm always open to suggestions!"
-            );
-          }
-          break;
-        default:
-          setTerminalOutput(
-            "Unknown command. Type /help for a list of commands."
-          );
+      if (messageStep > 0) {
+        // Handle the input based on the current step in the connect process
+        handleMessageInput();
+      } else {
+        // Process as a new command
+        processCommand();
       }
+      setCurrentInput(""); // Clear the input after processing
+    }
+  };
 
-      setCurrentInput("");
+  const handleMessageInput = () => {
+    const input = currentInput.trim();
+    switch (messageStep) {
+      case 1: // Name input
+        setMessageData({ ...messageData, name: input });
+        setTerminalOutput("Please enter your email:");
+        setMessageStep(2);
+        break;
+      case 2: // Email input
+        setMessageData({ ...messageData, email: input });
+        setTerminalOutput("Please enter your message:");
+        setMessageStep(3);
+        break;
+      case 3: // Message input
+        setMessageData({ ...messageData, message: input });
+        setTerminalOutput(
+          `Confirm sending this message (Y/N):\nName: ${messageData.name}\nEmail: ${messageData.email}\nMessage: ${input}`
+        );
+        setMessageStep(4);
+        break;
+      case 4: // Confirm input
+        if (input.toLowerCase() === "y") {
+          handleSubmitMessage();
+        } else if (input.toLowerCase() === "n") {
+          setTerminalOutput("Message sending canceled.");
+          resetMessageProcess();
+        } else {
+          setTerminalOutput(
+            "Invalid input. Please type 'Y' to confirm or 'N' to cancel."
+          );
+        }
+        break;
+      default:
+        setTerminalOutput("An error occurred. Please try the command again.");
+        resetMessageProcess();
+        break;
+    }
+  };
+
+  const processCommand = () => {
+    setLastCommand(currentInput);
+    const inputParts = currentInput.trim().split(" ");
+    const command = inputParts[0];
+    const argument = inputParts.slice(1).join(" ");
+
+    switch (command) {
+      case "/help":
+        setTerminalOutput(
+          "/help - Shows a list of commands\n" +
+            "/message - Share a message/job opportunity with me\n" +
+            "/ask <question> - Ask a Chatbot a question about this site\n" +
+            "/play <game> - Play one of my games\n" +
+            "/bug <report> - Leave notice of a bug you found\n" +
+            "/feedback <suggestion> - Suggest improvements\n"
+        );
+        break;
+      case "/ask":
+        if (argument) {
+          setIsLoading(true); // Start loading animation
+          const docRef = addDoc(collection(db, "generate"), {
+            prompt: argument,
+          }).then((ref) => {
+            const unsubscribe = onSnapshot(
+              doc(db, "generate", ref.id),
+              (doc) => {
+                if (doc.exists() && doc.data().response) {
+                  setTerminalOutput("Chatbot: " + doc.data().response);
+                  setIsLoading(false); // Stop loading animation
+                  unsubscribe();
+                } else if (doc.exists() && doc.data().error) {
+                  setTerminalOutput("Error: " + doc.data().error);
+                  setIsLoading(false); // Stop loading animation
+                  unsubscribe();
+                }
+              },
+              (err) => {
+                console.error("Error fetching chat response:", err);
+                setTerminalOutput("Error: " + err.message);
+                setIsLoading(false); // Ensure loading stops on error
+              }
+            );
+          });
+        } else {
+          setTerminalOutput(
+            "Glad you'd like to learn more!\n" +
+              "Please provide a question after '/ask'. For example, \n" +
+              "\n" +
+              "'/ask How do I leave a testimonial?'\n" +
+              "\n" +
+              "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+          );
+        }
+        break;
+      case "/message":
+        if (session?.user?.email) {
+          // If logged in, fill in the data from the session and go directly to message input
+          setMessageData({
+            name: session.user.name || "",
+            email: session.user.email,
+            message: "",
+          });
+          setTerminalOutput("Please enter your message:");
+          setMessageStep(3); // Directly go to message step
+        } else {
+          // Not logged in, start with asking for name
+          setTerminalOutput("Please enter your name:");
+          setMessageStep(1);
+        }
+        break;
+      case "/play":
+        if (argument) {
+          switch (argument.toLowerCase()) {
+            case "cyberwordle":
+              window.location.href = "/cyberwordle";
+              break;
+            case "snake":
+              window.location.href = "/snake";
+              break;
+            case "pong":
+              window.location.href = "/pong";
+              break;
+            default:
+              setTerminalOutput(
+                "Unknown game. Available games: CyberWordle, Snake, Pong."
+              );
+          }
+        } else {
+          setTerminalOutput(
+            "A thrill-seeker I see! I have a few options for you!\n" +
+              "You must specify a game after '/play'. For example,\n" +
+              "\n" +
+              "'/play CyberWordle'\n" +
+              "\n" +
+              "CyberWordle, Pong, Snake\n" +
+              "More games coming in the future!"
+          );
+        }
+        break;
+      case "/bug":
+        if (argument) {
+          addBugReport(argument).then(() => {
+            setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
+          });
+        } else {
+          setTerminalOutput(
+            "Ah! You found a pesky bug, did you?\n" +
+              "Please provide a report after '/bug'. For example, \n" +
+              "\n" +
+              "'/bug Profile information not updating after saving changes'\n" +
+              "\n" +
+              "You submit the report, I'll get to squishing!"
+          );
+        }
+        break;
+      case "/feedback":
+        if (argument) {
+          addFeedback(argument).then(() => {
+            setTerminalOutput(
+              `Feedback submitted! Your suggestion: ${argument}`
+            );
+          });
+        } else {
+          setTerminalOutput(
+            "Creative genius! You want to suggest improvements?\n" +
+              "Please provide a suggestion after '/feedback'. For example, \n" +
+              "\n" +
+              "'/feedback Add some new games!'\n" +
+              "\n" +
+              "I'm always open to suggestions!"
+          );
+        }
+        break;
+      default:
+        setTerminalOutput(
+          "Unknown command. Type /help for a list of commands."
+        );
+    }
+    setCurrentInput(""); // Clear the input after processing
+  };
+
+  const resetMessageProcess = () => {
+    setMessageStep(0);
+    setMessageData({ name: "", email: "", message: "" });
+  };
+
+  const handleSubmitMessage = async () => {
+    try {
+      await addDoc(collection(db, "connect"), {
+        name: messageData.name,
+        email: messageData.email,
+        message: messageData.message,
+        time: serverTimestamp(),
+      });
+      setTerminalOutput("Message sent successfully!");
+      resetMessageProcess();
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      setTerminalOutput("Failed to send message. Please try again.");
+      resetMessageProcess(); // Optional: You might want to keep the data filled in case they want to try again.
     }
   };
 
