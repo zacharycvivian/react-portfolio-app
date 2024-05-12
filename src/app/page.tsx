@@ -585,8 +585,8 @@ export default function Home() {
               <p className={styles.infoContainerText}>
                 I am a cybersecurity professional looking for new opportunities
                 to bolster your business's security. Want to learn more about
-                me? Scroll below!. Questions? Press 'Chat' in the lower right
-                corner.
+                me? Scroll below! Questions? Press 'Chat' in the lower right
+                corner to open a terminal window and discover new features.
               </p>
               <div className={styles.buttonContainer}>
                 <Link
