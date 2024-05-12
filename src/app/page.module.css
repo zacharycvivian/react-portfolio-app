@@ -7,9 +7,17 @@
   width: 100%;
   background-color: var(--secondary-color);
   height: auto;
-  overflow-y: auto;
   overflow-x: hidden;
   padding-top: 100px;
+}
+
+.secondarySection {
+  display: flex;
+  justify-content: center;
+  background-color: var(--third-color);
+  padding: 20px;
+  flex-wrap: wrap;
+  overflow-y: hidden; /* No internal scroll */
 }
 
 .logoContainer {
@@ -39,15 +47,6 @@
   font-size: 1.5rem;
   color: var(--text-color-light);
   z-index: 4;
-}
-
-.secondarySection {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;  /* Make items stretch to fill the container height */
-  background-color: var(--third-color);
-  padding: 20px;
-  flex-wrap: wrap;
 }
 
 .leftColumn, .rightColumn {
