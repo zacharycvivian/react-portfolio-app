@@ -1,11 +1,7 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import styles from "./page.module.css";
-import Zach from "@/../public/Zach.jpg";
-import Turbo from "@/../public/Turbo.jpg";
-import Squad from "@/../public/Squad.jpg";
-import Mountains from "@/../public/Mountains.jpg";
-import Logo from "@/../public/HeaderLogo.png";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,22 +12,26 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import React, { useState, useEffect } from "react";
 import {
   collection,
-  doc,
   addDoc,
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/../firebase";
 import { AnimatePresence, motion } from "framer-motion";
+import Zach from "@/../public/Zach.jpg";
+import Turbo from "@/../public/Turbo.jpg";
+import Squad from "@/../public/Squad.jpg";
+import Mountains from "@/../public/Mountains.jpg";
+import Logo from "@/../public/HeaderLogo.png";
 
+// Variants for animations
 const fadeInVariant = {
   visible: {
     opacity: 1,
     scale: 1,
-    y: 0, // End at the original position
+    y: 0,
     transition: { duration: 0.2 },
   },
   hidden: {
@@ -43,14 +43,14 @@ const fadeInVariant = {
 };
 
 const chatBotVariant = {
-  hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 }, // Start small from bottom right
+  hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 },
   visible: {
     opacity: 1,
-    scale: 1, // Overshoot to create a bounce effect
+    scale: 1,
     x: 0,
     y: 0,
     transition: {
-      type: "spring", // Using spring physics for the bounce
+      type: "spring",
       stiffness: 400,
       damping: 20,
     },
@@ -59,8 +59,8 @@ const chatBotVariant = {
     opacity: 0,
     scale: 0.5,
     x: 200,
-    y: 200, // Move out towards bottom right
-    transition: { duration: 0.5 }, // Smoother exit without bounce
+    y: 200,
+    transition: { duration: 0.5 },
   },
 };
 
@@ -69,6 +69,7 @@ interface Skill {
   level: number;
 }
 
+// Get label for skill level
 const getSkillLevelLabel = (level: number): string => {
   if (level <= 40) return "Beginner";
   if (level <= 60) return "Intermediate";
@@ -76,25 +77,14 @@ const getSkillLevelLabel = (level: number): string => {
   return "Skilled";
 };
 
-// SkillBar component displays a skill and its proficiency level visually
+// SkillBar component to display skill level
 const SkillBar: React.FC<Skill> = ({ skill, level }) => {
   const levelLabel = getSkillLevelLabel(level);
-
   return (
-    // A row for each skill showing the skill name and a visual representation of the level
     <div className={styles.skillRow}>
       <div className={styles.skillName}>{skill}</div>
       <div className={styles.skillLevelInfo}>
-        <div className={styles.skillBar}>
-          <div
-            className={styles.skillLevel}
-            style={{ width: `${level}%` }}
-            role="progressbar"
-            aria-valuenow={level}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          ></div>
-        </div>
+        <progress className={styles.skillBar} value={level} max={100}></progress>
         <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
     </div>
@@ -104,32 +94,12 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
 export default function Home() {
   const { data: session } = useSession();
   const [buttonTop, setButtonTop] = useState(20);
-  const [terminalTop, setTerminalTop] = useState(0); // To track the terminal's top position
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [currentInput, setCurrentInput] = useState("");
   const [terminalOutput, setTerminalOutput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
-  const terminalHeight = 300;
   const [isLoading, setIsLoading] = useState(false);
-
-  const addFeedback = async (feedback: string): Promise<void> => {
-    const email = session?.user?.email || "user not logged in";
-    await addDoc(collection(db, "feedback"), {
-      email,
-      feedback,
-      time: serverTimestamp(),
-    });
-  };
-
-  const addBugReport = async (bugDescription: string): Promise<void> => {
-    const email = session?.user?.email || "user not logged in";
-    await addDoc(collection(db, "bugs"), {
-      email,
-      bugs: bugDescription,
-      time: serverTimestamp(),
-    });
-  };
-
+  const [index, setIndex] = useState(0);
   const texts = [
     "INCIDENT RESPONSE",
     "ASSET PROTECTION",
@@ -140,10 +110,36 @@ export default function Home() {
     "DATA PROTECTION",
     "NETWORK SECURITY",
   ];
-  const [index, setIndex] = useState(0);
   const [displayWord, setDisplayWord] = useState(texts[0]);
   const [transitionIndex, setTransitionIndex] = useState(0);
+  const terminalHeight = 300;
+  const [messageStep, setMessageStep] = useState(0);
+  const [messageData, setMessageData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  // Add feedback to Firestore
+  const addFeedback = async (feedback: string): Promise<void> => {
+    const email = session?.user?.email || "user not logged in";
+    await addDoc(collection(db, "feedback"), {
+      email,
+      feedback,
+      time: serverTimestamp(),
+    });
+  };
 
+  // Add bug report to Firestore
+  const addBugReport = async (bugDescription: string): Promise<void> => {
+    const email = session?.user?.email || "user not logged in";
+    await addDoc(collection(db, "bugs"), {
+      email,
+      bugs: bugDescription,
+      time: serverTimestamp(),
+    });
+  };
+
+  // Effect to handle text transitions
   useEffect(() => {
     const currentWord = texts[index];
     const nextWord = texts[(index + 1) % texts.length];
@@ -156,30 +152,30 @@ export default function Home() {
           currentWord.slice(transitionIndex);
         setDisplayWord(newChars);
         setTransitionIndex(transitionIndex + 1);
-      }, 75); // Adjust the speed of the character transitions as needed
+      }, 75);
 
       return () => clearTimeout(timeoutId);
     } else {
-      // After completing the transition to the next word, add a pause
       const pauseTimeoutId = setTimeout(() => {
         setIndex((index + 1) % texts.length);
         setTransitionIndex(0);
-        setDisplayWord(nextWord); // Ensure displayWord is fully transitioned to nextWord
-      }, 2000); // 2-second delay after each word completes its transition
+        setDisplayWord(nextWord);
+      }, 2000);
 
       return () => clearTimeout(pauseTimeoutId);
     }
   }, [transitionIndex, index, texts]);
 
+  // Effect to handle loading animation
   useEffect(() => {
     let dotCount = 0;
-    let intervalId: NodeJS.Timeout | undefined; // Explicitly declare the type
+    let intervalId: NodeJS.Timeout | undefined;
 
     if (isLoading) {
       intervalId = setInterval(() => {
-        dotCount = (dotCount % 3) + 1; // Cycle through 1 to 3
+        dotCount = (dotCount % 3) + 1;
         setTerminalOutput("Generating Response" + ".".repeat(dotCount));
-      }, 500); // Update every 500 milliseconds
+      }, 500);
     }
 
     return () => {
@@ -189,47 +185,40 @@ export default function Home() {
     };
   }, [isLoading]);
 
-  const [messageStep, setMessageStep] = useState(0); // 0 - not in process, 1 - name, 2 - email, 3 - message, 4 - confirm
-  const [messageData, setMessageData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
+  // Handle enter key for terminal input
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       if (messageStep > 0) {
-        // Handle the input based on the current step in the connect process
         handleMessageInput();
       } else {
-        // Process as a new command
         processCommand();
       }
-      setCurrentInput(""); // Clear the input after processing
+      setCurrentInput("");
     }
   };
 
+  // Handle message input for different steps
   const handleMessageInput = () => {
     const input = currentInput.trim();
     switch (messageStep) {
-      case 1: // Name input
+      case 1:
         setMessageData({ ...messageData, name: input });
         setTerminalOutput("Please enter your email:");
         setMessageStep(2);
         break;
-      case 2: // Email input
+      case 2:
         setMessageData({ ...messageData, email: input });
         setTerminalOutput("Please enter your message:");
         setMessageStep(3);
         break;
-      case 3: // Message input
+      case 3:
         setMessageData({ ...messageData, message: input });
         setTerminalOutput(
           `Confirm sending this message (Y/N):\nName: ${messageData.name}\nEmail: ${messageData.email}\nMessage: ${input}`
         );
         setMessageStep(4);
         break;
-      case 4: // Confirm input
+      case 4:
         if (input.toLowerCase() === "y") {
           handleSubmitMessage();
         } else if (input.toLowerCase() === "n") {
@@ -248,152 +237,176 @@ export default function Home() {
     }
   };
 
-  const processCommand = () => {
-    setLastCommand(currentInput);
-    const inputParts = currentInput.trim().split(" ");
-    const command = inputParts[0];
-    const argument = inputParts.slice(1).join(" ");
+  // Handler for the /help command
+const handleHelpCommand = () => {
+  setTerminalOutput(
+    "/help - Shows a list of commands\n" +
+      "/message - Share a message/job opportunity with me\n" +
+      "/ask <question> - Ask a Chatbot a question about this site\n" +
+      "/play <game> - Play one of my games\n" +
+      "/bug <report> - Leave notice of a bug you found\n" +
+      "/feedback <suggestion> - Suggest improvements\n"
+  );
+};
 
-    switch (command) {
-      case "/help":
-        setTerminalOutput(
-          "/help - Shows a list of commands\n" +
-            "/message - Share a message/job opportunity with me\n" +
-            "/ask <question> - Ask a Chatbot a question about this site\n" +
-            "/play <game> - Play one of my games\n" +
-            "/bug <report> - Leave notice of a bug you found\n" +
-            "/feedback <suggestion> - Suggest improvements\n"
-        );
-        break;
-      case "/ask":
-        if (argument) {
-          setIsLoading(true); // Start loading animation
-          const docRef = addDoc(collection(db, "generate"), {
-            prompt: argument,
-          }).then((ref) => {
-            const unsubscribe = onSnapshot(
-              doc(db, "generate", ref.id),
-              (doc) => {
-                if (doc.exists() && doc.data().response) {
-                  setTerminalOutput("Chatbot: " + doc.data().response);
-                  setIsLoading(false); // Stop loading animation
-                  unsubscribe();
-                } else if (doc.exists() && doc.data().error) {
-                  setTerminalOutput("Error: " + doc.data().error);
-                  setIsLoading(false); // Stop loading animation
-                  unsubscribe();
-                }
-              },
-              (err) => {
-                console.error("Error fetching chat response:", err);
-                setTerminalOutput("Error: " + err.message);
-                setIsLoading(false); // Ensure loading stops on error
-              }
-            );
-          });
-        } else {
-          setTerminalOutput(
-            "Glad you'd like to learn more!\n" +
-              "Please provide a question after '/ask'. For example, \n" +
-              "\n" +
-              "'/ask How do I leave a testimonial?'\n" +
-              "\n" +
-              "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
-          );
-        }
-        break;
-      case "/message":
-        if (session?.user?.email) {
-          // If logged in, fill in the data from the session and go directly to message input
-          setMessageData({
-            name: session.user.name || "",
-            email: session.user.email,
-            message: "",
-          });
-          setTerminalOutput("Please enter your message:");
-          setMessageStep(3); // Directly go to message step
-        } else {
-          // Not logged in, start with asking for name
-          setTerminalOutput("Please enter your name:");
-          setMessageStep(1);
-        }
-        break;
-      case "/play":
-        if (argument) {
-          switch (argument.toLowerCase()) {
-            case "cyberwordle":
-              window.location.href = "/cyberwordle";
-              break;
-            case "snake":
-              window.location.href = "/snake";
-              break;
-            case "pong":
-              window.location.href = "/pong";
-              break;
-            default:
-              setTerminalOutput(
-                "Unknown game. Available games: CyberWordle, Snake, Pong."
-              );
+// Handler for the /ask command
+const handleAskCommand = (argument: string) => {
+  if (argument) {
+    setIsLoading(true);
+    addDoc(collection(db, "generate"), { prompt: argument }).then((ref) => {
+      const unsubscribe = onSnapshot(
+        ref,
+        (doc) => {
+          if (doc.exists() && doc.data().response) {
+            setTerminalOutput("Chatbot: " + doc.data().response);
+            setIsLoading(false);
+            unsubscribe();
+          } else if (doc.exists() && doc.data().error) {
+            setTerminalOutput("Error: " + doc.data().error);
+            setIsLoading(false);
+            unsubscribe();
           }
-        } else {
-          setTerminalOutput(
-            "A thrill-seeker I see! I have a few options for you!\n" +
-              "You must specify a game after '/play'. For example,\n" +
-              "\n" +
-              "'/play CyberWordle'\n" +
-              "\n" +
-              "CyberWordle, Pong, Snake\n" +
-              "More games coming in the future!"
-          );
+        },
+        (err) => {
+          console.error("Error fetching chat response:", err);
+          setTerminalOutput("Error: " + err.message);
+          setIsLoading(false);
         }
+      );
+    });
+  } else {
+    setTerminalOutput(
+      "Glad you'd like to learn more!\n" +
+        "Please provide a question after '/ask'. For example, \n" +
+        "\n" +
+        "'/ask How do I leave a testimonial?'\n" +
+        "\n" +
+        "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+    );
+  }
+};
+
+// Handler for the /message command
+const handleMessageCommand = () => {
+  if (session?.user?.email) {
+    setMessageData({
+      name: session.user.name || "",
+      email: session.user.email,
+      message: "",
+    });
+    setTerminalOutput("Please enter your message:");
+    setMessageStep(3);
+  } else {
+    setTerminalOutput("Please enter your name:");
+    setMessageStep(1);
+  }
+};
+
+// Handler for the /play command
+const handlePlayCommand = (argument: string) => {
+  if (argument) {
+    switch (argument.toLowerCase()) {
+      case "cyberwordle":
+        window.location.href = "/cyberwordle";
         break;
-      case "/bug":
-        if (argument) {
-          addBugReport(argument).then(() => {
-            setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
-          });
-        } else {
-          setTerminalOutput(
-            "Ah! You found a pesky bug, did you?\n" +
-              "Please provide a report after '/bug'. For example, \n" +
-              "\n" +
-              "'/bug Profile information not updating after saving changes'\n" +
-              "\n" +
-              "You submit the report, I'll get to squishing!"
-          );
-        }
+      case "snake":
+        window.location.href = "/snake";
         break;
-      case "/feedback":
-        if (argument) {
-          addFeedback(argument).then(() => {
-            setTerminalOutput(
-              `Feedback submitted! Your suggestion: ${argument}`
-            );
-          });
-        } else {
-          setTerminalOutput(
-            "Creative genius! You want to suggest improvements?\n" +
-              "Please provide a suggestion after '/feedback'. For example, \n" +
-              "\n" +
-              "'/feedback Add some new games!'\n" +
-              "\n" +
-              "I'm always open to suggestions!"
-          );
-        }
+      case "pong":
+        window.location.href = "/pong";
         break;
       default:
-        setTerminalOutput(
-          "Unknown command. Type /help for a list of commands."
-        );
+        setTerminalOutput("Unknown game. Available games: CyberWordle, Snake, Pong.");
     }
-    setCurrentInput(""); // Clear the input after processing
-  };
+  } else {
+    setTerminalOutput(
+      "A thrill-seeker I see! I have a few options for you!\n" +
+        "You must specify a game after '/play'. For example,\n" +
+        "\n" +
+        "'/play CyberWordle'\n" +
+        "\n" +
+        "CyberWordle, Pong, Snake\n" +
+        "More games coming in the future!"
+    );
+  }
+};
 
+// Handler for the /bug command
+const handleBugCommand = (argument: string) => {
+  if (argument) {
+    addBugReport(argument).then(() => {
+      setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
+    });
+  } else {
+    setTerminalOutput(
+      "Ah! You found a pesky bug, did you?\n" +
+        "Please provide a report after '/bug'. For example, \n" +
+        "\n" +
+        "'/bug Profile information not updating after saving changes'\n" +
+        "\n" +
+        "You submit the report, I'll get to squishing!"
+    );
+  }
+};
+
+// Handler for the /feedback command
+const handleFeedbackCommand = (argument: string) => {
+  if (argument) {
+    addFeedback(argument).then(() => {
+      setTerminalOutput(`Feedback submitted! Your suggestion: ${argument}`);
+    });
+  } else {
+    setTerminalOutput(
+      "Creative genius! You want to suggest improvements?\n" +
+        "Please provide a suggestion after '/feedback'. For example, \n" +
+        "\n" +
+        "'/feedback Add some new games!'\n" +
+        "\n" +
+        "I'm always open to suggestions!"
+    );
+  }
+};
+
+// Process terminal commands
+const processCommand = () => {
+  setLastCommand(currentInput);
+  const inputParts = currentInput.trim().split(" ");
+  const command = inputParts[0];
+  const argument = inputParts.slice(1).join(" ");
+
+  switch (command) {
+    case "/help":
+      handleHelpCommand();
+      break;
+    case "/ask":
+      handleAskCommand(argument);
+      break;
+    case "/message":
+      handleMessageCommand();
+      break;
+    case "/play":
+      handlePlayCommand(argument);
+      break;
+    case "/bug":
+      handleBugCommand(argument);
+      break;
+    case "/feedback":
+      handleFeedbackCommand(argument);
+      break;
+    default:
+      setTerminalOutput("Unknown command. Type /help for a list of commands.");
+  }
+  setCurrentInput("");
+};
+
+
+  // Reset message process
   const resetMessageProcess = () => {
     setMessageStep(0);
     setMessageData({ name: "", email: "", message: "" });
   };
 
+  // Handle message submission
   const handleSubmitMessage = async () => {
     try {
       await addDoc(collection(db, "connect"), {
@@ -407,15 +420,17 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to send message:", error);
       setTerminalOutput("Failed to send message. Please try again.");
-      resetMessageProcess(); // Optional: You might want to keep the data filled in case they want to try again.
+      resetMessageProcess();
     }
   };
 
+  // Set initial terminal position
   useEffect(() => {
     const initialPosition = window.innerHeight - 190;
-    setTerminalTop(initialPosition);
+    setButtonTop(initialPosition);
   }, []);
 
+  // Handle scroll to adjust button position
   useEffect(() => {
     const handleScroll = () => {
       setButtonTop(window.scrollY + window.innerHeight - 70);
@@ -428,17 +443,17 @@ export default function Home() {
     };
   }, []);
 
+  // Format username for terminal
   const formatUsername = (username: string | null | undefined): string => {
     return username ? username.toLowerCase().replace(/ /g, "") : "guest";
   };
 
+  // Handle download click
   const handleDownloadClick = () => {
     if (session) {
-      // Logic for opening the resume in a new tab
-      window.open("@/../zcvivian_Resume.pdf", "_blank"); // Adjust the file path as needed
+      window.open("@/../zcvivian_Resume.pdf", "_blank");
     } else {
-      // If the user is not logged in, redirect to the signIn page and then back to the /about page
-      signIn("google", { callbackUrl: `${window.location.origin}/` }); // Adjust the provider as needed
+      signIn("google", { callbackUrl: `${window.location.origin}/` });
     }
   };
 
@@ -455,16 +470,6 @@ export default function Home() {
     { skill: "MongoDB/MySQL/Firebase", level: 85 },
     { skill: "GitHub & GitLab", level: 75 },
   ];
-
-  const handleContactClick = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    if (!session) {
-      e.preventDefault(); // Stop the link from navigating
-      signIn("google", { callbackUrl: "/contact" }); // Redirect to signIn and then to the contact page
-    } else {
-    }
-  };
 
   return (
     <>
@@ -492,7 +497,7 @@ export default function Home() {
             variants={chatBotVariant}
             initial="hidden"
             animate="visible"
-            exit="hidden" // Ensure the terminal animates out when removed
+            exit="hidden"
           >
             <div className={styles.terminal_toolbar}>
               <div className={styles.close_button}>
@@ -506,7 +511,6 @@ export default function Home() {
               <p className={styles.user}>
                 {formatUsername(session?.user?.name)}@terminal: ~
               </p>
-
               <div className={styles.add_tab}>+</div>
             </div>
             <div className={styles.terminal_body}>
@@ -594,9 +598,8 @@ export default function Home() {
                   href={session ? "/contact" : "#"}
                   onClick={(e) => {
                     if (!session) {
-                      e.preventDefault(); // Stop the link from navigating
-                      signIn(); // Redirect to signIn and then to the contact page
-                    } else {
+                      e.preventDefault();
+                      signIn();
                     }
                   }}
                 >
@@ -665,7 +668,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>Education:</strong> The University of Wisconsin -
                   Platteville, Bachelor of Science in Cybersecurity, Minor in
@@ -679,7 +681,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>About Me: </strong>My academic journey has fueled a
                   passion for specializing in either penetration testing or
@@ -703,7 +704,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>Senior Project:</strong> Our senior project integrates
                   our cumulative knowledge of the software development
@@ -712,7 +712,7 @@ export default function Home() {
                   and pre-configured virtual machines for Windows and Linux,
                   utilizing Proxmox VE. This allows professors to effortlessly
                   assign and auto-grade lab assignments, providing a practical,
-                  hands- on learning experience for students. This initiative
+                  hands-on learning experience for students. This initiative
                   highlights our capability to apply theoretical concepts to
                   real-world challenges, enhancing the educational toolkit for
                   future academic use. Due to some difficulties the team had
@@ -743,7 +743,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>Hobbies:</strong> In my leisure hours, I'm passionate
                   about exploring the great outdoors, often found backpacking
@@ -765,7 +764,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <h3 className={styles.skillSectionTitle}>
                   <strong>Technical Skills:</strong>
                 </h3>
@@ -784,7 +782,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
                   independently in a fast-paced environment picking orders and
@@ -799,7 +796,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>
                     Blain's Farm & Fleet -- Automotive Sales Associate
@@ -822,7 +818,6 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                {" "}
                 <p>
                   <strong>
                     House on the Rock -- Food Service Worker (2017-2019):{" "}
