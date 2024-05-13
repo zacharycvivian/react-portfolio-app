@@ -1,9 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSession, signIn } from "next-auth/react";
 import styles from "./page.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "@/../firebase";
 import {
   Carousel,
   CarouselContent,
@@ -12,19 +19,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
-import { db } from "@/../firebase";
 import { AnimatePresence, motion } from "framer-motion";
+import Logo from "@/../public/HeaderLogo.png";
 import Zach from "@/../public/Zach.jpg";
 import Turbo from "@/../public/Turbo.jpg";
 import Squad from "@/../public/Squad.jpg";
 import Mountains from "@/../public/Mountains.jpg";
-import Logo from "@/../public/HeaderLogo.png";
 
 // Variants for animations
 const fadeInVariant = {
@@ -119,6 +119,7 @@ export default function Home() {
     email: "",
     message: "",
   });
+
   // Add feedback to Firestore
   const addFeedback = async (feedback: string): Promise<void> => {
     const email = session?.user?.email || "user not logged in";
@@ -238,167 +239,166 @@ export default function Home() {
   };
 
   // Handler for the /help command
-const handleHelpCommand = () => {
-  setTerminalOutput(
-    "/help - Shows a list of commands\n" +
-      "/message - Share a message/job opportunity with me\n" +
-      "/ask <question> - Ask a Chatbot a question about this site\n" +
-      "/play <game> - Play one of my games\n" +
-      "/bug <report> - Leave notice of a bug you found\n" +
-      "/feedback <suggestion> - Suggest improvements\n"
-  );
-};
-
-// Handler for the /ask command
-const handleAskCommand = (argument: string) => {
-  if (argument) {
-    setIsLoading(true);
-    addDoc(collection(db, "generate"), { prompt: argument }).then((ref) => {
-      const unsubscribe = onSnapshot(
-        ref,
-        (doc) => {
-          if (doc.exists() && doc.data().response) {
-            setTerminalOutput("Chatbot: " + doc.data().response);
-            setIsLoading(false);
-            unsubscribe();
-          } else if (doc.exists() && doc.data().error) {
-            setTerminalOutput("Error: " + doc.data().error);
-            setIsLoading(false);
-            unsubscribe();
-          }
-        },
-        (err) => {
-          console.error("Error fetching chat response:", err);
-          setTerminalOutput("Error: " + err.message);
-          setIsLoading(false);
-        }
-      );
-    });
-  } else {
+  const handleHelpCommand = () => {
     setTerminalOutput(
-      "Glad you'd like to learn more!\n" +
-        "Please provide a question after '/ask'. For example, \n" +
-        "\n" +
-        "'/ask How do I leave a testimonial?'\n" +
-        "\n" +
-        "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+      "/help - Shows a list of commands\n" +
+        "/message - Share a message/job opportunity with me\n" +
+        "/ask <question> - Ask a Chatbot a question about this site\n" +
+        "/play <game> - Play one of my games\n" +
+        "/bug <report> - Leave notice of a bug you found\n" +
+        "/feedback <suggestion> - Suggest improvements\n"
     );
-  }
-};
+  };
 
-// Handler for the /message command
-const handleMessageCommand = () => {
-  if (session?.user?.email) {
-    setMessageData({
-      name: session.user.name || "",
-      email: session.user.email,
-      message: "",
-    });
-    setTerminalOutput("Please enter your message:");
-    setMessageStep(3);
-  } else {
-    setTerminalOutput("Please enter your name:");
-    setMessageStep(1);
-  }
-};
+  // Handler for the /ask command
+  const handleAskCommand = (argument: string) => {
+    if (argument) {
+      setIsLoading(true);
+      addDoc(collection(db, "generate"), { prompt: argument }).then((ref) => {
+        const unsubscribe = onSnapshot(
+          ref,
+          (doc) => {
+            if (doc.exists() && doc.data().response) {
+              setTerminalOutput("Chatbot: " + doc.data().response);
+              setIsLoading(false);
+              unsubscribe();
+            } else if (doc.exists() && doc.data().error) {
+              setTerminalOutput("Error: " + doc.data().error);
+              setIsLoading(false);
+              unsubscribe();
+            }
+          },
+          (err) => {
+            console.error("Error fetching chat response:", err);
+            setTerminalOutput("Error: " + err.message);
+            setIsLoading(false);
+          }
+        );
+      });
+    } else {
+      setTerminalOutput(
+        "Glad you'd like to learn more!\n" +
+          "Please provide a question after '/ask'. For example, \n" +
+          "\n" +
+          "'/ask How do I leave a testimonial?'\n" +
+          "\n" +
+          "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+      );
+    }
+  };
 
-// Handler for the /play command
-const handlePlayCommand = (argument: string) => {
-  if (argument) {
-    switch (argument.toLowerCase()) {
-      case "cyberwordle":
-        window.location.href = "/cyberwordle";
+  // Handler for the /message command
+  const handleMessageCommand = () => {
+    if (session?.user?.email) {
+      setMessageData({
+        name: session.user.name || "",
+        email: session.user.email,
+        message: "",
+      });
+      setTerminalOutput("Please enter your message:");
+      setMessageStep(3);
+    } else {
+      setTerminalOutput("Please enter your name:");
+      setMessageStep(1);
+    }
+  };
+
+  // Handler for the /play command
+  const handlePlayCommand = (argument: string) => {
+    if (argument) {
+      switch (argument.toLowerCase()) {
+        case "cyberwordle":
+          window.location.href = "/cyberwordle";
+          break;
+        case "snake":
+          window.location.href = "/snake";
+          break;
+        case "pong":
+          window.location.href = "/pong";
+          break;
+        default:
+          setTerminalOutput("Unknown game. Available games: CyberWordle, Snake, Pong.");
+      }
+    } else {
+      setTerminalOutput(
+        "A thrill-seeker I see! I have a few options for you!\n" +
+          "You must specify a game after '/play'. For example,\n" +
+          "\n" +
+          "'/play CyberWordle'\n" +
+          "\n" +
+          "CyberWordle, Pong, Snake\n" +
+          "More games coming in the future!"
+      );
+    }
+  };
+
+  // Handler for the /bug command
+  const handleBugCommand = (argument: string) => {
+    if (argument) {
+      addBugReport(argument).then(() => {
+        setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
+      });
+    } else {
+      setTerminalOutput(
+        "Ah! You found a pesky bug, did you?\n" +
+          "Please provide a report after '/bug'. For example, \n" +
+          "\n" +
+          "'/bug Profile information not updating after saving changes'\n" +
+          "\n" +
+          "You submit the report, I'll get to squishing!"
+      );
+    }
+  };
+
+  // Handler for the /feedback command
+  const handleFeedbackCommand = (argument: string) => {
+    if (argument) {
+      addFeedback(argument).then(() => {
+        setTerminalOutput(`Feedback submitted! Your suggestion: ${argument}`);
+      });
+    } else {
+      setTerminalOutput(
+        "Creative genius! You want to suggest improvements?\n" +
+          "Please provide a suggestion after '/feedback'. For example, \n" +
+          "\n" +
+          "'/feedback Add some new games!'\n" +
+          "\n" +
+          "I'm always open to suggestions!"
+      );
+    }
+  };
+
+  // Process terminal commands
+  const processCommand = () => {
+    setLastCommand(currentInput);
+    const inputParts = currentInput.trim().split(" ");
+    const command = inputParts[0];
+    const argument = inputParts.slice(1).join(" ");
+
+    switch (command) {
+      case "/help":
+        handleHelpCommand();
         break;
-      case "snake":
-        window.location.href = "/snake";
+      case "/ask":
+        handleAskCommand(argument);
         break;
-      case "pong":
-        window.location.href = "/pong";
+      case "/message":
+        handleMessageCommand();
+        break;
+      case "/play":
+        handlePlayCommand(argument);
+        break;
+      case "/bug":
+        handleBugCommand(argument);
+        break;
+      case "/feedback":
+        handleFeedbackCommand(argument);
         break;
       default:
-        setTerminalOutput("Unknown game. Available games: CyberWordle, Snake, Pong.");
+        setTerminalOutput("Unknown command. Type /help for a list of commands.");
     }
-  } else {
-    setTerminalOutput(
-      "A thrill-seeker I see! I have a few options for you!\n" +
-        "You must specify a game after '/play'. For example,\n" +
-        "\n" +
-        "'/play CyberWordle'\n" +
-        "\n" +
-        "CyberWordle, Pong, Snake\n" +
-        "More games coming in the future!"
-    );
-  }
-};
-
-// Handler for the /bug command
-const handleBugCommand = (argument: string) => {
-  if (argument) {
-    addBugReport(argument).then(() => {
-      setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
-    });
-  } else {
-    setTerminalOutput(
-      "Ah! You found a pesky bug, did you?\n" +
-        "Please provide a report after '/bug'. For example, \n" +
-        "\n" +
-        "'/bug Profile information not updating after saving changes'\n" +
-        "\n" +
-        "You submit the report, I'll get to squishing!"
-    );
-  }
-};
-
-// Handler for the /feedback command
-const handleFeedbackCommand = (argument: string) => {
-  if (argument) {
-    addFeedback(argument).then(() => {
-      setTerminalOutput(`Feedback submitted! Your suggestion: ${argument}`);
-    });
-  } else {
-    setTerminalOutput(
-      "Creative genius! You want to suggest improvements?\n" +
-        "Please provide a suggestion after '/feedback'. For example, \n" +
-        "\n" +
-        "'/feedback Add some new games!'\n" +
-        "\n" +
-        "I'm always open to suggestions!"
-    );
-  }
-};
-
-// Process terminal commands
-const processCommand = () => {
-  setLastCommand(currentInput);
-  const inputParts = currentInput.trim().split(" ");
-  const command = inputParts[0];
-  const argument = inputParts.slice(1).join(" ");
-
-  switch (command) {
-    case "/help":
-      handleHelpCommand();
-      break;
-    case "/ask":
-      handleAskCommand(argument);
-      break;
-    case "/message":
-      handleMessageCommand();
-      break;
-    case "/play":
-      handlePlayCommand(argument);
-      break;
-    case "/bug":
-      handleBugCommand(argument);
-      break;
-    case "/feedback":
-      handleFeedbackCommand(argument);
-      break;
-    default:
-      setTerminalOutput("Unknown command. Type /help for a list of commands.");
-  }
-  setCurrentInput("");
-};
-
+    setCurrentInput("");
+  };
 
   // Reset message process
   const resetMessageProcess = () => {
@@ -555,6 +555,7 @@ const processCommand = () => {
             layout="fill"
             objectFit="contain"
             priority
+            loading="eager"
           />
         </motion.div>
         <div>
@@ -627,32 +628,40 @@ const processCommand = () => {
             >
               <CarouselContent>
                 <CarouselItem className={styles.image}>
-                  <Image
-                    src={Mountains}
-                    priority
-                    alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado "
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Image
+                      src={Mountains}
+                      alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
+                      loading="lazy"
+                    />
+                  </Suspense>
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Image
-                    src={Zach}
-                    priority
-                    alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Image
+                      src={Zach}
+                      alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
+                      loading="lazy"
+                    />
+                  </Suspense>
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Image
-                    src={Squad}
-                    priority
-                    alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Image
+                      src={Squad}
+                      alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
+                      loading="lazy"
+                    />
+                  </Suspense>
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Image
-                    src={Turbo}
-                    priority
-                    alt="Image of Zach Vivian's dog, Turbo"
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Image
+                      src={Turbo}
+                      alt="Image of Zach Vivian's dog, Turbo"
+                      loading="lazy"
+                    />
+                  </Suspense>
                 </CarouselItem>
               </CarouselContent>
               <CarouselPrevious />
