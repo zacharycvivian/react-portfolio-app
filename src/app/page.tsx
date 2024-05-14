@@ -74,7 +74,7 @@ const getSkillLevelLabel = (level: number): string => {
   if (level <= 40) return "Beginner";
   if (level <= 60) return "Intermediate";
   if (level <= 85) return "Advanced";
-  return "Skilled";
+  return "Proficient";
 };
 
 // SkillBar component to display skill level
@@ -82,9 +82,13 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
   const levelLabel = getSkillLevelLabel(level);
   return (
     <div className={styles.skillRow}>
-      <div className={styles.skillName}>{skill}</div>
-      <div className={styles.skillLevelInfo}>
+      <div className={styles.skillNameContainer}>
+        <div className={styles.skillName}>{skill}</div>
+      </div>
+      <div className={styles.skillBarContainer}>
         <progress className={styles.skillBar} value={level} max={100}></progress>
+      </div>
+      <div className={styles.skillLabelContainer}>
         <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
     </div>
@@ -458,17 +462,19 @@ export default function Home() {
   };
 
   const technicalSkills = [
-    { skill: "C/C++/Java", level: 75 },
-    { skill: "Python", level: 65 },
-    { skill: "Windows Powershell", level: 70 },
-    { skill: "Office 365", level: 90 },
-    { skill: "MacOS + Terminal", level: 90 },
-    { skill: "Kali Linux + Tools", level: 80 },
-    { skill: "Proxmox VE and Docker", level: 75 },
-    { skill: "React/Next.js", level: 60 },
-    { skill: "Angular", level: 40 },
-    { skill: "MongoDB/MySQL/Firebase", level: 85 },
-    { skill: "GitHub & GitLab", level: 75 },
+    { skill: "Windows", level: 70 },
+    { skill: "MacOS", level: 95 },
+    { skill: "Kali Linux", level: 80 },
+    { skill: "Virtualization/Containers", level: 75 },
+    { skill: "Risk Management", level: 90 },
+    { skill: "Vulnerability Scanning", level: 75 },
+    { skill: "Intrusion Detection", level: 65 },
+    { skill: "Incident Response", level: 65 },
+    { skill: "Python", level: 75 },
+    { skill: "Web Development", level: 75 },
+    { skill: "Database", level: 75 },
+    { skill: "Git", level: 75 },
+    { skill: "Office 365", level: 95 },
   ];
 
   return (

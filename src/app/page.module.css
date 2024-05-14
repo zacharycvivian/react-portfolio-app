@@ -17,7 +17,7 @@
   background-color: var(--third-color);
   padding: 20px;
   flex-wrap: wrap;
-  overflow-y: hidden; /* No internal scroll */
+  overflow-y: hidden;
 }
 
 .logoContainer {
@@ -52,11 +52,11 @@
 .leftColumn, .rightColumn {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distributes space between cards */
-  flex: 1 1 48%;  /* Controls the width */
+  justify-content: space-between;
+  flex: 1 1 48%;
   max-width: 48%;
   padding: 20px;
-  height: 100%;  /* Ensure columns stretch to match the height of the section */
+  height: 100%;
 }
 
 .card {
@@ -65,15 +65,10 @@
   margin-bottom: 20px;
   padding: 30px;
   border-radius: 60px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  flex-grow: 1;  /* Allows each card to grow and fill the space */
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-}
-
-
-.skill {
-  margin-bottom: 10px;
 }
 
 .skillSectionTitle {
@@ -82,46 +77,52 @@
   margin-bottom: 10px;
 }
 
-.skillName {
-  font-size: 16px;
-  color: var(--text-color-light);
-  margin-bottom: 4px;
-  display: inline-block;
-  vertical-align: middle;
-  flex-grow: 1; 
-}
-
-.skillBar {
-  background-color: #eee;
-  border-radius: 4px;
-  overflow: hidden;
-  flex-grow: 1; 
-  margin-right: 10px;
-}
-
-.skillLevel {
-  background-color: #4caf50; 
-  height: 20px;
-  border-radius: 4px;
-  transition: width 0.3s ease-in-out;
-}
-
-.skillLevelInfo {
+.skillRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-grow: 2; 
-  padding-bottom:6px;
+  margin-bottom: 20px; /* Increase space between rows */
+}
+
+.skillNameContainer {
+  flex: 1;
+}
+
+.skillBarContainer {
+  flex: 2.5; /* Adjust flex value to make the bar wider */
+  display: flex;
+  align-items: center;
+}
+
+.skillLabelContainer {
+  flex: .75;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.skillName {
+  font-size: 1rem;
+  color: var(--text-color-light);
+  margin-right:10px;
+}
+
+.skillBar {
+  width: 100%;
+  background-color: var(--third-color);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 6px 6px 8px var(--card-shadow), inset -6px -6px 8px var(--card-shadow-2);
+  height: 20px;
+  margin-right:10px;
 }
 
 .skillLevelLabel {
   font-size: 0.75em;
   color: var(--text-color-light);
   white-space: nowrap;
-  font-style: italic; 
-  align-self: flex-end; 
-  padding-left: 10px; 
+  font-style: italic;
 }
+
 
 .downloadResumeButton {
   color: var(--text-color-light);
@@ -131,12 +132,12 @@
   background: var(--button-color-light);
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
 }
 
 .downloadResumeButton:hover {
   background: var(--card-hover-light);
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2);
 }
 
 .downloadResumeButton:active {
@@ -146,10 +147,10 @@
 
 .buttonContainer {
   display: flex;
-  justify-content: center; /* Center the buttons in the container */
+  justify-content: center;
   align-items: center;
-  gap: 20px; /* Creates a 20px gap between each button */
-  padding: 20px 0; /* Add some vertical padding */
+  gap: 20px;
+  padding: 20px 0;
 }
 
 .button {
@@ -173,7 +174,7 @@
 }
 
 .buttonText {
-  display: block; /* Ensures text takes up the full width */
+  display: block;
 }
 
 .infoContainer {
@@ -182,38 +183,33 @@
   background-color: var(--card-color-light);
   backdrop-filter: blur(10px);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
-    background-color 0.3s ease, width 0.3s ease; /* Added width to the transition */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, width 0.3s ease;
   max-width: 800px;
   border-radius: 60px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
   z-index: 3;
 }
 
 .infoContainerText {
   text-align: justify;
   text-justify: inter-word;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 .carouselItem {
   max-width: 800px;
-  margin-top: 20px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  margin-bottom: 20px;
+  margin: 20px 0;
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
   border-radius: 60px;
-  overflow:hidden;
+  overflow: hidden;
   z-index: 1;
 }
 
 .terminalcontainer {
   right: 20px;
-  bottom: 70px; /* Distance from the viewport bottom. Adjust based on the chat button's height and desired gap */
-  max-height: 30vh; /* Adjust based on your preference */
-  width: 400px; /* Adjust as necessary */
+  bottom: 70px;
+  max-height: 30vh;
+  width: 400px;
   z-index: 1100;
   font-family: "Fira Code", monospace !important;
 }
@@ -222,28 +218,25 @@
   position: absolute;
   bottom: 20px;
   right: 20px;
-  z-index: 1000; /* Ensure it's above most content */
+  z-index: 1000;
   height: 50px;
   width: 50px;
   border-radius: 50%;
   background-color: var(--button-color-light);
   color: var(--text-color-light);
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
   cursor: pointer;
-  z-index: 6;
 }
 
 .chatbotbutton:hover {
   transform: scale(1.03);
   background-color: var(--card-hover-light);
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
-  z-index: 6;
+  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2);
 }
 
 .chatbotbutton:active {
   color: var(--text-color-light);
   box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
-  z-index: 6;
 }
 
 .terminal_toolbar {
@@ -296,10 +289,6 @@
   outline: none;
 }
 
-.butt--exit {
-  background: linear-gradient(#f37458 0%, #de4c12 100%);
-}
-
 .add_tab {
   border: 1px solid #fff;
   color: #fff;
@@ -331,12 +320,12 @@
   display: flex;
   flex-direction: column;
   z-index: 8;
-  overflow-y: auto; /* Add scroll to the terminal body */
+  overflow-y: auto;
 }
 
 .terminal_prompt {
   display: flex;
-  align-items: flex-start; /* Align prompt content to the top */
+  align-items: flex-start;
   padding: 4px;
   z-index: 8;
   color: var(--text-color-dark);
@@ -380,8 +369,8 @@
   margin: 0;
   z-index: 8;
   color: var(--text-color-dark);
-  word-wrap: break-word; /* Ensures words break to prevent horizontal overflow */
-  white-space: pre-wrap; /* Maintains formatting but wraps text */
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .terminal_input {
@@ -400,11 +389,15 @@
 }
 
 .textLoopContainer {
-  font-size: 2rem; /* Larger font size for better visibility */
+  font-size: 2rem;
   color: var(--text-color-light);
   text-align: center;
   margin: 20px 0;
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for text changes */
+  transition: opacity 0.5s ease-in-out;
+}
+
+.textLoopItem {
+  animation: fadeInOut 3s linear infinite;
 }
 
 @keyframes fadeInOut {
@@ -412,33 +405,15 @@
   50% { opacity: 1; }
 }
 
-.textLoopItem {
-  animation: fadeInOut 3s linear infinite; /* Fade in and out effect */
-}
-
 @keyframes curbl {
-  0% {
-    background: #ffffff;
-  }
-
-  49% {
-    background: #ffffff;
-  }
-
-  60% {
-    background: transparent;
-  }
-
-  99% {
-    background: transparent;
-  }
-
-  100% {
-    background: #ffffff;
-  }
+  0% { background: #ffffff; }
+  49% { background: #ffffff; }
+  60% { background: transparent; }
+  99% { background: transparent; }
+  100% { background: #ffffff; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .secondarySection {
     flex-direction: column;
     align-items: center;
@@ -446,24 +421,24 @@
   }
 
   .leftColumn, .rightColumn {
-    flex: 1 1 100%; /* Takes full width */
-    max-width: 100%; /* Maximizes width for mobile */
+    flex: 1 1 100%;
+    max-width: 100%;
     padding: 10px;
-    order: 0; /* Ensures left column is on top if needed */
+    order: 0;
   }
 
   .card {
-    margin: 10px 0; /* Adjust vertical spacing for cards */
-    width: 100%; /* Full width cards on mobile */
-    flex-grow: 0; /* Disables flex-grow to maintain content-based height */
+    margin: 10px 0;
+    width: 100%;
+    flex-grow: 0;
   }
-  
+
   .logoContainer {
-    height: 160px; /* Adjust height as necessary */
+    height: 160px;
   }
 
   .welcomeMessage, .textLoopContainer h2 {
-    font-size: 1.25rem; /* Reduce font size for the title */
+    font-size: 1.25rem;
   }
 
   .logoContainer img {
@@ -477,25 +452,23 @@
   }
 
   .infoContainer {
-    width: 85vw; /* Adjust the width to be less than the viewport width */
+    width: 85vw;
   }
 
   .carouselItem {
-    width: 85vw; /* Adjust the width to be less than the viewport width */
+    width: 85vw;
   }
 
   .homeContainer, .welcomeMessage, .instructions {
-    font-size: 1rem; /* Adjust the font size for smaller screens */
+    font-size: 1rem;
   }
 
   .button {
-    padding: 0.5em 1em; /* Reduce padding to decrease button size */
-    font-size: 0.9rem; /* Optionally reduce font size */
+    padding: 0.5em 1em;
+    font-size: 0.9rem;
   }
 
   .buttonContainer {
-    gap: 10px; /* Reduce the gap between buttons */
+    gap: 10px;
   }
 }
-
-
