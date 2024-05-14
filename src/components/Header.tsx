@@ -148,20 +148,14 @@ function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className={styles.dropdownContent}>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              <strong>System (Default)</strong>
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("light")}>
-              <strong>Light</strong>
+              Light Mode
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("dark")}>
-              <strong>Dark</strong>
+              Dark Mode
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("navy")}>
-              Navy
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("crimson")}>
-              Crimson
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              System Setting
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
