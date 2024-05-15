@@ -84,12 +84,10 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
     <div className={styles.skillRow}>
       <div className={styles.skillNameContainer}>
         <div className={styles.skillName}>{skill}</div>
+        <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
       <div className={styles.skillBarContainer}>
         <progress className={styles.skillBar} value={level} max={100}></progress>
-      </div>
-      <div className={styles.skillLabelContainer}>
-        <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
     </div>
   );
@@ -321,7 +319,9 @@ export default function Home() {
           window.location.href = "/pong";
           break;
         default:
-          setTerminalOutput("Unknown game. Available games: CyberWordle, Snake, Pong.");
+          setTerminalOutput(
+            "Unknown game. Available games: CyberWordle, Snake, Pong."
+          );
       }
     } else {
       setTerminalOutput(
@@ -399,7 +399,9 @@ export default function Home() {
         handleFeedbackCommand(argument);
         break;
       default:
-        setTerminalOutput("Unknown command. Type /help for a list of commands.");
+        setTerminalOutput(
+          "Unknown command. Type /help for a list of commands."
+        );
     }
     setCurrentInput("");
   };
@@ -595,10 +597,22 @@ export default function Home() {
               </div>
               <p className={styles.infoContainerText}>
                 I am a cybersecurity professional looking for new opportunities
-                to bolster your business's security. Want to learn more about
-                me? Scroll below! Questions? Press 'Chat' in the lower right
-                corner to open a terminal window and discover new features.
+                to bolster your business's security. Click{" "}
+                <a
+                  href="#"
+                  onClick={() =>
+                    window.open("@/../Risk_Management_Plan.pdf", "_blank")
+                  }
+                  className={styles.hyperlink}
+                >
+                  here
+                </a>{" "}
+                to view a Risk Management Plan I developed relating to a
+                real-life company and its assets. Want to learn more about me?
+                Scroll below! Questions? Press 'Chat' in the lower right corner
+                to open a terminal window and discover new features.
               </p>
+
               <div className={styles.buttonContainer}>
                 <Link
                   className={styles.button}
@@ -739,7 +753,7 @@ export default function Home() {
                     href="https://angular-cyberlabs-app.vercel.app/login"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ textDecoration: "none", color: "teal" }}
+                    className={styles.hyperlink}
                   >
                     this link
                   </a>
@@ -748,7 +762,7 @@ export default function Home() {
                   <strong>password</strong>, to view this template built in
                   Angular. This does not have any security implementations, the
                   MySQL database, or the Proxmox VE environment built in with it
-                  since it's being deployed on my GitHub profile.
+                  since it's being shown publicly on my GitHub profile.
                 </p>
               </motion.div>
               <motion.div

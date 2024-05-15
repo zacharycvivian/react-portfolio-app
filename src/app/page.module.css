@@ -36,6 +36,11 @@
   text-align: center;
 }
 
+.hyperlink {
+  color: rgb(36, 157, 255);
+  font-weight: bold;
+}
+
 .welcomeMessage {
   font-size: 2rem;
   padding-top: 10px;
@@ -79,47 +84,40 @@
 
 .skillRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  width: 100%; /* Ensure full width */
   margin-bottom: 20px; /* Increase space between rows */
 }
 
-.skillNameContainer {
-  flex: 1;
+.skillNameContainer,
+.skillLabelContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Ensure full width */
 }
 
 .skillBarContainer {
-  flex: 2.5; /* Adjust flex value to make the bar wider */
-  display: flex;
-  align-items: center;
-}
-
-.skillLabelContainer {
-  flex: .75;
-  display: flex;
-  justify-content: flex-end;
+  width: 100%; /* Ensure full width */
+  margin-top: 5px; /* Space between label and bar */
 }
 
 .skillName {
   font-size: 1rem;
   color: var(--text-color-light);
-  margin-right:10px;
 }
 
 .skillBar {
-  width: 100%;
+  width: 100%; /* Ensure full width */
   background-color: var(--third-color);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: inset 6px 6px 8px var(--card-shadow), inset -6px -6px 8px var(--card-shadow-2);
+  box-shadow: inset 6px 6px 8px var(--card-shadow), inset -6px -6px 8px var (--card-shadow-2);
   height: 20px;
-  margin-right:10px;
 }
 
 .skillLevelLabel {
   font-size: 0.75em;
   color: var(--text-color-light);
-  white-space: nowrap;
   font-style: italic;
 }
 
