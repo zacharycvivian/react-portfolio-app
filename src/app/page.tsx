@@ -245,7 +245,7 @@ export default function Home() {
     setTerminalOutput(
       "/help - Shows a list of commands\n" +
         "/message - Share a message/job opportunity with me\n" +
-        "/ask <question> - Ask a Chatbot a question about this site\n" +
+        /*"/ask <question> - Ask a Chatbot a question about this site\n" +*/
         "/play <game> - Play one of my games\n" +
         "/bug <report> - Leave notice of a bug you found\n" +
         "/feedback <suggestion> - Suggest improvements\n"
@@ -384,7 +384,9 @@ export default function Home() {
         handleHelpCommand();
         break;
       case "/ask":
+        /*
         handleAskCommand(argument);
+        */
         break;
       case "/message":
         handleMessageCommand();
