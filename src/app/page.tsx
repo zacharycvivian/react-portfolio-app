@@ -10,7 +10,7 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "@/../firebase";
+import { db, model } from "@/../firebase";
 import {
   Carousel,
   CarouselContent,
@@ -87,7 +87,11 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
         <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
       <div className={styles.skillBarContainer}>
-        <progress className={styles.skillBar} value={level} max={100}></progress>
+        <progress
+          className={styles.skillBar}
+          value={level}
+          max={100}
+        ></progress>
       </div>
     </div>
   );
@@ -245,7 +249,7 @@ export default function Home() {
     setTerminalOutput(
       "/help - Shows a list of commands\n" +
         "/message - Share a message/job opportunity with me\n" +
-        /*"/ask <question> - Ask a Chatbot a question about this site\n" +*/
+        "/ask <question> - Ask a Chatbot a question about this site\n" +
         "/play <game> - Play one of my games\n" +
         "/bug <report> - Leave notice of a bug you found\n" +
         "/feedback <suggestion> - Suggest improvements\n"
@@ -253,30 +257,39 @@ export default function Home() {
   };
 
   // Handler for the /ask command
-  const handleAskCommand = (argument: string) => {
+  const handleAskCommand = async (argument: string) => {
     if (argument) {
       setIsLoading(true);
-      addDoc(collection(db, "generate"), { prompt: argument }).then((ref) => {
-        const unsubscribe = onSnapshot(
-          ref,
-          (doc) => {
-            if (doc.exists() && doc.data().response) {
-              setTerminalOutput("Chatbot: " + doc.data().response);
-              setIsLoading(false);
-              unsubscribe();
-            } else if (doc.exists() && doc.data().error) {
-              setTerminalOutput("Error: " + doc.data().error);
-              setIsLoading(false);
-              unsubscribe();
-            }
-          },
-          (err) => {
-            console.error("Error fetching chat response:", err);
-            setTerminalOutput("Error: " + err.message);
-            setIsLoading(false);
-          }
-        );
-      });
+      try {
+        // Add prompt instructions
+        const promptInstructions = `
+          I want you to act as a helpful and friendly AI assistant on Zachary Vivian's website homepage. Zach is a University of Wisconsin - Platteville graduate, with a bachelor of science degree in Cybersecurity and minor in Business Administration. Your goal is to help direct the user towards any information they’d like to learn about him. Please refrain from assisting them with other tasks other than basic questions about Zach or information they can find on the internet. Do not assist the user with code generation, rather direct them towards a resource like ChatGPT/Zach’s GPT that he designed called the ‘All-in-One Programming Assistant’ (https://chat.openai.com/g/g-N5n358sXE-all-in-one-programming-assistant).  
+
+          LOGGING IN: The purpose of logging in on this website is to provide Zach with the user’s information to verify it and contact them, and to have their occupation and employer visible if they choose to leave a testimonial. They can log in by pressing the user icon in the top right of the page, in the header, and then sign in with their Google account. After logging in, they can click on their profile picture in the same spot to edit their profile and add more information if they choose to do so. 
+          HOME PAGE: This is the default landing page, where you can view basic information about Zach such as his resume, skillset, and experience. 
+          ABOUT PAGE: If the user wants to view more information about frameworks for his website, they can head to the ‘about’ page by clicking on the 'About this Website' button in the footer or click menu icon in the top left of the page to open the sidebar and click on the ‘about’ button to view this information.   
+          CONTACT PAGE: The contact page is also available in the sidebar (or the user can click on 'Contact' from the top of the home page), but requires authentication to view that sensitive information. If they prefer to not sign in, there are still a few links you may provide them with. If the user asks for his LinkedIn: https://www.linkedin.com/in/zacharycvivian If the user asks for his GitHub: https://github.com/zacharycvivian If the user asks for his Twitter/X: https://twitter.com/zacharycvivian If the user asks for his phone number or email, please let them know that they must log in to the website with Google in order to view that information. Once they view this page, they can also scroll to the bottom and add him as a contact with a click of a button.  
+          BLOG PAGE: If the user navigates to the blog page from the sidebar, they can find a list of blogs that Zach has posted to learn more about what he is up to and continues to learn about.  TESTIMONIALS PAGE: This page shows all of the professional reviews left by his peers! If the user would like to add one themselves, they must be signed in and add an occupation and employer to their profile so it can be visible in the testimonial!   
+          GAMES: In the terminal of the website there are various games available to play using the ‘/play <game>’ command! CyberWordle (a typescript spin-off of the New York Times original game), Snake (a typescript version of the 1970’s original), and Pong (another 70’s classic brought to life in typescript). 
+          FEEDBACK/BUGS: The user can submit feedback/suggestions or a bug report through the terminal as well using the '/feedback <suggestion>' or '/bug <report>' commands. 
+          MESSAGING: The user can send Zach a message, such as a job opportunity, though the '/message' command. This will guide the user through a step by step process to provide Zach with necessary information to share a message and allow him to get in contact with them. 
+
+          Please end your prompt with an emoji that represents the overall message of your prompt to convey feelings of emotion to the user.
+        `;
+        const prompt = `${promptInstructions}\n\n${argument}`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response.text();
+        setTerminalOutput("Website Support: " + response);
+      } catch (error) {
+        if (error instanceof Error) {
+          setTerminalOutput("Error: " + error.message);
+        } else {
+          setTerminalOutput("An unknown error occurred.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       setTerminalOutput(
         "Glad you'd like to learn more!\n" +
@@ -384,9 +397,7 @@ export default function Home() {
         handleHelpCommand();
         break;
       case "/ask":
-        /*
         handleAskCommand(argument);
-        */
         break;
       case "/message":
         handleMessageCommand();

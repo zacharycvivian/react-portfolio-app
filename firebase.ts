@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -22,8 +23,15 @@ const auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 const functions = getFunctions(app);
 
+// Gemini API for Chatbot
+const vertexAI = getVertexAI(app);
+
+const model = getGenerativeModel(vertexAI, {
+  model: "gemini-1.5-flash",
+});
+
 if (typeof window !== "undefined") {
   const analytics = getAnalytics(app);
 }
 
-export { auth, app, db, functions };
+export { auth, app, db, functions, model };
