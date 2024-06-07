@@ -1,9 +1,8 @@
 This is [Zachary Vivian's website](https://www.zacharycvivian.com/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 This website was designed with both Desktop and Mobile applications in mind, allowing for a seamless user experience.
-![PortfolioReadme](https://github.com/zacharycvivian/react-portfolio-app/assets/161660633/9175a6ef-49a7-4fb9-9107-da8272b772fd)
+![PortfolioReadme]![GitHub](https://github.com/zacharycvivian/react-portfolio-app/assets/161660633/a6eae3c3-3707-42c2-be8f-dec429bafce4)
 
- 
 ## Tools
 Frameworks: React/Next.js/Tailwind CSS,
 Database: Google Firebase,
