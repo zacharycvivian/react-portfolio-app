@@ -261,7 +261,7 @@ export default function Home() {
     if (argument) {
       setIsLoading(true);
       try {
-        // Add prompt instructions
+        // Custom prompt instructions
         const promptInstructions = `
           I want you to act as a helpful and friendly AI assistant on Zachary Vivian's website homepage. Zach is a University of Wisconsin - Platteville graduate, with a bachelor of science degree in Cybersecurity and minor in Business Administration. Your goal is to help direct the user towards any information they’d like to learn about him. Please refrain from assisting them with other tasks other than basic questions about Zach or information they can find on the internet. Do not assist the user with code generation, rather direct them towards a resource like ChatGPT/Zach’s GPT that he designed called the ‘All-in-One Programming Assistant’ (https://chat.openai.com/g/g-N5n358sXE-all-in-one-programming-assistant).  
 
@@ -816,6 +816,26 @@ export default function Home() {
                     level={techSkill.level}
                   />
                 ))}
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>
+                    On The Mark Solutions -- Implementation and Support
+                    Specialist (2024-Current):
+                  </strong>{" "}
+                  The primary point of contact for OTMS's clients throughout the
+                  implementation process + ongoing support. Creating accurate
+                  documentation for user guides and troubleshooting resources,
+                  configuring POS software to meet client-specific requirements,
+                  providing technical training to clients, and
+                  resolving/troubleshooting issues.
+                </p>
               </motion.div>
               <motion.div
                 className={styles.card}
