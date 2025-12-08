@@ -27,7 +27,7 @@ const functions = getFunctions(app);
 const vertexAI = getVertexAI(app);
 
 const model = getGenerativeModel(vertexAI, {
-  model: "gemini-1.5-flash",
+  model: "gemini-2.0-flash",
 });
 
 if (typeof window !== "undefined") {
