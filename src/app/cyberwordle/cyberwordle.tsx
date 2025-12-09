@@ -6,6 +6,9 @@ type WordListType = string[];
 type GuessesType = string[];
 
 const CyberWordle: React.FC = () => {
+  type WordSource = "cyber" | "classic";
+
+  const [wordSource, setWordSource] = useState<WordSource>("cyber");
   const [wordList, setWordList] = useState<WordListType>([]);
   const [validWords, setValidWords] = useState<WordListType>([]);
   const [currentWord, setCurrentWord] = useState<string>("");
@@ -16,21 +19,24 @@ const CyberWordle: React.FC = () => {
 
   // Initializes the word list and selects a random word for the game
   useEffect(() => {
-    fetch("/CyberWordList.txt")
-      //uncomment this line if you want to play regular wordle
-      //fetch("/wordle-list.txt")
+    const path = wordSource === "cyber" ? "/CyberWordList.txt" : "/wordle-list.txt";
+
+    fetch(path)
       .then((response) => response.text())
       .then((text) => {
         const words: WordListType = text
           .split("\n")
           .map((word) => word.trim())
           .filter((word) => word.length === 5);
+        if (!words.length) return;
         setWordList(words);
-        setCurrentWord(
-          words[Math.floor(Math.random() * words.length)].toUpperCase()
-        );
+        setCurrentWord(words[Math.floor(Math.random() * words.length)].toUpperCase());
+        setGuesses([]);
+        setInputValues(["", "", "", "", ""]);
+        setGameOver(false);
+        inputRefs.current[0]?.focus();
       });
-  }, []);
+  }, [wordSource]);
 
   // Loads a list of valid words for the game from an external file
   useEffect(() => {
@@ -298,6 +304,24 @@ const CyberWordle: React.FC = () => {
       {/* Your game content here */}
       <div className={styles.container}>
         <h1 className={styles.title}>Cyber Wordle</h1>
+        <div className={styles.sourceToggle}>
+          <button
+            className={`${styles.sourceButton} ${
+              wordSource === "cyber" ? styles.sourceButtonActive : ""
+            }`}
+            onClick={() => setWordSource("cyber")}
+          >
+            Cyber Word List
+          </button>
+          <button
+            className={`${styles.sourceButton} ${
+              wordSource === "classic" ? styles.sourceButtonActive : ""
+            }`}
+            onClick={() => setWordSource("classic")}
+          >
+            Classic Wordle
+          </button>
+        </div>
         <div className={styles.game}>
           <div className={styles.inputBoxes}>{renderInputBoxes()}</div>
           <button

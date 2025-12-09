@@ -37,6 +37,28 @@
   padding-bottom: 10px;
 }
 
+.sourceToggle {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sourceButton {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.sourceButtonActive {
+  background-color: var(--button-color-light);
+  color: var(--text-color-light);
+  border-color: var(--button-color-light);
+}
+
 .game {
   display: flex;
   flex-direction: column;
