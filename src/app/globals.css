@@ -44,4 +44,9 @@ body {
   margin: 0;
   backdrop-filter: blur(5px);
   font-family: var(--font-manrope), sans-serif !important;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
