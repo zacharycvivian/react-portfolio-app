@@ -70,6 +70,13 @@
   flex-direction: column;
   gap: 32px;
   padding: 0 12px;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+.skillsCard {
+  width: 100%;
 }
 
 .logoContainer {
@@ -116,6 +123,7 @@
     -6px -6px 8px var(--card-shadow-2);
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .skillSectionTitle {
@@ -506,19 +514,23 @@
   }
 
   .card {
-    margin: 10px 0;
+    margin: 10px auto;
     width: 100%;
+    max-width: 720px;
     flex-grow: 0;
   }
 
   .cardsGrid {
     grid-template-columns: 1fr;
     padding: 24px;
+    justify-items: center;
+    row-gap: 16px;
   }
 
   .cardsColumn {
     padding: 0;
     gap: 20px;
+    max-width: 720px;
   }
 
   .logoContainer {
@@ -565,18 +577,28 @@
   .cardsGrid {
     grid-template-columns: 1fr;
     gap: 28px;
+    justify-items: center;
   }
 
   .cardsColumn {
     padding: 0;
+    max-width: 900px;
   }
 
   .card {
     max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .secondarySection {
+    align-items: center;
   }
 
   .infoContainer,
   .carouselItem {
     max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
