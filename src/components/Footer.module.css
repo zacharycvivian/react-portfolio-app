@@ -70,6 +70,13 @@
   font-size: 0.75rem;
 }
 
+.disclaimer {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-color-dark);
+  opacity: 0.85;
+}
+
 @media (max-width: 600px) {
   .footer {
     padding: 10px;

@@ -12,7 +12,7 @@ const fadeInVariant = {
   visible: {
     opacity: 1,
     scale: 1,
-    y: 0, // End at the original position
+    y: 0,
     transition: { duration: 0.2 },
   },
   hidden: {
@@ -22,7 +22,6 @@ const fadeInVariant = {
   },
 };
 
-// BlogPage component to display the blog section of the website
 const BlogPage = () => {
   return (
     <div className={styles.container}>
@@ -51,12 +50,14 @@ const BlogPage = () => {
               <Image
                 src={article1}
                 alt="An image of a programmer harnessing the power of artifical intelligence while looking at a computer with books flying open around him"
-                quality={100}
+                placeholder="blur"
+                quality={80}
+                sizes="(max-width: 900px) 90vw, 720px"
                 className={styles.cardImage}
               />
               <div>
                 <h3 className={styles.cardTitle}>
-                  What I’ve Learned From Developing my own Website Utilizing
+                  What I've Learned From Developing My Own Website Utilizing
                   Prompt Engineering
                 </h3>
                 <p className={styles.cardSubtext}>March 15, 2024</p>

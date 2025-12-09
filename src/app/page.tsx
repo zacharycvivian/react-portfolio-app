@@ -476,7 +476,7 @@ export default function Home() {
 
   const handleDownloadClick = () => {
     if (session) {
-      window.open("@/../zcvivian_Resume.pdf", "_blank");
+      window.open("/api/resume", "_blank");
     } else {
       signIn("google", { callbackUrl: `${window.location.origin}/`, prompt: "select_account" });
     }
