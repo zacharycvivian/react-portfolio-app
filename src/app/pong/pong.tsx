@@ -139,18 +139,17 @@ const PongGame: React.FC = () => {
   const animationFrameId = useRef<number>(0);
   const [paddleHeight, setPaddleHeight] = useState(60); // Initial default value
 
-
   // Constants for game settings
-  let paddleWidth = 10; 
+  const paddleWidth = 10;
   const ballSize = 10;
-  
-  let playerPaddleY = 50;
-  let computerPaddleY = 50;
-  let ballX = 50;
-  let ballY = 50;
-  let ballSpeedX = 5;
-  let ballSpeedY = 3;
-  let computerPaddleSpeed = 4; // Set a default value that makes sense for your game
+
+  const playerPaddleYRef = useRef(50);
+  const computerPaddleYRef = useRef(50);
+  const ballXRef = useRef(50);
+  const ballYRef = useRef(50);
+  const ballSpeedXRef = useRef(5);
+  const ballSpeedYRef = useRef(3);
+  const computerPaddleSpeedRef = useRef(4); // Set a default value that makes sense for your game
 
   const difficultySettings = {
     easy: {
@@ -183,10 +182,13 @@ const PongGame: React.FC = () => {
   
     const settings = difficultySettings[selectedDifficulty];
     setPaddleHeight(settings.paddleHeight); // Update state to trigger re-render
-    ballSpeedX = settings.ballSpeed.x;    // Valid reassignment
-    ballSpeedY = settings.ballSpeed.y;    // Valid reassignment
-    computerPaddleSpeed = settings.computerPaddleSpeed; // Assuming it's declared with let
-    // Continue with game initialization...
+    ballSpeedXRef.current = settings.ballSpeed.x;
+    ballSpeedYRef.current = settings.ballSpeed.y;
+    computerPaddleSpeedRef.current = settings.computerPaddleSpeed;
+    ballXRef.current = 50;
+    ballYRef.current = 50;
+    playerPaddleYRef.current = 50;
+    computerPaddleYRef.current = 50;
   };
 
   useEffect(() => {
@@ -200,46 +202,46 @@ const PongGame: React.FC = () => {
     gameCanvas.height = 400;
 
     const resetBall = () => {
-      ballX = gameCanvas.width / 2;
-      ballY = gameCanvas.height / 2;
-      ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
-      ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ballXRef.current = gameCanvas.width / 2;
+      ballYRef.current = gameCanvas.height / 2;
+      ballSpeedXRef.current = 5 * (Math.random() > 0.5 ? 1 : -1);
+      ballSpeedYRef.current = 3 * (Math.random() > 0.5 ? 1 : -1);
     };
 
     const checkCollisionWithPaddles = () => {
       // Player paddle collision
       if (
-        ballX <= paddleWidth &&
-        ballY > playerPaddleY &&
-        ballY < playerPaddleY + paddleHeight
+        ballXRef.current <= paddleWidth &&
+        ballYRef.current > playerPaddleYRef.current &&
+        ballYRef.current < playerPaddleYRef.current + paddleHeight
       ) {
-        ballSpeedX = -ballSpeedX;
+        ballSpeedXRef.current = -ballSpeedXRef.current;
       }
       // Computer paddle collision
       if (
-        ballX >= gameCanvas.width - paddleWidth - ballSize &&
-        ballY > computerPaddleY &&
-        ballY < computerPaddleY + paddleHeight
+        ballXRef.current >= gameCanvas.width - paddleWidth - ballSize &&
+        ballYRef.current > computerPaddleYRef.current &&
+        ballYRef.current < computerPaddleYRef.current + paddleHeight
       ) {
-        ballSpeedX = -ballSpeedX;
+        ballSpeedXRef.current = -ballSpeedXRef.current;
       }
     };
 
     const moveComputerPaddle = () => {
-        const targetY = ballY - (paddleHeight / 2);
-        
-        if (computerPaddleY + paddleHeight / 2 < targetY) {
-          computerPaddleY += computerPaddleSpeed; // Use computerPaddleSpeed directly
-        } else if (computerPaddleY + paddleHeight / 2 > targetY) {
-          computerPaddleY -= computerPaddleSpeed; // Use computerPaddleSpeed directly
-        }
-      
-        // Ensure the computer paddle does not move beyond the canvas boundaries
-        computerPaddleY = Math.max(0, computerPaddleY); // Prevent moving above the canvas
-        computerPaddleY = Math.min(gameCanvas.height - paddleHeight, computerPaddleY); // Prevent moving below the canvas
-      };
-      
-      
+      const targetY = ballYRef.current - paddleHeight / 2;
+
+      if (computerPaddleYRef.current + paddleHeight / 2 < targetY) {
+        computerPaddleYRef.current += computerPaddleSpeedRef.current;
+      } else if (computerPaddleYRef.current + paddleHeight / 2 > targetY) {
+        computerPaddleYRef.current -= computerPaddleSpeedRef.current;
+      }
+
+      computerPaddleYRef.current = Math.max(0, computerPaddleYRef.current);
+      computerPaddleYRef.current = Math.min(
+        gameCanvas.height - paddleHeight,
+        computerPaddleYRef.current
+      );
+    };
 
     const gameLoop = () => {
       if (gameStatus !== "playing") {
@@ -248,16 +250,19 @@ const PongGame: React.FC = () => {
 
       ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
 
-      ballX += ballSpeedX;
-      ballY += ballSpeedY;
+      ballXRef.current += ballSpeedXRef.current;
+      ballYRef.current += ballSpeedYRef.current;
 
       // Wall collision
-      if (ballY <= 0 || ballY >= gameCanvas.height - ballSize) {
-        ballSpeedY = -ballSpeedY;
+      if (
+        ballYRef.current <= 0 ||
+        ballYRef.current >= gameCanvas.height - ballSize
+      ) {
+        ballSpeedYRef.current = -ballSpeedYRef.current;
       }
 
       // Score update and ball reset
-      if (ballX < 0) {
+      if (ballXRef.current < 0) {
         setComputerScore((score) => {
           if (score + 1 === 5) {
             setGameStatus("ended");
@@ -265,7 +270,7 @@ const PongGame: React.FC = () => {
           return score + 1;
         });
         resetBall();
-      } else if (ballX > gameCanvas.width) {
+      } else if (ballXRef.current > gameCanvas.width) {
         setPlayerScore((score) => {
           if (score + 1 === 5) {
             setGameStatus("ended");
@@ -280,15 +285,27 @@ const PongGame: React.FC = () => {
 
       // Draw paddles and ball
       ctx.fillStyle = "white";
-      ctx.fillRect(0, playerPaddleY, paddleWidth, paddleHeight);
+      ctx.fillRect(
+        0,
+        playerPaddleYRef.current,
+        paddleWidth,
+        paddleHeight
+      );
       ctx.fillRect(
         gameCanvas.width - paddleWidth,
-        computerPaddleY,
+        computerPaddleYRef.current,
         paddleWidth,
         paddleHeight
       );
       ctx.beginPath();
-      ctx.arc(ballX, ballY, ballSize / 2, 0, Math.PI * 2, true);
+      ctx.arc(
+        ballXRef.current,
+        ballYRef.current,
+        ballSize / 2,
+        0,
+        Math.PI * 2,
+        true
+      );
       ctx.fill();
 
       if (gameStatus === "playing") {
@@ -298,17 +315,25 @@ const PongGame: React.FC = () => {
 
     const handleMouseMove = (event: MouseEvent) => {
       const rect = gameCanvas.getBoundingClientRect();
-      playerPaddleY = event.clientY - rect.top - paddleHeight / 2;
-      playerPaddleY = Math.max(0, playerPaddleY);
-      playerPaddleY = Math.min(gameCanvas.height - paddleHeight, playerPaddleY);
+      playerPaddleYRef.current =
+        event.clientY - rect.top - paddleHeight / 2;
+      playerPaddleYRef.current = Math.max(0, playerPaddleYRef.current);
+      playerPaddleYRef.current = Math.min(
+        gameCanvas.height - paddleHeight,
+        playerPaddleYRef.current
+      );
     };
     const handleTouchMove = (event: TouchEvent) => {
       if (event.touches.length === 0) return;
       const touch = event.touches[0];
       const rect = gameCanvas.getBoundingClientRect();
-      playerPaddleY = touch.clientY - rect.top - paddleHeight / 2;
-      playerPaddleY = Math.max(0, playerPaddleY);
-      playerPaddleY = Math.min(gameCanvas.height - paddleHeight, playerPaddleY);
+      playerPaddleYRef.current =
+        touch.clientY - rect.top - paddleHeight / 2;
+      playerPaddleYRef.current = Math.max(0, playerPaddleYRef.current);
+      playerPaddleYRef.current = Math.min(
+        gameCanvas.height - paddleHeight,
+        playerPaddleYRef.current
+      );
       event.preventDefault(); // Prevent scrolling when moving the paddle
     };
 
@@ -326,7 +351,7 @@ const PongGame: React.FC = () => {
       gameCanvas.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(animationFrameId.current);
     };
-  }, [gameStatus]);
+  }, [gameStatus, paddleHeight]);
 
   useEffect(() => {
     // Automatically scroll down 80 pixels to ensure the game is in full view

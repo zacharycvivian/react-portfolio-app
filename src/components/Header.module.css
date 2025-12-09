@@ -17,7 +17,7 @@
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 5;
-  font-family: "Fira Code", monospace !important;
+  font-family: var(--font-fira), monospace !important;
 }
 
 .modalBackdrop {
@@ -181,7 +181,7 @@
   opacity: 0.5; /* Initial opacity can be 0.8 or 1 based on your preference */
   animation: blink 1.2s infinite;
   font-size: 2rem; /* Makes the cursor more pronounced */
-  font-family: "Fira Code", monospace !important;
+  font-family: var(--font-fira), monospace !important;
 }
 
 @media (max-width: 600px) {

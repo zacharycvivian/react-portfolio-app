@@ -221,7 +221,9 @@ const CyberWordle: React.FC = () => {
     return inputValues.map((value, index) => (
       <input
         key={index}
-        ref={(el) => (inputRefs.current[index] = el)}
+        ref={(el) => {
+          inputRefs.current[index] = el;
+        }}
         type="text"
         value={value}
         onChange={(e) => handleInputChange(index, e.target.value)}
@@ -237,7 +239,7 @@ const CyberWordle: React.FC = () => {
   const renderGuessFeedback = (
     guess: string,
     isCorrectWord: boolean = false
-  ): JSX.Element[] => {
+  ): React.ReactElement[] => {
     return guess.split("").map((letter, index) => {
       const letterStyle = isCorrectWord
         ? styles.red

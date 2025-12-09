@@ -96,7 +96,7 @@ const Footer = () => {
           </Link>
         </Button>
       </div>
-      <p className={styles["copyright-info"]}>© Zachary Vivian 2024</p>
+      <p className={styles["copyright-info"]}>© Zachary Vivian 2026</p>
     </footer>
   );
 };

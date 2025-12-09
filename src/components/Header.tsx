@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import styles from "./Header.module.css";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,11 @@ function Header() {
   const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
   const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
   const originalName = "Zachary Vivian";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let timeoutId: number;
@@ -116,7 +122,7 @@ function Header() {
       signOut({ callbackUrl: "/" });
       console.log("string" + session);
     } else {
-      signIn("google", { callbackUrl: "/" });
+      signIn("google", { callbackUrl: "/", prompt: "select_account" });
       console.log("string" + session);
     }
   };
@@ -126,6 +132,10 @@ function Header() {
 
   const { theme, setTheme, resolvedTheme } = useTheme();
   const currentTheme = theme === "system" ? resolvedTheme : theme;
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <header className={styles.header}>
@@ -166,10 +176,13 @@ function Header() {
                 !session && styles.glintButton
               }`}
             >
-              <img
+              <Image
                 src={userImageURL}
                 alt="Profile"
+                width={24}
+                height={24}
                 className="h-[1.2rem] w-[1.2rem] rounded-full"
+                unoptimized
               />
             </button>
           </DropdownMenuTrigger>

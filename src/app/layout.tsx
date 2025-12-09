@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope, Fira_Code } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
@@ -12,7 +12,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import FirebaseAuthProvider from "@/components/FirebaseAuthProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira" });
 
 export const metadata: Metadata = {
   title: "Home - Zachary Vivian's Portfolio Website",
@@ -28,7 +29,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${manrope.variable} ${firaCode.variable}`}>
         <SessionProvider session={session}>
           <FirebaseAuthProvider>
           <Providers>

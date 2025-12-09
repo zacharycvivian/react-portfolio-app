@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./snake.module.css"; // Adjust the import path as necessary
 
 // Define a Point interface to type the snake segments and apple position
@@ -156,7 +156,6 @@ const SnakeGame: React.FC = () => {
   // This useEffect is responsible for adjusting the game size to fit the parent container
   useEffect(() => {
     const updateGameSize = () => {
-      setScore(score);  // This won't change the score but will trigger a re-render
       // Adjust the canvas size to match its parent container's size
       if (canvasRef.current && canvasRef.current.parentElement) {
         const parent = canvasRef.current.parentElement;
@@ -277,7 +276,29 @@ const SnakeGame: React.FC = () => {
         gameCanvas.removeEventListener("touchmove", handleTouchMove);
       }
     };
-  }, [dir, setDir]);
+  }, [dir, gameOver]);
+
+  // Function to randomly place an apple within the game boundaries
+  const spawnApple = useCallback(() => {
+    let potentialApple: Point;
+    let isOccupied = false;
+
+    do {
+      // Generate a random position within the game boundaries
+      potentialApple = {
+        x: Math.floor(Math.random() * (gameSize.width / 20)) * 20,
+        y: Math.floor(Math.random() * (gameSize.height / 20)) * 20,
+      };
+
+      // Check if the generated position collides with any part of the snake
+      isOccupied = snake.some(
+        (segment) =>
+          segment.x === potentialApple.x && segment.y === potentialApple.y
+      );
+    } while (isOccupied); // Repeat until an unoccupied position is found
+
+    setApple(potentialApple);
+  }, [gameSize.height, gameSize.width, snake]);
 
   // Effect hook for the main game loop
   useEffect(() => {
@@ -314,7 +335,7 @@ const SnakeGame: React.FC = () => {
           const newSegment = { x: lastSegment.x, y: lastSegment.y };
           newSnake.push(newSegment);
         }
-        setScore(score + 1); // Increment score
+        setScore((prev) => prev + 1); // Increment score
         spawnApple(); // Generate a new apple position
       }
 
@@ -323,29 +344,7 @@ const SnakeGame: React.FC = () => {
 
     const gameLoop = setInterval(moveSnake, speed);
     return () => clearInterval(gameLoop);
-  }, [snake, dir, apple, gameOver, gameSize, speed]);
-
-  // Function to randomly place an apple within the game boundaries
-  const spawnApple = () => {
-    let potentialApple: Point;
-    let isOccupied = false;
-
-    do {
-      // Generate a random position within the game boundaries
-      potentialApple = {
-        x: Math.floor(Math.random() * (gameSize.width / 20)) * 20,
-        y: Math.floor(Math.random() * (gameSize.height / 20)) * 20,
-      };
-
-      // Check if the generated position collides with any part of the snake
-      isOccupied = snake.some(
-        (segment) =>
-          segment.x === potentialApple.x && segment.y === potentialApple.y
-      );
-    } while (isOccupied); // Repeat until an unoccupied position is found
-
-    setApple(potentialApple);
-  };
+  }, [snake, dir, apple, gameOver, gameSize, speed, spawnApple]);
 
   const restartGame = () => {
     setSnake([{ x: 20, y: 20 }]);

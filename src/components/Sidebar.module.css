@@ -16,6 +16,15 @@
   position: fixed;
   top: 0;
   color: var(--text-color-dark);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
 }
 
 .link {

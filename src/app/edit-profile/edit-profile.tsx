@@ -1,8 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { db } from "@/../firebase";
 import { useSession } from "next-auth/react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  where,
+  limit,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import styles from "./edit-profile.module.css";
 import VerifiedLabel from "@/../public/verified.png";
 
@@ -25,24 +35,51 @@ const EditProfilePage = () => {
   const [phonePart2, setPhonePart2] = useState("");
   const [phonePart3, setPhonePart3] = useState("");
 
+  // Helper to resolve the Firestore user document id (prefer NextAuth uid, else email match)
+  const resolveUserDocId = async (): Promise<string | null> => {
+    const email = session?.user?.email;
+    const uid = (session?.user as any)?.id;
+    if (!email && !uid) return null;
+
+    // Prefer uid if present
+    if (uid) {
+      const snap = await getDoc(doc(db, "users", uid));
+      if (snap.exists()) return uid;
+    }
+
+    if (email) {
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", email),
+        limit(1)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        return snap.docs[0].id;
+      }
+      // fallback create id by uid or email
+      return uid ?? email;
+    }
+    return null;
+  };
+
   // Fetches the user's profile from Firestore on component mount or when session changes
   useEffect(() => {
     const fetchProfile = async () => {
-      if (session?.user?.email) {
-        const docRef = doc(db, "users", session.user.email);
-        const docSnap = await getDoc(docRef);
+      const userDocId = await resolveUserDocId();
+      if (!userDocId || !session?.user?.email) return;
+      const docRef = doc(db, "users", userDocId);
+      const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setProfile(docSnap.data() as UserProfile);
-        } else {
-          // Set default profile data if document does not exist
-          setProfile({
-            name: session.user.name ?? "",
-            email: session.user.email,
-            profileImageUrl: session.user.image ?? "",
-            isVerified: false,
-          });
-        }
+      if (docSnap.exists()) {
+        setProfile(docSnap.data() as UserProfile);
+      } else {
+        setProfile({
+          name: session.user.name ?? "",
+          email: session.user.email,
+          profileImageUrl: session.user.image ?? "",
+          isVerified: false,
+        });
       }
     };
 
@@ -98,6 +135,8 @@ const EditProfilePage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!profile || !session?.user?.email) return;
+    const userDocId = await resolveUserDocId();
+    if (!userDocId) return;
     const phone = `${phonePart1}${phonePart2}${phonePart3}`;
     const userProfileUpdate = {
       ...profile,
@@ -105,7 +144,7 @@ const EditProfilePage = () => {
       profileImageUrl: session.user.image ?? "",
     };
 
-    await setDoc(doc(db, "users", session.user.email), userProfileUpdate);
+    await setDoc(doc(db, "users", userDocId), userProfileUpdate, { merge: true });
     alert("Profile updated successfully!");
   };
 
@@ -136,10 +175,11 @@ const EditProfilePage = () => {
                       gap: "5px",
                     }}
                   >
-                    <img
-                      src={VerifiedLabel.src}
+                    <Image
+                      src={VerifiedLabel}
                       alt="Verified"
-                      style={{ width: "20px", height: "20px" }}
+                      width={20}
+                      height={20}
                     />
                     <span>Verified</span>
                   </div>

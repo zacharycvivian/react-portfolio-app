@@ -1,8 +1,18 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./contact.module.css";
 import { useSession, signIn } from "next-auth/react";
 import { motion } from "framer-motion";
+import {
+  doc,
+  getDoc,
+  query,
+  where,
+  limit,
+  getDocs,
+  collection,
+} from "firebase/firestore";
+import { db } from "@/../firebase";
 
 const fadeInVariant = {
   visible: {
@@ -31,15 +41,55 @@ const downloadVCard = () => {
 // The ContactPage component that renders the contact information section of the website
 const ContactPage = () => {
   const { data: session, status } = useSession();
+  const [hasVerifiedPhone, setHasVerifiedPhone] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Effect hook to redirect unauthenticated users to sign-in page
-  useEffect(() => {
-    if (status !== "loading" && !session) {
-      signIn();
+  const resolveUserDocId = async (): Promise<string | null> => {
+    const email = session?.user?.email;
+    const uid = (session?.user as any)?.id;
+    if (!email && !uid) return null;
+
+    if (uid) {
+      const snap = await getDoc(doc(db, "users", uid));
+      if (snap.exists()) return uid;
     }
-  }, [session, status]);
 
-  if (status === "loading" || !session) {
+    if (email) {
+      const q = query(collection(db, "users"), where("email", "==", email), limit(1));
+      const snap = await getDocs(q);
+      if (!snap.empty) return snap.docs[0].id;
+      return uid ?? email;
+    }
+    return null;
+  };
+
+  // Redirect only when we know the user is unauthenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      signIn("google", { callbackUrl: "/contact", prompt: "select_account" });
+    }
+  }, [status]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const userDocId = await resolveUserDocId();
+      if (userDocId) {
+        const profileRef = doc(db, "users", userDocId);
+        const snap = await getDoc(profileRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          setIsAdmin(Boolean(data.isAdmin));
+          setHasVerifiedPhone(
+            Boolean(data.isAdmin) ||
+              (Boolean(data.phone) && Boolean(data.isVerified))
+          );
+        }
+      }
+    };
+    fetchProfile();
+  }, [session]);
+
+  if (status === "loading" || status === "unauthenticated") {
     // Using inline styles for troubleshooting
     return (
       <div
@@ -118,33 +168,64 @@ const ContactPage = () => {
             </p>
           </div>
         </motion.div>
-        <motion.div
-          className={styles.card}
-          onClick={() => handleTel("+16085740816")}
-          variants={fadeInVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <div className={styles.svgAndTextContainer}>
-            <div className={styles.svgContainer}>
-              <svg
-                viewBox="0 0 15 15"
-                width="30" // Scaled up to match other icons
-                height="30" // Scaled up to match other icons
-                fill="currentColor" // Using currentColor to adapt to CSS color settings
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M4 2.5C4 2.22386 4.22386 2 4.5 2H10.5C10.7761 2 11 2.22386 11 2.5V12.5C11 12.7761 10.7761 13 10.5 13H4.5C4.22386 13 4 12.7761 4 12.5V2.5ZM4.5 1C3.67157 1 3 1.67157 3 2.5V12.5C3 13.3284 3.67157 14 4.5 14H10.5C11.3284 14 12 13.3284 12 12.5V2.5C12 1.67157 11.3284 1 10.5 1H4.5ZM6 11.65C5.8067 11.65 5.65 11.8067 5.65 12C5.65 12.1933 5.8067 12.35 6 12.35H9C9.1933 12.35 9.35 12.1933 9.35 12C9.35 11.8067 9.1933 11.65 9 11.65H6Z" />
-              </svg>
+        {hasVerifiedPhone ? (
+          <motion.div
+            className={styles.card}
+            onClick={() => handleTel("+16085740816")}
+            variants={fadeInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <div className={styles.svgAndTextContainer}>
+              <div className={styles.svgContainer}>
+                <svg
+                  viewBox="0 0 15 15"
+                  width="30"
+                  height="30"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4 2.5C4 2.22386 4.22386 2 4.5 2H10.5C10.7761 2 11 2.22386 11 2.5V12.5C11 12.7761 10.7761 13 10.5 13H4.5C4.22386 13 4 12.7761 4 12.5V2.5ZM4.5 1C3.67157 1 3 1.67157 3 2.5V12.5C3 13.3284 3.67157 14 4.5 14H10.5C11.3284 14 12 13.3284 12 12.5V2.5C12 1.67157 11.3284 1 10.5 1H4.5ZM6 11.65C5.8067 11.65 5.65 11.8067 5.65 12C5.65 12.1933 5.8067 12.35 6 12.35H9C9.1933 12.35 9.35 12.1933 9.35 12C9.35 11.8067 9.1933 11.65 9 11.65H6Z" />
+                </svg>
+              </div>
+              <p>
+                <strong>Phone:</strong> +1 608-574-0816
+                <br />
+                <span className={styles.subtext}>Personal Cell Phone</span>
+              </p>
             </div>
-            <p>
-              <strong>Phone:</strong> +1 608-574-0816
-              <br />
-              <span className={styles.subtext}>Personal Cell Phone</span>
-            </p>
-          </div>
-        </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            className={styles.card}
+            variants={fadeInVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <div className={styles.svgAndTextContainer}>
+              <div className={styles.svgContainer}>
+                <svg
+                  viewBox="0 0 15 15"
+                  width="30"
+                  height="30"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4 2.5C4 2.22386 4.22386 2 4.5 2H10.5C10.7761 2 11 2.22386 11 2.5V12.5C11 12.7761 10.7761 13 10.5 13H4.5C4.22386 13 4 12.7761 4 12.5V2.5ZM4.5 1C3.67157 1 3 1.67157 3 2.5V12.5C3 13.3284 3.67157 14 4.5 14H10.5C11.3284 14 12 13.3284 12 12.5V2.5C12 1.67157 11.3284 1 10.5 1H4.5ZM6 11.65C5.8067 11.65 5.65 11.8067 5.65 12C5.65 12.1933 5.8067 12.35 6 12.35H9C9.1933 12.35 9.35 12.1933 9.35 12C9.35 11.8067 9.1933 11.65 9 11.65H6Z" />
+                </svg>
+              </div>
+              <p>
+                <strong>Phone:</strong> Available after you add a phone number to your profile.
+                <br />
+                <span className={styles.subtext}>
+                  Go to Edit Profile and add a phone number to view Zach's phone.
+                </span>
+              </p>
+            </div>
+          </motion.div>
+        )}
         <motion.div
           className={styles.card}
           onClick={() =>

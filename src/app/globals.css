@@ -1,10 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Edu+NSW+ACT+Foundation:wght@400..700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Edu+NSW+ACT+Foundation:wght@400..700&family=Encode+Sans+Expanded:wght@100;200;300;400;500;600;700;800;900&family=Fira+Code:wght@300..700&family=Lexend:wght@100..900&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import "tailwindcss";
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -45,5 +39,5 @@ body {
   color: var(--text-color-light);
   margin: 0;
   backdrop-filter: blur(5px);
-  font-family: "Manrope", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
 }
