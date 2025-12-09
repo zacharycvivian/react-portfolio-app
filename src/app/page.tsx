@@ -1,15 +1,9 @@
 "use client";
-import React, { useState, useEffect, Suspense, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSession, signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
-import { db } from "@/../firebase";
+import type { Firestore } from "firebase/firestore";
 import {
   Carousel,
   CarouselContent,
@@ -77,6 +71,32 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
   );
 };
 
+type FirestoreDeps = {
+  db: Firestore;
+  collection: typeof import("firebase/firestore").collection;
+  addDoc: typeof import("firebase/firestore").addDoc;
+  onSnapshot: typeof import("firebase/firestore").onSnapshot;
+  serverTimestamp: typeof import("firebase/firestore").serverTimestamp;
+};
+
+let firestoreDepsPromise: Promise<FirestoreDeps> | null = null;
+
+const loadFirestoreDeps = async (): Promise<FirestoreDeps> => {
+  if (!firestoreDepsPromise) {
+    firestoreDepsPromise = Promise.all([
+      import("@/../firebase"),
+      import("firebase/firestore"),
+    ]).then(([firebaseClient, firestore]) => ({
+      db: firebaseClient.db as Firestore,
+      collection: firestore.collection,
+      addDoc: firestore.addDoc,
+      onSnapshot: firestore.onSnapshot,
+      serverTimestamp: firestore.serverTimestamp,
+    }));
+  }
+  return firestoreDepsPromise;
+};
+
 export default function Home() {
   const { data: session } = useSession();
   const [buttonTop, setButtonTop] = useState(20);
@@ -112,6 +132,7 @@ export default function Home() {
 
   // Firestore helpers
   const addFeedback = async (feedback: string): Promise<void> => {
+    const { db, collection, addDoc, serverTimestamp } = await loadFirestoreDeps();
     const email = session?.user?.email || "user not logged in";
     await addDoc(collection(db, "feedback"), {
       email,
@@ -121,6 +142,7 @@ export default function Home() {
   };
 
   const addBugReport = async (bugDescription: string): Promise<void> => {
+    const { db, collection, addDoc, serverTimestamp } = await loadFirestoreDeps();
     const email = session?.user?.email || "user not logged in";
     await addDoc(collection(db, "bugs"), {
       email,
@@ -265,6 +287,8 @@ export default function Home() {
     let unsubscribe: (() => void) | undefined;
 
     try {
+      const { db, collection, addDoc, onSnapshot, serverTimestamp } =
+        await loadFirestoreDeps();
       const prompt = argument;
       const docRef = await addDoc(collection(db, "generate"), {
         prompt,
@@ -414,6 +438,8 @@ export default function Home() {
 
   const handleSubmitMessage = async () => {
     try {
+      const { db, collection, addDoc, serverTimestamp } =
+        await loadFirestoreDeps();
       await addDoc(collection(db, "connect"), {
         name: messageData.name,
         email: messageData.email,
@@ -551,13 +577,13 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <Image
-              className={styles.logoContainer}
               src={Logo}
               alt="Zach Vivian's Logo"
-              layout="fill"
-              objectFit="contain"
+              fill
+              sizes="(max-width: 900px) 70vw, 420px"
+              placeholder="blur"
               priority
-              loading="eager"
+              style={{ objectFit: "contain" }}
             />
           </motion.div>
 
@@ -643,40 +669,37 @@ export default function Home() {
             >
               <CarouselContent>
                 <CarouselItem className={styles.image}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Image
-                      src={Mountains}
-                      alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
-                      loading="lazy"
-                    />
-                  </Suspense>
+                  <Image
+                    src={Mountains}
+                    alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
+                    placeholder="blur"
+                    priority
+                    sizes="(max-width: 900px) 85vw, 800px"
+                  />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Image
-                      src={Zach}
-                      alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
-                      loading="lazy"
-                    />
-                  </Suspense>
+                  <Image
+                    src={Zach}
+                    alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
+                    placeholder="blur"
+                    sizes="(max-width: 900px) 85vw, 800px"
+                  />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Image
-                      src={Squad}
-                      alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
-                      loading="lazy"
-                    />
-                  </Suspense>
+                  <Image
+                    src={Squad}
+                    alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
+                    placeholder="blur"
+                    sizes="(max-width: 900px) 85vw, 800px"
+                  />
                 </CarouselItem>
                 <CarouselItem className={styles.image}>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Image
-                      src={Turbo}
-                      alt="Image of Zach Vivian's dog, Turbo"
-                      loading="lazy"
-                    />
-                  </Suspense>
+                  <Image
+                    src={Turbo}
+                    alt="Image of Zach Vivian's dog, Turbo"
+                    placeholder="blur"
+                    sizes="(max-width: 900px) 85vw, 800px"
+                  />
                 </CarouselItem>
               </CarouselContent>
               <CarouselPrevious />

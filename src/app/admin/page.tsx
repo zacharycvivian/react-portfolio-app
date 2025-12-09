@@ -4,6 +4,7 @@ import { authOptions } from "@/../auth";
 import { adminDb } from "@/../firebase-admin";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import type { Metadata } from "next";
 import styles from "./users.module.css";
 import VerifiedLabel from "@/../public/verified.png";
 import DefaultAvatar from "@/../public/defaultavatar.jpg";
@@ -31,6 +32,14 @@ type BugEntry = {
   email?: string;
   bugs?: string;
   time?: FirebaseFirestore.Timestamp;
+};
+
+export const metadata: Metadata = {
+  title: "Admin - Zachary Vivian's Portfolio Website",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 async function toggleVerification(formData: FormData) {

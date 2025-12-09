@@ -16,6 +16,7 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.zacharycvivian.com"),
   title: "Home - Zachary Vivian's Portfolio Website",
   description:
     "On this website, you're able to learn more about Zach Vivian's experience, reach out to him, view his blogs, and even leave a testimonial if you've worked with him in the past!",

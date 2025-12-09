@@ -9,9 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://www.zacharycvivian.com/about",
     },
     {
-      url: "https://www.zacharycvivian.com/contact",
-    },
-    {
       url: "https://www.zacharycvivian.com/blog",
     },
     {
