@@ -65,7 +65,11 @@ const SkillBar: React.FC<Skill> = ({ skill, level }) => {
         <div className={styles.skillLevelLabel}>{levelLabel}</div>
       </div>
       <div className={styles.skillBarContainer}>
-        <progress className={styles.skillBar} value={level} max={100}></progress>
+        <progress
+          className={styles.skillBar}
+          value={level}
+          max={100}
+        ></progress>
       </div>
     </div>
   );
@@ -108,14 +112,14 @@ export default function Home() {
   const [index, setIndex] = useState(0);
   const texts = useMemo(
     () => [
-      "INCIDENT RESPONSE",
-      "ASSET PROTECTION",
-      "THREAT INTELLIGENCE",
-      "VULNERABILITY ASSESSMENT",
-      "PENETRATION TESTING",
+      "SOFTWARE IMPLEMENTATION",
       "RISK MANAGEMENT",
-      "DATA PROTECTION",
-      "NETWORK SECURITY",
+      "IT/CUSTOMER SUPPORT",
+      "TECHNICAL TRAINING",
+      "DOCUMENTATION",
+      "SQL DATABASES",
+      "WINDOWS + SERVER",
+      "NETWORKING",
     ],
     []
   );
@@ -132,7 +136,8 @@ export default function Home() {
 
   // Firestore helpers
   const addFeedback = async (feedback: string): Promise<void> => {
-    const { db, collection, addDoc, serverTimestamp } = await loadFirestoreDeps();
+    const { db, collection, addDoc, serverTimestamp } =
+      await loadFirestoreDeps();
     const email = session?.user?.email || "user not logged in";
     await addDoc(collection(db, "feedback"), {
       email,
@@ -142,7 +147,8 @@ export default function Home() {
   };
 
   const addBugReport = async (bugDescription: string): Promise<void> => {
-    const { db, collection, addDoc, serverTimestamp } = await loadFirestoreDeps();
+    const { db, collection, addDoc, serverTimestamp } =
+      await loadFirestoreDeps();
     const email = session?.user?.email || "user not logged in";
     await addDoc(collection(db, "bugs"), {
       email,
@@ -160,7 +166,8 @@ export default function Home() {
     if (transitionIndex <= maxTransitionLength) {
       const timeoutId = setTimeout(() => {
         const newChars =
-          nextWord.slice(0, transitionIndex) + currentWord.slice(transitionIndex);
+          nextWord.slice(0, transitionIndex) +
+          currentWord.slice(transitionIndex);
         setDisplayWord(newChars);
         setTransitionIndex(transitionIndex + 1);
       }, 75);
@@ -426,7 +433,9 @@ export default function Home() {
         handleFeedbackCommand(argument);
         break;
       default:
-        setTerminalOutput("Unknown command. Type /help for a list of commands.");
+        setTerminalOutput(
+          "Unknown command. Type /help for a list of commands."
+        );
     }
     setCurrentInput("");
   };
@@ -478,24 +487,30 @@ export default function Home() {
     if (session) {
       window.open("/api/resume", "_blank");
     } else {
-      signIn("google", { callbackUrl: `${window.location.origin}/`, prompt: "select_account" });
+      signIn("google", {
+        callbackUrl: `${window.location.origin}/`,
+        prompt: "select_account",
+      });
     }
   };
 
   const technicalSkills = [
-    { skill: "Windows", level: 70 },
-    { skill: "MacOS", level: 95 },
-    { skill: "Kali Linux", level: 80 },
-    { skill: "Virtualization/Containers", level: 75 },
-    { skill: "Risk Management", level: 90 },
-    { skill: "Vulnerability Scanning", level: 75 },
-    { skill: "Intrusion Detection", level: 65 },
-    { skill: "Incident Response", level: 65 },
-    { skill: "Python", level: 75 },
-    { skill: "Web Development", level: 75 },
-    { skill: "Database", level: 75 },
-    { skill: "Git", level: 75 },
-    { skill: "Office 365", level: 95 },
+    { skill: "Custom Software Implementation", level: 85 },
+    { skill: "IT/Customer Support", level: 90 },
+    { skill: "Technical Training", level: 90 },
+    { skill: "Virtualization/Lab Environment", level: 75 },
+    { skill: "Networking", level: 65 },
+    { skill: "Risk Management", level: 80 },
+    { skill: "Installation and Support Documentation", level: 85 },
+    { skill: "Oracle Simphony POS/EMC", level: 65 },
+    { skill: "Support Ticket/Implementation Tracking", level: 65 },
+    { skill: "Javascript, HTML, Tailwind CSS", level: 75 },
+    { skill: "SQLExpress, MySQL, SQLLite", level: 75 },
+    { skill: "Google Firebase", level: 75 },
+    { skill: "Scripting (Batch, SQL, PowerShell, Python)", level: 75 },
+    { skill: "Office 365 Suite", level: 95 },
+    { skill: "Windows 7 + Up, Windows Server 2016 + Up", level: 90 },
+    { skill: "Ubuntu, Kali Linux", level: 80 },
   ];
 
   return (
@@ -601,7 +616,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              Hi, I'm <strong>Zachary Vivian</strong>
+              Hello, I'm <strong>Zachary Vivian</strong>
             </motion.h1>
             <motion.div
               className={styles.infoContainer}
@@ -616,21 +631,13 @@ export default function Home() {
                 </h2>
               </div>
               <p className={styles.infoContainerText}>
-                I am a cybersecurity professional looking for new opportunities
-                to bolster your business's security. Click{" "}
-                <a
-                  href="#"
-                  onClick={() =>
-                    window.open("@/../Risk_Management_Plan.pdf", "_blank")
-                  }
-                  className={styles.hyperlink}
-                >
-                  here
-                </a>{" "}
-                to view a Risk Management Plan I developed relating to a
-                real-life company and its assets. Want to learn more about me?
-                Scroll below! Questions? Press 'Chat' in the lower right corner
-                to open a terminal window and discover new features.
+                I am a cybersecurity professional currently working at On The
+                Mark Solutions as an Implementation and Support Specialist. Want
+                to learn more about me? Scroll below to view my experience,
+                skillset, and other various projects I've worked on! Questions?
+                Press 'Chat' in the lower right corner to open a terminal window
+                to interact with a chatbot that can help answer questions about
+                the site, or even help you get in touch with me!
               </p>
 
               <div className={styles.buttonContainer}>
@@ -640,7 +647,10 @@ export default function Home() {
                   onClick={(e) => {
                     if (!session) {
                       e.preventDefault();
-                      signIn("google", { callbackUrl: "/contact", prompt: "select_account" });
+                      signIn("google", {
+                        callbackUrl: "/contact",
+                        prompt: "select_account",
+                      });
                     }
                   }}
                 >
@@ -671,7 +681,7 @@ export default function Home() {
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Mountains}
-                    alt="A photo of Zach Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
+                    alt="A photo of Zachary Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
                     placeholder="blur"
                     priority
                     sizes="(max-width: 900px) 85vw, 800px"
@@ -680,7 +690,7 @@ export default function Home() {
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Zach}
-                    alt="A picture of Zach Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
+                    alt="A picture of Zachary Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
                     placeholder="blur"
                     sizes="(max-width: 900px) 85vw, 800px"
                   />
@@ -688,7 +698,7 @@ export default function Home() {
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Squad}
-                    alt="Zach Vivian and his buddies on a hike near Nederland, Colorado"
+                    alt="Zachary Vivian and his buddies on a hike near Nederland, Colorado"
                     placeholder="blur"
                     sizes="(max-width: 900px) 85vw, 800px"
                   />
@@ -696,7 +706,7 @@ export default function Home() {
                 <CarouselItem className={styles.image}>
                   <Image
                     src={Turbo}
-                    alt="Image of Zach Vivian's dog, Turbo"
+                    alt="Image of Zachary Vivian's dog, Turbo"
                     placeholder="blur"
                     sizes="(max-width: 900px) 85vw, 800px"
                   />
@@ -709,7 +719,7 @@ export default function Home() {
         </div>
 
         <div className={styles.secondarySection}>
-          <div className={styles.leftColumn}>
+          <div className={styles.cardsGrid}>
             <motion.div
               className={styles.card}
               variants={fadeInVariant}
@@ -718,9 +728,10 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <p>
-                <strong>Education:</strong> The University of Wisconsin -
-                Platteville, Bachelor of Science in Cybersecurity, Minor in
-                Business Administration
+                <strong>Education:</strong> I graduated from The University of
+                Wisconsin - Platteville with a Bachelor of Science in
+                Cybersecurity and a Minor in Business Administration in May
+                2024.
               </p>
             </motion.div>
             <motion.div
@@ -731,19 +742,13 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <p>
-                <strong>About Me: </strong>My academic journey has fueled a
-                passion for specializing in either penetration testing or
-                incident response, with the goal of safeguarding your
-                organization against sophisticated cyber threats and
-                vulnerabilities. As a diligent and quick learner, I am keen on
-                employing advanced analytical tools to thoroughly evaluate
-                potential security breaches. My proficiency in applying
-                cybersecurity frameworks and conducting comprehensive risk
-                assessments enables me to develop strategic approaches to
-                bolster your cybersecurity posture. My ambition is to
-                contribute to your team by not only preempting and mitigating
-                cyber attacks through robust security protocols but also
-                ensuring a resilient and adaptive security infrastructure.
+                <strong>About Me:</strong> My academic journey has fueled a
+                passion for specializing in penetration testing and incident
+                response. I focus on safeguarding organizations from advanced
+                threats, leveraging analytical tooling to assess vulnerabilities
+                and design adaptive security postures. I aim to contribute by
+                preempting attacks, strengthening protocols, and maintaining a
+                resilient infrastructure.
               </p>
             </motion.div>
             <motion.div
@@ -754,35 +759,13 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <p>
-                <strong>Senior Project:</strong> Our senior project integrates
-                our cumulative knowledge of the software development lifecycle,
-                focusing on creating virtual labs for educational use. My team's
-                role involves developing scalable containers and pre-configured
-                virtual machines for Windows and Linux, utilizing Proxmox VE.
-                This allows professors to effortlessly assign and auto-grade lab
-                assignments, providing a practical, hands-on learning experience
-                for students. This initiative highlights our capability to apply
-                theoretical concepts to real-world challenges, enhancing the
-                educational toolkit for future academic use. Due to some
-                difficulties the team had with the UI towards the end of the
-                project, I quickly remade the entire UI with the experience I
-                had gained from making this website. If you'd like to check out
-                the template, visit my GitHub profile from the 'Contact' page or
-                simply click{" "}
-                <a
-                  href="https://angular-cyberlabs-app.vercel.app/login"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.hyperlink}
-                >
-                  this link
-                </a>
-                . Login with usernames <strong>student</strong> or{" "}
-                <strong>teacher</strong> and the secure password,{" "}
-                <strong>password</strong>, to view this template built in
-                Angular. This does not have any security implementations, the
-                MySQL database, or the Proxmox VE environment built in with it
-                since it's being shown publicly on my GitHub profile.
+                <strong>Senior Project:</strong> Our capstone created virtual
+                labs for education, orchestrating scalable containers and
+                pre-configured VMs on Proxmox VE. I rebuilt the UI late in the
+                project to make assignment distribution, auto-grading, and
+                accessibility seamless. The GitHub-hosted template (student /
+                teacher, password “password”) demonstrates that front-end work
+                without the backend integrations.
               </p>
             </motion.div>
             <motion.div
@@ -793,19 +776,12 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <p>
-                <strong>Hobbies:</strong> In my leisure hours, I'm passionate
-                about exploring the great outdoors, often found backpacking with
-                my friends and my dog, Turbo, by my side. Beyond these
-                adventures, I have a keen interest in photography and
-                longboarding, which allows me to appreciate the world's beauty
-                from different perspectives. Additionally, I dedicate time to
-                personal projects, like developing this website, which not only
-                fuels my creativity but also sharpens my technical skills.
+                <strong>Hobbies:</strong> When I’m not building software, I’m
+                hiking with friends and my dog Turbo, longboarding, taking
+                photographs, and spending downtime gaming or reading with loved
+                ones. These hobbies keep me grounded and constantly curious.
               </p>
             </motion.div>
-          </div>
-
-          <div className={styles.rightColumn}>
             <motion.div
               className={styles.card}
               variants={fadeInVariant}
@@ -831,70 +807,42 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              <p>
-                <strong>
-                  On The Mark Solutions -- Implementation and Support Specialist
-                  (2024-Current):
-                </strong>{" "}
-                The primary point of contact for OTMS's clients throughout the
-                implementation process + ongoing support. Creating accurate
-                documentation for user guides and troubleshooting resources,
-                configuring POS software to meet client-specific requirements,
-                providing technical training to clients, and
-                resolving/troubleshooting issues.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
-                independently in a fast-paced environment picking orders and
-                sorting clothing. Also worked in shipping loading truck trailers
-                with packed merchandise.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>
-                  Blain's Farm & Fleet -- Automotive Sales Associate (2019-2023):{" "}
-                </strong>
-                Supervised and trained department employees on customer service,
-                special orders, and planograms. Worked alongside management to
-                implement a new warehouse management system. Forklift Certified
-                and DOT Hazards trained, assisted in the warehouse unloading
-                freight trucks, loading customer vehicles, and building
-                equipment and floor models. Also worked in the Automotive
-                Service Center as an advisor to set up vehicle appointments and
-                order tires.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>
-                  House on the Rock -- Food Service Worker (2017-2019):{" "}
-                </strong>
-                Worked at the popular tourist attraction directing guests and
-                answering questions. General housekeeping and cleaning displays
-                as well as changing themes for seasonal events. Worked in the
-                pizza restaurant and the ice cream shop serving guests.
-              </p>
+              <h3 className={styles.skillSectionTitle}>
+                <strong>Experience:</strong>
+              </h3>
+              <ul className={styles.experienceList}>
+                <li>
+                  <strong>
+                    On The Mark Solutions — Implementation & Support Specialist
+                    (2024-Current):
+                  </strong>{" "}
+                  Lead client contact during implementations, wrote guidance
+                  docs, configured POS systems, and delivered training plus
+                  troubleshooting.
+                </li>
+                <li>
+                  <strong>Lands' End — Orderfiller (2022-2024):</strong> Picked
+                  and sorted clothing orders in a fast-paced warehouse and
+                  supported outbound shipping/loading with high accuracy.
+                </li>
+                <li>
+                  <strong>
+                    Blain's Farm & Fleet — Automotive Sales Associate
+                    (2019-2023):
+                  </strong>{" "}
+                  Trained associates, helped deploy a warehouse system, managed
+                  freight handling, and supported the service center with
+                  appointments and parts fulfillment.
+                </li>
+                <li>
+                  <strong>
+                    House on the Rock — Food Service Worker (2017-2019):
+                  </strong>{" "}
+                  Explained attractions to guests, rotated seasonal displays,
+                  and served customers in the pizza restaurant and ice cream
+                  shop.
+                </li>
+              </ul>
             </motion.div>
           </div>
 
