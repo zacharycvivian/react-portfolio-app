@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
 import styles from "./page.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import Zach from "@/../public/Zach.jpg";
@@ -111,13 +112,13 @@ const getTimeGreeting = () => {
 export default function Home() {
   const { data: session } = useSession();
   const greeting = useMemo(() => getTimeGreeting(), []);
-  const [buttonTop, setButtonTop] = useState(20);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [currentInput, setCurrentInput] = useState("");
   const [terminalOutput, setTerminalOutput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [index, setIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const texts = useMemo(
     () => [
       "SOFTWARE IMPLEMENTATION",
@@ -133,7 +134,6 @@ export default function Home() {
   );
   const [displayWord, setDisplayWord] = useState(texts[0]);
   const [transitionIndex, setTransitionIndex] = useState(0);
-  const terminalHeight = 300;
   const [messageStep, setMessageStep] = useState(0);
   const [messageData, setMessageData] = useState({
     name: "",
@@ -472,20 +472,55 @@ export default function Home() {
     }
   };
 
-  // Chat button positioning
+  const chatButtonOffset = 20;
+  const chatButtonSize = 50;
+  const chatSpacing = 16;
+  const terminalOffset = chatButtonOffset + chatButtonSize + chatSpacing;
+  const terminalId = "chatbotTerminal";
+
   useEffect(() => {
-    const initialPosition = window.innerHeight - 190;
-    setButtonTop(initialPosition);
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setButtonTop(window.scrollY + window.innerHeight - 70);
+    const applyFixedPositions = () => {
+      const btn = document.getElementById("chatbotButton");
+      const terminal = document.getElementById(terminalId);
+      if (btn) {
+        btn.style.position = "fixed";
+        btn.style.bottom = `${chatButtonOffset}px`;
+        btn.style.right = "20px";
+        btn.style.left = "";
+        btn.style.top = "";
+        btn.style.zIndex = "1200";
+      }
+      if (terminal) {
+        terminal.style.position = "fixed";
+        terminal.style.bottom = `${terminalOffset}px`;
+        terminal.style.right = "20px";
+        terminal.style.left = "";
+        terminal.style.top = "";
+        terminal.style.zIndex = "1100";
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Add a style tag as a final override to survive unexpected CSS
+    const styleEl = document.createElement("style");
+    styleEl.setAttribute("data-chatbot-style", "true");
+    styleEl.innerHTML = `
+#chatbotButton { position: fixed !important; bottom: ${chatButtonOffset}px !important; right: 20px !important; z-index: 1200 !important; }
+#${terminalId} { position: fixed !important; bottom: ${terminalOffset}px !important; right: 20px !important; z-index: 1100 !important; }
+`;
+    document.head.appendChild(styleEl);
+
+    applyFixedPositions();
+    window.addEventListener("scroll", applyFixedPositions);
+    window.addEventListener("resize", applyFixedPositions);
+    return () => {
+      window.removeEventListener("scroll", applyFixedPositions);
+      window.removeEventListener("resize", applyFixedPositions);
+      document.head.removeChild(styleEl);
+    };
+  }, [chatButtonOffset, terminalOffset, terminalId]);
 
   const formatUsername = (username: string | null | undefined): string => {
     return username ? username.toLowerCase().replace(/ /g, "") : "guest";
@@ -523,72 +558,84 @@ export default function Home() {
 
   return (
     <>
-      <motion.button
-        id="chatbotButton"
-        className={styles.chatbotbutton}
-        style={{ top: `${buttonTop}px` }}
-        onClick={() => setIsChatVisible(!isChatVisible)}
-        variants={chatBotVariant}
-        initial="visible"
-        viewport={{ once: true }}
-      >
-        Chat
-      </motion.button>
-      <AnimatePresence>
-        {isChatVisible && (
-          <motion.div
-            className={styles.terminalcontainer}
-            style={{
-              top: `${buttonTop - terminalHeight}px`,
-              right: "20px",
-              position: "fixed",
-              zIndex: 1100,
-            }}
-            variants={chatBotVariant}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            <div className={styles.terminal_toolbar}>
-              <div className={styles.close_button}>
-                <button
-                  className={`${styles.btn} ${styles["btn-color"]}`}
-                  onClick={() => setIsChatVisible(!isChatVisible)}
-                ></button>
-                <button className={styles.btn}></button>
-                <button className={styles.btn}></button>
-              </div>
-              <p className={styles.user}>
-                {formatUsername(session?.user?.name)}@terminal: ~
-              </p>
-              <div className={styles.add_tab}>+</div>
-            </div>
-            <div className={styles.terminal_body}>
-              <div className={styles.terminal_prompt}>
-                <span className={styles.terminal_user}>
-                  {formatUsername(session?.user?.name)}@terminal/main/:
-                </span>
-                <span className={styles.terminal_location}>~</span>
-                <span className={styles.terminal_bling}>$</span>
-                <span>{lastCommand}</span>
-              </div>
-              <div className={styles.terminal_output}>
-                <pre className={styles.output_text}>{terminalOutput}</pre>
-              </div>
-              <div className={styles.terminal_input}>
-                <input
-                  placeholder="Type '/help' here to get started..."
-                  className={styles.input_text}
-                  type="text"
-                  value={currentInput}
-                  onChange={(e) => setCurrentInput(e.target.value)}
-                  onKeyDown={handleEnterKey}
-                />
-              </div>
-            </div>
-          </motion.div>
+      {isMounted &&
+        createPortal(
+          <>
+            <motion.button
+              id="chatbotButton"
+              className={styles.chatbotbutton}
+              style={{
+                position: "fixed",
+                bottom: chatButtonOffset,
+                right: 20,
+                zIndex: 1200,
+              }}
+              onClick={() => setIsChatVisible(!isChatVisible)}
+              variants={chatBotVariant}
+              initial="visible"
+              viewport={{ once: true }}
+            >
+              Chat
+            </motion.button>
+            <AnimatePresence>
+              {isChatVisible && (
+                <motion.div
+                  id={terminalId}
+                  className={styles.terminalcontainer}
+                  style={{
+                    position: "fixed",
+                    bottom: terminalOffset,
+                    right: 20,
+                    zIndex: 1100,
+                  }}
+                  variants={chatBotVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                >
+                  <div className={styles.terminal_toolbar}>
+                    <div className={styles.close_button}>
+                      <button
+                        className={`${styles.btn} ${styles["btn-color"]}`}
+                        onClick={() => setIsChatVisible(!isChatVisible)}
+                      ></button>
+                      <button className={styles.btn}></button>
+                      <button className={styles.btn}></button>
+                    </div>
+                    <p className={styles.user}>
+                      {formatUsername(session?.user?.name)}@terminal: ~
+                    </p>
+                    <div className={styles.add_tab}>+</div>
+                  </div>
+                  <div className={styles.terminal_body}>
+                    <div className={styles.terminal_prompt}>
+                      <span className={styles.terminal_user}>
+                        {formatUsername(session?.user?.name)}@terminal/main/:
+                      </span>
+                      <span className={styles.terminal_location}>~</span>
+                      <span className={styles.terminal_bling}>$</span>
+                      <span>{lastCommand}</span>
+                    </div>
+                    <div className={styles.terminal_output}>
+                      <pre className={styles.output_text}>{terminalOutput}</pre>
+                    </div>
+                    <div className={styles.terminal_input}>
+                      <input
+                        placeholder="Type '/help' here to get started..."
+                        className={styles.input_text}
+                        type="text"
+                        value={currentInput}
+                        onChange={(e) => setCurrentInput(e.target.value)}
+                        onKeyDown={handleEnterKey}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>,
+          document.body
         )}
-      </AnimatePresence>
 
       <div className={styles.layoutContainer}>
         <div className={styles.heroSection}>

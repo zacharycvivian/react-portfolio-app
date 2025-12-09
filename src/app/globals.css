@@ -42,11 +42,30 @@ body {
   background-color: var(--primary-color);
   color: var(--text-color-light);
   margin: 0;
-  backdrop-filter: blur(5px);
   font-family: var(--font-manrope), sans-serif !important;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 html {
   overflow-x: hidden;
+}
+
+/* Hide scrollbars while keeping scroll functionality */
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+#chatbotButton {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 1200 !important;
 }

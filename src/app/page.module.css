@@ -5,9 +5,20 @@
   width: 100%;
   background-color: var(--secondary-color);
   height: auto;
-  overflow-x: hidden;
   padding-top: 100px;
-  overflow-y: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+.layoutContainer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: var(--secondary-color);
+  z-index: -1;
 }
 
 .heroSection {
@@ -26,10 +37,22 @@
   flex-direction: column;
   align-items: stretch;
   background-color: var(--third-color);
+  width: 100%;
+  position: relative;
   padding: 20px;
   margin-top: 20px;
   gap: 24px;
-  overflow-y: hidden;
+}
+
+.secondarySection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: var(--third-color);
+  z-index: -1;
 }
 
 .cardsGrid {
@@ -229,8 +252,9 @@
 }
 
 .terminalcontainer {
+  position: fixed;
   right: 20px;
-  bottom: 70px;
+  bottom: 86px;
   max-height: 30vh;
   width: 400px;
   z-index: 1100;
@@ -238,9 +262,9 @@
 }
 
 .chatbotbutton {
-  position: absolute;
-  bottom: 20px;
+  position: fixed;
   right: 20px;
+  bottom: 20px;
   z-index: 1000;
   height: 50px;
   width: 50px;
@@ -260,6 +284,44 @@
 .chatbotbutton:active {
   color: var(--text-color-light);
   box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+}
+
+@media (min-width: 1600px) {
+  .layoutContainer {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .heroSection {
+    min-height: calc(100vh - 80px);
+    gap: 32px;
+  }
+
+  .logoContainer {
+    height: 240px;
+  }
+
+  .welcomeMessage {
+    font-size: 2.4rem;
+  }
+
+  .instructions {
+    font-size: 1.6rem;
+  }
+
+  .card {
+    padding: 40px;
+  }
+
+  .cardsGrid {
+    grid-template-columns: repeat(2, minmax(520px, 1fr));
+    gap: 48px;
+  }
+
+  .infoContainer,
+  .carouselItem {
+    max-width: 1100px;
+  }
 }
 
 .terminal_toolbar {
@@ -496,5 +558,25 @@
 
   .buttonContainer {
     gap: 10px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .cardsColumn {
+    padding: 0;
+  }
+
+  .card {
+    max-width: 900px;
+  }
+
+  .infoContainer,
+  .carouselItem {
+    max-width: 900px;
   }
 }

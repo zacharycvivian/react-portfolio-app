@@ -269,13 +269,16 @@ const CyberWordle: React.FC = () => {
     }
   };
 
+  // Automatically scroll down 80 pixels to keep the game in view while keeping header/footer reachable
   useEffect(() => {
-    // Automatically scroll down 80 pixels to ensure the game is in full view
-    window.scrollTo({
-      top: 80,
-      left: 0,
-      behavior: "smooth", // Optional: Adds a smooth scrolling effect
-    });
+    const timer = window.setTimeout(() => {
+      window.scrollTo({
+        top: 80,
+        left: 0,
+        behavior: "smooth",
+      });
+    }, 50);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Displays game instructions to the user on their first visit
