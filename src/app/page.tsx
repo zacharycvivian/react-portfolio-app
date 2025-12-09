@@ -101,8 +101,16 @@ const loadFirestoreDeps = async (): Promise<FirestoreDeps> => {
   return firestoreDepsPromise;
 };
 
+const getTimeGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
+
 export default function Home() {
   const { data: session } = useSession();
+  const greeting = useMemo(() => getTimeGreeting(), []);
   const [buttonTop, setButtonTop] = useState(20);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [currentInput, setCurrentInput] = useState("");
@@ -616,7 +624,7 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              Hello, I'm <strong>Zachary Vivian</strong>
+              {greeting}, I'm <strong>Zachary Vivian</strong>
             </motion.h1>
             <motion.div
               className={styles.infoContainer}
@@ -631,13 +639,24 @@ export default function Home() {
                 </h2>
               </div>
               <p className={styles.infoContainerText}>
-                I am a cybersecurity professional currently working at On The
-                Mark Solutions as an Implementation and Support Specialist. Want
-                to learn more about me? Scroll below to view my experience,
-                skillset, and other various projects I've worked on! Questions?
-                Press 'Chat' in the lower right corner to open a terminal window
-                to interact with a chatbot that can help answer questions about
-                the site, or even help you get in touch with me!
+                I am a cybersecurity professional currently working for On The
+                Mark Solutions as an Implementation and Support Specialist.
+                Click{" "}
+                <a
+                  href="#"
+                  onClick={() =>
+                    window.open("@/../Risk_Management_Plan.pdf", "_blank")
+                  }
+                  className={styles.hyperlink}
+                >
+                  here
+                </a>{" "}
+                to view a Risk Management Plan final project I completed during
+                college relating to a real-life company and its assets. If you'd
+                like to learn more about my experience, projects, and technical
+                skills, scroll below. Questions? Press 'Chat' in the lower right
+                corner to open a terminal window to ask a bot any questions you
+                have about my site.
               </p>
 
               <div className={styles.buttonContainer}>
@@ -720,130 +739,196 @@ export default function Home() {
 
         <div className={styles.secondarySection}>
           <div className={styles.cardsGrid}>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>Education:</strong> I graduated from The University of
-                Wisconsin - Platteville with a Bachelor of Science in
-                Cybersecurity and a Minor in Business Administration in May
-                2024.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>About Me:</strong> My academic journey has fueled a
-                passion for specializing in penetration testing and incident
-                response. I focus on safeguarding organizations from advanced
-                threats, leveraging analytical tooling to assess vulnerabilities
-                and design adaptive security postures. I aim to contribute by
-                preempting attacks, strengthening protocols, and maintaining a
-                resilient infrastructure.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>Senior Project:</strong> Our capstone created virtual
-                labs for education, orchestrating scalable containers and
-                pre-configured VMs on Proxmox VE. I rebuilt the UI late in the
-                project to make assignment distribution, auto-grading, and
-                accessibility seamless. The GitHub-hosted template (student /
-                teacher, password “password”) demonstrates that front-end work
-                without the backend integrations.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <p>
-                <strong>Hobbies:</strong> When I’m not building software, I’m
-                hiking with friends and my dog Turbo, longboarding, taking
-                photographs, and spending downtime gaming or reading with loved
-                ones. These hobbies keep me grounded and constantly curious.
-              </p>
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <h3 className={styles.skillSectionTitle}>
-                <strong>Technical Skills:</strong>
-              </h3>
-              {technicalSkills.map((techSkill) => (
-                <SkillBar
-                  key={techSkill.skill}
-                  skill={techSkill.skill}
-                  level={techSkill.level}
-                />
-              ))}
-            </motion.div>
-            <motion.div
-              className={styles.card}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <h3 className={styles.skillSectionTitle}>
-                <strong>Experience:</strong>
-              </h3>
-              <ul className={styles.experienceList}>
-                <li>
+            <div className={styles.cardsColumn}>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>Education:</strong> The University of Wisconsin -
+                  Platteville, Bachelor of Science in Cybersecurity, Minor in
+                  Business Administration
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>About Me: </strong>My academic journey has fueled a
+                  passion for specializing in either penetration testing or
+                  incident response, with the goal of safeguarding your
+                  organization against sophisticated cyber threats and
+                  vulnerabilities. As a diligent and quick learner, I am keen on
+                  employing advanced analytical tools to thoroughly evaluate
+                  potential security breaches. My proficiency in applying
+                  cybersecurity frameworks and conducting comprehensive risk
+                  assessments enables me to develop strategic approaches to
+                  bolster your cybersecurity posture. My ambition is to
+                  contribute to your team by not only preempting and mitigating
+                  cyber attacks through robust security protocols but also
+                  ensuring a resilient and adaptive security infrastructure.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>Senior Project:</strong> Our senior project integrates
+                  our cumulative knowledge of the software development
+                  lifecycle, focusing on creating virtual labs for educational
+                  use. My team's role involves developing scalable containers
+                  and pre-configured virtual machines for Windows and Linux,
+                  utilizing Proxmox VE. This allows professors to effortlessly
+                  assign and auto-grade lab assignments, providing a practical,
+                  hands-on learning experience for students. This initiative
+                  highlights our capability to apply theoretical concepts to
+                  real-world challenges, enhancing the educational toolkit for
+                  future academic use. Due to some difficulties the team had
+                  with the UI towards the end of the project, I quickly remade
+                  the entire UI with the experience I had gained from making
+                  this website. If you'd like to check out the template, visit
+                  my GitHub profile from the 'Contact' page or simply click{" "}
+                  <a
+                    href="https://angular-cyberlabs-app.vercel.app/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.hyperlink}
+                  >
+                    this link
+                  </a>
+                  . Login with usernames <strong>student</strong> or{" "}
+                  <strong>teacher</strong> and the secure password,{" "}
+                  <strong>password</strong>, to view this template built in
+                  Angular. This does not have any security implementations, the
+                  MySQL database, or the Proxmox VE environment built in with it
+                  since it's being shown publicly on my GitHub profile.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>Hobbies:</strong> In my leisure hours, I'm passionate
+                  about exploring the great outdoors, often found backpacking
+                  with my friends and my dog, Turbo, by my side. Beyond these
+                  adventures, I have a keen interest in photography and
+                  longboarding, which allows me to appreciate the world's beauty
+                  from different perspectives. Additionally, I dedicate time to
+                  personal projects, like developing this website, which not
+                  only fuels my creativity but also sharpens my technical
+                  skills.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
                   <strong>
-                    On The Mark Solutions — Implementation & Support Specialist
-                    (2024-Current):
+                    On The Mark Solutions -- Implementation and Support
+                    Specialist (2024-Current):
                   </strong>{" "}
-                  Lead client contact during implementations, wrote guidance
-                  docs, configured POS systems, and delivered training plus
-                  troubleshooting.
-                </li>
-                <li>
-                  <strong>Lands' End — Orderfiller (2022-2024):</strong> Picked
-                  and sorted clothing orders in a fast-paced warehouse and
-                  supported outbound shipping/loading with high accuracy.
-                </li>
-                <li>
+                  The primary point of contact for OTMS's clients throughout the
+                  implementation process + ongoing support. Creating accurate
+                  documentation for user guides and troubleshooting resources,
+                  configuring POS software to meet client-specific requirements,
+                  providing technical training to clients, and
+                  resolving/troubleshooting issues.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
+                  <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
+                  independently in a fast-paced environment picking orders and
+                  sorting clothing. Also worked in shipping loading truck
+                  trailers with packed merchandise.
+                </p>
+              </motion.div>
+            </div>
+            <div className={styles.cardsColumn}>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <h3 className={styles.skillSectionTitle}>
+                  <strong>Technical Skills:</strong>
+                </h3>
+                {technicalSkills.map((techSkill) => (
+                  <SkillBar
+                    key={techSkill.skill}
+                    skill={techSkill.skill}
+                    level={techSkill.level}
+                  />
+                ))}
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
                   <strong>
-                    Blain's Farm & Fleet — Automotive Sales Associate
+                    Blain's Farm & Fleet -- Automotive Sales Associate
                     (2019-2023):
                   </strong>{" "}
-                  Trained associates, helped deploy a warehouse system, managed
-                  freight handling, and supported the service center with
-                  appointments and parts fulfillment.
-                </li>
-                <li>
+                  Supervised and trained department employees on customer
+                  service, special orders, and planograms. Worked alongside
+                  management to implement a new warehouse management system.
+                  Forklift Certified and DOT Hazards trained, assisted in the
+                  warehouse unloading freight trucks, loading customer vehicles,
+                  and building equipment and floor models. Also worked in the
+                  Automotive Service Center as an advisor to set up vehicle
+                  appointments and order tires.
+                </p>
+              </motion.div>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <p>
                   <strong>
-                    House on the Rock — Food Service Worker (2017-2019):
+                    House on the Rock -- Food Service Worker (2017-2019):
                   </strong>{" "}
-                  Explained attractions to guests, rotated seasonal displays,
-                  and served customers in the pizza restaurant and ice cream
-                  shop.
-                </li>
-              </ul>
-            </motion.div>
+                  Worked at the popular tourist attraction directing guests and
+                  answering questions. General housekeeping and cleaning
+                  displays as well as changing themes for seasonal events.
+                  Worked in the pizza restaurant and the ice cream shop serving
+                  guests.
+                </p>
+              </motion.div>
+            </div>
           </div>
 
           <motion.div
