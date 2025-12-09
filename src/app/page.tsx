@@ -748,9 +748,9 @@ export default function Home() {
                 viewport={{ once: true }}
               >
                 <p>
-                  <strong>Education:</strong> The University of Wisconsin -
-                  Platteville, Bachelor of Science in Cybersecurity, Minor in
-                  Business Administration
+                  <strong>Education: </strong>I graduated from The University of Wisconsin -
+                  Platteville, with a Bachelor of Science in Cybersecurity and a Minor in
+                  Business Administration in May 2024.
                 </p>
               </motion.div>
               <motion.div
@@ -831,7 +831,8 @@ export default function Home() {
                   from different perspectives. Additionally, I dedicate time to
                   personal projects, like developing this website, which not
                   only fuels my creativity but also sharpens my technical
-                  skills.
+                  skills. Besides that, I enjoy spending the rest of my time
+                  playing video games and spending time with family and friends.
                 </p>
               </motion.div>
               <motion.div
@@ -851,7 +852,10 @@ export default function Home() {
                   documentation for user guides and troubleshooting resources,
                   configuring POS software to meet client-specific requirements,
                   providing technical training to clients, and
-                  resolving/troubleshooting issues.
+                  resolving/troubleshooting issues. Also responsible for
+                  planning implementation timelines, coordinating with
+                  cross-functional teams, and ensuring a smooth transition for
+                  clients adopting new software solutions.
                 </p>
               </motion.div>
               <motion.div
@@ -863,9 +867,9 @@ export default function Home() {
               >
                 <p>
                   <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
-                  independently in a fast-paced environment picking orders and
-                  sorting clothing. Also worked in shipping loading truck
-                  trailers with packed merchandise.
+                  independently in a fast-paced environment picking clothing
+                  orders and sorting pieces. Also worked in the shipping
+                  department loading truck trailers with packed merchandise.
                 </p>
               </motion.div>
             </div>
@@ -900,14 +904,15 @@ export default function Home() {
                     Blain's Farm & Fleet -- Automotive Sales Associate
                     (2019-2023):
                   </strong>{" "}
-                  Supervised and trained department employees on customer
-                  service, special orders, and planograms. Worked alongside
-                  management to implement a new warehouse management system.
-                  Forklift Certified and DOT Hazards trained, assisted in the
-                  warehouse unloading freight trucks, loading customer vehicles,
-                  and building equipment and floor models. Also worked in the
-                  Automotive Service Center as an advisor to set up vehicle
-                  appointments and order tires.
+                  During most of my college, I worked part time at F&F
+                  supervising and training the automotive sales department
+                  employees on customer service, special orders, and planograms.
+                  Worked alongside management to implement the new warehouse
+                  management system. Forklift Certified and DOT Hazards trained,
+                  assisted in the warehouse unloading freight trucks, loading
+                  customer vehicles, and building equipment and floor models.
+                  Also worked in the Automotive Service Center as an advisor to
+                  set up vehicle appointments and order tires.
                 </p>
               </motion.div>
               <motion.div
@@ -921,11 +926,12 @@ export default function Home() {
                   <strong>
                     House on the Rock -- Food Service Worker (2017-2019):
                   </strong>{" "}
-                  Worked at the popular tourist attraction directing guests and
-                  answering questions. General housekeeping and cleaning
-                  displays as well as changing themes for seasonal events.
-                  Worked in the pizza restaurant and the ice cream shop serving
-                  guests.
+                  Between my Junior and Senior years of high school, I worked at
+                  the popular tourist attraction and resort directing guests and
+                  answering questions, performed general housekeeping and
+                  cleaning displays as well as changing decorational themes for
+                  seasonal events. Ended up working in the pizza restaurant as
+                  well as the ice cream shop serving guests.
                 </p>
               </motion.div>
             </div>
