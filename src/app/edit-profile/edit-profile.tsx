@@ -255,16 +255,25 @@ const EditProfilePage = () => {
             </div>
           </form>
         ) : null}
-        <p className={styles.disclaimer}>
-          <strong>Disclaimer:</strong> I prioritize your privacy and security,
-          entrusting your data to Google Firebase for safekeeping (your password
-          is unavailable to me). Please note that your occupation and employer
-          will be visible to others on the testimonials page. Your phone number
-          is requested solely for the purposes of adding you to my contact list
-          and verifying your authenticity as a user. Feel free to leave a review
-          on my testimonials page, if you’d like a verified badge please contact
-          me so I can review your information!
-        </p>
+        <div className={styles.disclaimer}>
+          <h3>Privacy Policy:</h3>
+          <p>
+            This profile editor only stores the information you choose to share
+            (name, email, phone, occupation, employer, and profile photo).
+            Authentication and password handling are fully managed by Google
+            Firebase—this application never sees or stores your password.
+
+            Your occupation and employer may be displayed publicly on the
+            testimonials page to give context to reviews. Your phone number is
+            collected solely so I can verify real users and reach out if needed;
+            it is never shared or sold.
+
+            Data is stored securely in Firebase and is not provided to
+            advertisers or other third parties. You can request that your profile
+            be updated or removed at any time via the contact page. By logging in
+            with your Google account, you consent to this use of your information.
+          </p>
+        </div>
       </div>
     </div>
   );

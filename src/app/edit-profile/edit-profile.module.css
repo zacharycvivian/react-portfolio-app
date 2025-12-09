@@ -56,8 +56,8 @@
 }
 
 .input[disabled] {
-  background-color: #ccc;
-  color: #777;
+  background-color: var(--input-disabled-background);
+  color: var(--input-disabled-color);
 }
 
 .phoneInputContainer {
@@ -114,6 +114,7 @@
   font-size: 0.8rem;
   color: var(--text-color-light);
   padding-bottom: 5px;
+  text-align: justify;
 }
 
 .card {

@@ -16,6 +16,8 @@
   --card-shadow: #bebebe;
   --card-shadow-2: #ffffff;
   --footer-color: #2c3035;
+  --input-disabled-color: #696969;
+  --input-disabled-background: #c9c9c9;
 }
 
 [data-theme="dark"] {
@@ -31,6 +33,8 @@
   --card-shadow: #191919;
   --card-shadow-2: #363636;
   --footer-color: #151515;
+  --input-disabled-color: #858585;
+  --input-disabled-background: #3d3d3d;
 }
 
 body {
