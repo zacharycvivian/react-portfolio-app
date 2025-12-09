@@ -19,7 +19,6 @@
 # misc
 .DS_Store
 *.pem
-protected/zcvivian_Resume.pdf
 
 # debug
 npm-debug.log*
