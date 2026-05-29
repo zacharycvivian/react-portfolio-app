@@ -104,7 +104,7 @@ function Header() {
 
   const persistReadIds = (ids: Set<string>) => {
     setReadIds(ids);
-    try { localStorage.setItem("notifReadIds", JSON.stringify([...ids])); } catch {}
+    try { localStorage.setItem("notifReadIds", JSON.stringify(Array.from(ids))); } catch {}
   };
 
   useEffect(() => {
@@ -193,11 +193,11 @@ function Header() {
   }, [notifOpen]);
 
   const markOneRead = (id: string) => {
-    persistReadIds(new Set([...readIds, id]));
+    persistReadIds(new Set(Array.from(readIds).concat(id)));
   };
 
   const markAllRead = () => {
-    persistReadIds(new Set([...readIds, ...notifications.map(n => n.id)]));
+    persistReadIds(new Set(Array.from(readIds).concat(notifications.map(n => n.id))));
   };
 
   const unreadCount = notifications.filter(n => !readIds.has(n.id)).length;
