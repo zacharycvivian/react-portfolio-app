@@ -18,12 +18,20 @@
   --footer-color: #2c3035;
   --input-disabled-color: #696969;
   --input-disabled-background: #c9c9c9;
+  /* Liquid Glass */
+  --glass-bg: rgba(238, 240, 244, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-blur: 32px;
+  --glass-saturate: 180%;
+  --glass-chroma-a: rgba(255, 128, 200, 0.18);
+  --glass-chroma-b: rgba(128, 188, 255, 0.14);
+  --glass-specular: rgba(255, 255, 255, 0.32);
 }
 
 [data-theme="dark"] {
   --primary-color: #0f0f0f;
-  --secondary-color: #1b1b1b;
-  --third-color: #2b2b2b;
+  --secondary-color: rgba(16, 16, 22, 0.72);
+  --third-color: rgba(22, 22, 30, 0.72);
   --text-color-light: #ffffff;
   --text-color-dark: #ffffff;
   --button-color-light: #484848;
@@ -32,9 +40,15 @@
   --card-hover-light: #787d81;
   --card-shadow: #191919;
   --card-shadow-2: #363636;
-  --footer-color: #151515;
+  --footer-color: rgba(22, 22, 30, 0.72);
   --input-disabled-color: #858585;
   --input-disabled-background: #3d3d3d;
+  /* Liquid Glass - dark mode */
+  --glass-bg: rgba(22, 22, 30, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.11);
+  --glass-chroma-a: rgba(200, 120, 180, 0.14);
+  --glass-chroma-b: rgba(120, 158, 220, 0.10);
+  --glass-specular: rgba(255, 255, 255, 0.14);
 }
 
 body {
@@ -42,7 +56,7 @@ body {
   background-color: var(--primary-color);
   color: var(--text-color-light);
   margin: 0;
-  font-family: var(--font-manrope), sans-serif !important;
+  font-family: var(--font-fira), monospace !important;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -68,4 +82,31 @@ body::-webkit-scrollbar {
   bottom: 20px !important;
   right: 20px !important;
   z-index: 1200 !important;
+}
+
+/* ── Glass UI animation keyframes ──────────────────────────── */
+@keyframes glassDropIn {
+  from { opacity: 0; transform: scale(0.94) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+@keyframes glassDropOut {
+  from { opacity: 1; transform: scale(1)    translateY(0); }
+  to   { opacity: 0; transform: scale(0.94) translateY(-6px); }
+}
+@keyframes navItemIn {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeScaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

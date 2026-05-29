@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://www.zacharycvivian.com/about",
     },
     {
-      url: "https://www.zacharycvivian.com/blog",
+      url: "https://www.zacharycvivian.com/gallery",
     },
     {
       url: "https://www.zacharycvivian.com/blog/what-i-learned-developing-website-prompt-engineering",

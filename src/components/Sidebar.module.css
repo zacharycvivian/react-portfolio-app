@@ -1,20 +1,49 @@
 .sheetContainer {
-  background-color: var(--third-color);
   z-index: 999;
   border-radius: 30px;
   margin: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); 
-  max-height: calc(100%); 
+  height: calc(100% - 20px);
+  max-height: calc(100% - 20px);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   color: var(--text-color-light);
+  /* Liquid glass */
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    -2px -2px 6px rgba(255, 100, 180, 0.06),
+    2px 2px 6px rgba(100, 168, 255, 0.06),
+    inset 0 1px 0 var(--glass-specular),
+    inset 1px 0 0 rgba(255, 255, 255, 0.10),
+    0 16px 48px rgba(0, 0, 0, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+.sheetContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 28% -8%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.08) 38%, transparent 60%),
+    radial-gradient(ellipse at 82% 96%, rgba(255, 255, 255, 0.06) 0%, transparent 40%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.10) 0%, transparent 46%);
+  filter: url(#glass-distort);
 }
 
 .logo {
   z-index: 10;
   margin-left: 20px;
-  margin-top: 20px;
   position: fixed;
-  top: 0;
+  top: 40px;
+  transform: translateY(-50%);
   color: var(--text-color-dark);
   width: 48px;
   height: 48px;
@@ -28,45 +57,113 @@
 }
 
 .link {
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  margin: 10px 0; 
-  border-radius: 60px; 
-  background-color: var(--card-color-light); 
-  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; 
-  text-decoration: none; 
-  height: 50px; 
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2) !important; 
-  border: transparent;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  border-radius: 60px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background 0.2s ease-in-out;
+  text-decoration: none;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.16),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 4px 14px rgba(0, 0, 0, 0.10);
+  color: var(--text-color-light);
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% -10%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 42%, transparent 64%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  z-index: 0;
+}
+
+[data-theme="dark"] .link {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(200, 120, 180, 0.12),
+    0.5px 0.5px 0 rgba(120, 158, 220, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .link::before {
+  background:
+    radial-gradient(ellipse at 30% -10%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 42%, transparent 64%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
 }
 
 .linkDisabled {
-  opacity: 0.5; /* Make the button look disabled */
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .linkText {
-  display: block; /* Ensures text takes up the full width */
+  display: block;
 }
 
 .currentLink {
-  transform: scale(1.05); 
-  background-color: var(--card-hover-light); 
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.22),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    0 6px 20px rgba(0, 0, 0, 0.14);
 }
 
 .links {
-  padding: 10px 20px; 
-  color: inherit; 
-  text-decoration: none; 
-  width: 100%; 
+  padding: 10px 20px;
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .link:hover {
-  background-color: var(--card-hover-light); 
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2) !important; 
+  background: rgba(255, 255, 255, 0.26);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.20),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.13);
 }
 
 .link:active {
   color: var(--text-color-light);
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2) !important;
+  transform: scale(0.98);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
+
+.navWrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px;
+}
+
+/* ── Sidebar animation overrides ─────────────────────────────
+   Only override the open animation — leave close timing to Radix
+   so its pointer-events cleanup fires correctly.              */
+.sheetContainer[data-state="open"] {
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+  animation-duration: 380ms !important;
+  will-change: transform;
+}
+
+/* Nav item stagger is driven by inline styles in Sidebar.tsx */

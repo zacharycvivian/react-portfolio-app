@@ -8,7 +8,7 @@ Frameworks: React/Next.js/Tailwind CSS,
 Database: Google Firebase,
 AI Chatbot: Google Gemini,
 UI Elements: Shadcn.ui (Sidebar, Dropdowns), Radix-ui (Icons),
-Code Help and Image Generation: ChatGPT-4/DALLE-3,
+Code Help: Claude by Anthropic,
 Hosting: Domain from Squarespace & Hosted on Vercel,
 Other Tools: Google Search Console (Sitemapping)
 

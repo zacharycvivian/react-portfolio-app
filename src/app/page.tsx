@@ -23,8 +23,13 @@ import Mountains from "@/../public/Mountains.jpg";
 
 // Animation variants
 const fadeInVariant = {
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.2 } },
-  hidden: { opacity: 0, scale: 1, y: 100, transition: { duration: 0.15 } },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+  },
+  hidden: { opacity: 0, scale: 0.97, y: 36 },
 };
 
 const chatBotVariant = {
@@ -130,7 +135,7 @@ export default function Home() {
       "WINDOWS + SERVER",
       "NETWORKING",
     ],
-    []
+    [],
   );
   const [displayWord, setDisplayWord] = useState(texts[0]);
   const [transitionIndex, setTransitionIndex] = useState(0);
@@ -233,7 +238,7 @@ export default function Home() {
       case 3:
         setMessageData({ ...messageData, message: input });
         setTerminalOutput(
-          `Confirm sending this message (Y/N):\nName: ${messageData.name}\nEmail: ${messageData.email}\nMessage: \n${input}`
+          `Confirm sending this message (Y/N):\nName: ${messageData.name}\nEmail: ${messageData.email}\nMessage: \n${input}`,
         );
         setMessageStep(4);
         break;
@@ -261,7 +266,7 @@ export default function Home() {
         "/ask <question> - Ask a Chatbot a question about this site\n" +
         "/play <game> - Play one of my games\n" +
         "/bug <report> - Leave notice of a bug you found\n" +
-        "/feedback <suggestion> - Suggest improvements\n"
+        "/feedback <suggestion> - Suggest improvements\n",
     );
   };
 
@@ -278,7 +283,7 @@ export default function Home() {
           "\n" +
           "'/ask How do I leave a testimonial?'\n" +
           "\n" +
-          "This utilizes Google Gemini with custom instructions to answer most questions you may have!"
+          "This utilizes Google Gemini with custom instructions to answer most questions you may have!",
       );
       return;
     }
@@ -292,7 +297,7 @@ export default function Home() {
     const recent = askTimestamps.filter((t) => now - t < WINDOW_MS);
     if (recent.length >= MAX_REQUESTS) {
       setTerminalOutput(
-        "You've hit the limit for now. Please wait a few minutes before sending another question."
+        "You've hit the limit for now. Please wait a few minutes before sending another question.",
       );
       return;
     }
@@ -365,7 +370,7 @@ export default function Home() {
           break;
         default:
           setTerminalOutput(
-            "Unknown game. Available games: CyberWordle, Snake, Pong."
+            "Unknown game. Available games: CyberWordle, Snake, Pong.",
           );
       }
     } else {
@@ -376,7 +381,7 @@ export default function Home() {
           "'/play CyberWordle'\n" +
           "\n" +
           "CyberWordle, Pong, Snake\n" +
-          "More games coming in the future!"
+          "More games coming in the future!",
       );
     }
   };
@@ -393,7 +398,7 @@ export default function Home() {
           "\n" +
           "'/bug Profile information not updating after saving changes'\n" +
           "\n" +
-          "You submit the report, I'll get to squishing!"
+          "You submit the report, I'll get to squishing!",
       );
     }
   };
@@ -410,7 +415,7 @@ export default function Home() {
           "\n" +
           "'/feedback Add some new games!'\n" +
           "\n" +
-          "I'm always open to suggestions!"
+          "I'm always open to suggestions!",
       );
     }
   };
@@ -442,7 +447,7 @@ export default function Home() {
         break;
       default:
         setTerminalOutput(
-          "Unknown command. Type /help for a list of commands."
+          "Unknown command. Type /help for a list of commands.",
         );
     }
     setCurrentInput("");
@@ -634,7 +639,7 @@ export default function Home() {
               )}
             </AnimatePresence>
           </>,
-          document.body
+          document.body,
         )}
 
       <div className={styles.layoutContainer}>
@@ -687,23 +692,11 @@ export default function Home() {
               </div>
               <p className={styles.infoContainerText}>
                 I am a cybersecurity professional currently working for On The
-                Mark Solutions as an Implementation and Support Specialist.
-                Click{" "}
-                <a
-                  href="#"
-                  onClick={() =>
-                    window.open("@/../Risk_Management_Plan.pdf", "_blank")
-                  }
-                  className={styles.hyperlink}
-                >
-                  here
-                </a>{" "}
-                to view a Risk Management Plan final project I completed during
-                college relating to a real-life company and its assets. If you'd
-                like to learn more about my experience, projects, and technical
-                skills, scroll below. Questions? Press 'Chat' in the lower right
-                corner to open a terminal window to ask a bot any questions you
-                have about my site.
+                Mark Solutions as an Implementation and Support Specialist. If
+                you'd like to learn more about my experience, projects, and
+                technical skills, scroll below. Questions? Press 'Chat' in the
+                lower right corner to open a terminal window to ask AI any
+                questions you have about my site.
               </p>
 
               <div className={styles.buttonContainer}>
@@ -725,8 +718,8 @@ export default function Home() {
                 <Link href="/testimonials" passHref>
                   <button className={styles.button}>Testimonials</button>
                 </Link>
-                <Link href="/blog" passHref>
-                  <button className={styles.button}>Blog</button>
+                <Link href="/gallery" passHref>
+                  <button className={styles.button}>Gallery</button>
                 </Link>
               </div>
             </motion.div>
@@ -786,6 +779,7 @@ export default function Home() {
 
         <div className={styles.secondarySection}>
           <div className={styles.cardsGrid}>
+            {/* Column 1 — all work experience here so it stacks together on mobile */}
             <div className={styles.cardsColumn}>
               <motion.div
                 className={styles.card}
@@ -795,9 +789,10 @@ export default function Home() {
                 viewport={{ once: true }}
               >
                 <p>
-                  <strong>Education: </strong>I graduated from The University of Wisconsin -
-                  Platteville, with a Bachelor of Science in Cybersecurity and a Minor in
-                  Business Administration in May 2024.
+                  <strong>Education: </strong>I graduated from The University of
+                  Wisconsin - Platteville, with a Bachelor of Science in
+                  Cybersecurity and a Minor in Business Administration in May
+                  2024.
                 </p>
               </motion.div>
               <motion.div
@@ -822,6 +817,126 @@ export default function Home() {
                   cyber attacks through robust security protocols but also
                   ensuring a resilient and adaptive security infrastructure.
                 </p>
+              </motion.div>
+              <h3 className={styles.timelineSectionTitle}>Work Experience</h3>
+              <div className={styles.timeline}>
+                <div className={styles.timelineItem}>
+                  <div className={styles.timelineDot} />
+                  <div className={styles.timelineDateBadge}>2024–Now</div>
+                  <motion.div
+                    className={styles.card}
+                    variants={fadeInVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <p>
+                      <strong>
+                        On The Mark Solutions — Implementation &amp; Support
+                        Specialist:
+                      </strong>{" "}
+                      The primary point of contact for OTMS's clients throughout the
+                      implementation process + ongoing support. Creating accurate
+                      documentation for user guides and troubleshooting resources,
+                      configuring POS software to meet client-specific requirements,
+                      providing technical training to clients, and
+                      resolving/troubleshooting issues. Also responsible for
+                      planning implementation timelines, coordinating with
+                      cross-functional teams, and ensuring a smooth transition for
+                      clients adopting new software solutions. Additionally,
+                      quality assurance testing software and interfaces before
+                      client deployment to ensure reliability and accuracy.
+                    </p>
+                  </motion.div>
+                </div>
+                <div className={styles.timelineItem}>
+                  <div className={styles.timelineDot} />
+                  <div className={styles.timelineDateBadge}>2022–2024</div>
+                  <motion.div
+                    className={styles.card}
+                    variants={fadeInVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <p>
+                      <strong>Lands&apos; End — Orderfiller:</strong> Worked
+                      independently in a fast-paced environment picking clothing
+                      orders and sorting pieces. Also worked in the shipping
+                      department loading truck trailers with packed merchandise.
+                    </p>
+                  </motion.div>
+                </div>
+                <div className={styles.timelineItem}>
+                  <div className={styles.timelineDot} />
+                  <div className={styles.timelineDateBadge}>2019–2023</div>
+                  <motion.div
+                    className={styles.card}
+                    variants={fadeInVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <p>
+                      <strong>
+                        Blain&apos;s Farm &amp; Fleet — Automotive Sales Associate:
+                      </strong>{" "}
+                      During most of my college, I worked part time at F&amp;F
+                      supervising and training the automotive sales department
+                      employees on customer service, special orders, and planograms.
+                      Worked alongside management to implement the new warehouse
+                      management system. Forklift Certified and DOT Hazards trained,
+                      assisted in the warehouse unloading freight trucks, loading
+                      customer vehicles, and building equipment and floor models.
+                      Also worked in the Automotive Service Center as an advisor to
+                      set up vehicle appointments and order tires.
+                    </p>
+                  </motion.div>
+                </div>
+                <div className={styles.timelineItem}>
+                  <div className={styles.timelineDot} />
+                  <div className={styles.timelineDateBadge}>2017–2019</div>
+                  <motion.div
+                    className={styles.card}
+                    variants={fadeInVariant}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <p>
+                      <strong>
+                        House on the Rock — Food Service Worker:
+                      </strong>{" "}
+                      Between my Junior and Senior years of high school, I worked at
+                      the popular tourist attraction and resort directing guests and
+                      answering questions, performed general housekeeping and
+                      cleaning displays as well as changing decorational themes for
+                      seasonal events. Ended up working in the pizza restaurant as
+                      well as the ice cream shop serving guests.
+                    </p>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+            {/* Column 2 — skills, projects, hobbies */}
+            <div className={styles.cardsColumn}>
+              <motion.div
+                className={styles.card}
+                variants={fadeInVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <h3 className={styles.skillSectionTitle}>
+                  <strong>Technical Skills:</strong>
+                </h3>
+                {technicalSkills.map((techSkill) => (
+                  <SkillBar
+                    key={techSkill.skill}
+                    skill={techSkill.skill}
+                    level={techSkill.level}
+                  />
+                ))}
               </motion.div>
               <motion.div
                 className={styles.card}
@@ -880,105 +995,6 @@ export default function Home() {
                   only fuels my creativity but also sharpens my technical
                   skills. Besides that, I enjoy spending the rest of my time
                   playing video games and spending time with family and friends.
-                </p>
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <p>
-                  <strong>
-                    On The Mark Solutions -- Implementation and Support
-                    Specialist (2024-Current):
-                  </strong>{" "}
-                  The primary point of contact for OTMS's clients throughout the
-                  implementation process + ongoing support. Creating accurate
-                  documentation for user guides and troubleshooting resources,
-                  configuring POS software to meet client-specific requirements,
-                  providing technical training to clients, and
-                  resolving/troubleshooting issues. Also responsible for
-                  planning implementation timelines, coordinating with
-                  cross-functional teams, and ensuring a smooth transition for
-                  clients adopting new software solutions.
-                </p>
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <p>
-                  <strong>Lands' End -- Orderfiller (2022-2024):</strong> Worked
-                  independently in a fast-paced environment picking clothing
-                  orders and sorting pieces. Also worked in the shipping
-                  department loading truck trailers with packed merchandise.
-                </p>
-              </motion.div>
-            </div>
-            <div className={styles.cardsColumn}>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <h3 className={styles.skillSectionTitle}>
-                  <strong>Technical Skills:</strong>
-                </h3>
-                {technicalSkills.map((techSkill) => (
-                  <SkillBar
-                    key={techSkill.skill}
-                    skill={techSkill.skill}
-                    level={techSkill.level}
-                  />
-                ))}
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <p>
-                  <strong>
-                    Blain's Farm & Fleet -- Automotive Sales Associate
-                    (2019-2023):
-                  </strong>{" "}
-                  During most of my college, I worked part time at F&F
-                  supervising and training the automotive sales department
-                  employees on customer service, special orders, and planograms.
-                  Worked alongside management to implement the new warehouse
-                  management system. Forklift Certified and DOT Hazards trained,
-                  assisted in the warehouse unloading freight trucks, loading
-                  customer vehicles, and building equipment and floor models.
-                  Also worked in the Automotive Service Center as an advisor to
-                  set up vehicle appointments and order tires.
-                </p>
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <p>
-                  <strong>
-                    House on the Rock -- Food Service Worker (2017-2019):
-                  </strong>{" "}
-                  Between my Junior and Senior years of high school, I worked at
-                  the popular tourist attraction and resort directing guests and
-                  answering questions, performed general housekeeping and
-                  cleaning displays as well as changing decorational themes for
-                  seasonal events. Ended up working in the pizza restaurant as
-                  well as the ice cream shop serving guests.
                 </p>
               </motion.div>
             </div>

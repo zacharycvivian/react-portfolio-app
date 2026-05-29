@@ -2,7 +2,6 @@
 .header {
   height: 80px;
   width: 100vw;
-  background-color: var(--primary-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -15,9 +14,32 @@
   padding: 0 20px;
   padding-left: 80px;
   box-sizing: border-box;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 5;
   font-family: var(--font-fira), monospace !important;
+  /* Liquid glass header — dark glass */
+  background: rgba(13, 15, 22, 0.815);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    /* Chromatic aberration at bottom edge */
+    0 1px 0 rgba(200, 120, 180, 0.22),
+    0 2px 0 rgba(120, 158, 220, 0.16),
+    /* Drop shadow */
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    0 1px 6px rgba(0, 0, 0, 0.30);
+}
+
+/* Subtle specular sheen across the header */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(255, 255, 255, 0.06) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+  z-index: 0;
 }
 
 .modalBackdrop {
@@ -26,41 +48,71 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
 .modalContent {
-  background-color: var(--card-color-light);
+  position: relative;
   color: var(--text-color-light);
   padding: 20px;
   border-radius: 30px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
   width: 90%;
   max-width: 500px;
   z-index: 100;
+  /* Liquid glass modal */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -2px -2px 0 var(--glass-chroma-a),
+    2px 2px 0 var(--glass-chroma-b),
+    -4px -4px 12px rgba(255, 100, 180, 0.10),
+    4px 4px 12px rgba(100, 168, 255, 0.10),
+    inset 0 1.5px 0 var(--glass-specular),
+    inset 1px 0 0 rgba(255, 255, 255, 0.18),
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+.modalContent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% -8%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.08) 38%, transparent 60%),
+    linear-gradient(152deg, rgba(255, 255, 255, 0.10) 0%, transparent 46%);
+  filter: url(#glass-distort);
+  z-index: 0;
 }
 
 .characterLimit {
   text-align: center;
-  font-size: 0.8rem; /* Smaller font size for character limit */
-  color: var(--text-color-light); /* Adjust color based on your theme */
-  margin-top: -10px; /* Adjust spacing based on your design */
+  font-size: 0.8rem;
+  color: var(--text-color-light);
+  margin-top: -10px;
 }
 
 .modalTitle {
   text-align: center;
   font-size: 1.2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .formButtons {
   display: flex;
   justify-content: space-around;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .inputField,
@@ -69,11 +121,13 @@
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 20px;
   background-color: var(--card-hover-light);
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
 
 .submitButton,
@@ -83,70 +137,140 @@
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  backdrop-filter: blur(10px);
+  transition: box-shadow 0.2s, background 0.2s, transform 0.12s;
+  will-change: transform;
+  position: relative;
+  z-index: 1;
+  /* Liquid glass buttons */
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    -1px -1px 0 rgba(255, 128, 200, 0.35),
+    1px 1px 0 rgba(128, 188, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 4px 14px rgba(0, 0, 0, 0.14);
 }
 
 .submitButton {
-  background-color: var(--button-color-light);
+  background: rgba(238, 238, 238, 0.75);
   color: var(--text-color-light);
+  border: 1px solid rgba(255, 255, 255, 0.50);
 }
 
 .cancelButton {
-  background-color: #f44336;
-  color: var(--text-color-light);
+  background: rgba(220, 60, 50, 0.80);
+  color: #fff;
+  border: 1px solid rgba(255, 120, 110, 0.40);
 }
 
 .submitButton:hover,
 .cancelButton:hover {
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2) !important; 
+  box-shadow:
+    -1.5px -1.5px 0 rgba(255, 128, 200, 0.48),
+    1.5px 1.5px 0 rgba(128, 188, 255, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 6px 20px rgba(0, 0, 0, 0.18) !important;
 }
 
 .submitButton:active,
 .cancelButton:active {
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2) !important;
+  transform: scale(0.97);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40) !important;
 }
 
 .dropdownContent {
-  background-color: var(--third-color);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
   color: var(--text-color-light);
   border-radius: 20px;
-  border-color: transparent;
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
   cursor: pointer;
+  box-shadow:
+    -1px -1px 0 var(--glass-chroma-a),
+    1px 1px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+.dropdownContent[data-state="open"] {
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-duration: 180ms;
 }
 
 .iconButton {
-  position: relative; /* Add this line to your existing .iconButton styles */
-  border-radius: 50%; /* Makes the button's border circular */
-  background-color: var(--third-color);
-  color: var(--text-color-light);
-  border-color: transparent;
-  margin-left: 20px; /* Adjust the space between profile image and mode toggle */
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-left: 10px;
+  /* Liquid glass icon button */
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  color: var(--text-color-dark);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.22),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.16),
+    -2px -2px 6px rgba(255, 100, 180, 0.06),
+    2px 2px 6px rgba(100, 168, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 4px 14px rgba(0, 0, 0, 0.28);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.12s;
+  will-change: transform;
 }
 
-.iconButton img {
-  width: 55px; /* Increase width as needed */
-  height: 55px; /* Increase height as needed */
-  border-color: transparent;
+.iconButton img,
+.iconButton > div {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 600px) {
+  .iconButton {
+    width: 34px;
+    height: 34px;
+  }
+
+  .iconButton img {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .iconButton:hover {
-  background: var(--card-hover-light);
-  box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.30),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.22),
+    -2px -2px 6px rgba(255, 100, 180, 0.08),
+    2px 2px 6px rgba(100, 168, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 4px 14px rgba(0, 0, 0, 0.32);
 }
 
 .iconButton:active {
-  background: var(--card-hover-light);
-  box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .profileAndToggleContainer {
   display: flex;
   align-items: center;
-  justify-content: center; /* Adjust as needed */
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes glintEffect {
@@ -178,10 +302,12 @@
 }
 
 .cursor {
-  opacity: 0.5; /* Initial opacity can be 0.8 or 1 based on your preference */
+  opacity: 0.5;
   animation: blink 1.2s infinite;
-  font-size: 2rem; /* Makes the cursor more pronounced */
+  font-size: 2rem;
   font-family: var(--font-fira), monospace !important;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 600px) {
@@ -190,4 +316,181 @@
     font-size: 1.25rem;
     margin-bottom: 4px;
   }
+}
+
+/* ── Notification bell ─────────────────────────────────── */
+
+.notifWrapper {
+  position: relative;
+}
+
+.notifBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #e53e3e;
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 700;
+  min-width: 15px;
+  height: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+  z-index: 2;
+  border: 1.5px solid rgba(13, 15, 22, 0.85);
+  line-height: 1;
+}
+
+.notifPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 310px;
+  max-height: 440px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  z-index: 200;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -1px -1px 0 var(--glass-chroma-a),
+    1px 1px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+  color: var(--text-color-light);
+}
+
+.notifPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px 10px;
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+.notifPanelTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.notifMarkRead {
+  font-size: 0.72rem;
+  color: var(--text-color-light);
+  opacity: 0.55;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+.notifMarkRead:hover {
+  opacity: 1;
+}
+
+.notifList {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notifEmpty {
+  padding: 28px 16px;
+  text-align: center;
+  opacity: 0.45;
+  font-size: 0.82rem;
+}
+
+.notifItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s;
+}
+
+.notifItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.notifItem:last-child {
+  border-bottom: none;
+}
+
+.notifItemRead {
+  opacity: 0.35;
+}
+
+.notifReadBtn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-color-light);
+  opacity: 0.5;
+  transition: opacity 0.15s, background 0.15s;
+  align-self: center;
+  padding: 0;
+}
+
+.notifReadBtn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notifIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 1px;
+}
+
+.notifContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notifItemTitle {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.notifBody {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notifTime {
+  font-size: 0.65rem;
+  opacity: 0.4;
+  white-space: nowrap;
 }

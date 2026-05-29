@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
+import { getStorage } from "firebase/storage";
 import { getAI, getGenerativeModel } from "firebase/ai";
 
 const firebaseConfig = {
@@ -22,6 +23,7 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 const functions = getFunctions(app);
+const storage = getStorage(app);
 
 // Gemini API for Chatbot
 const ai = getAI(app);
@@ -33,4 +35,4 @@ if (typeof window !== "undefined") {
   const analytics = getAnalytics(app);
 }
 
-export { auth, app, db, functions, model };
+export { auth, app, db, functions, model, storage };

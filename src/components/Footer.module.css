@@ -4,52 +4,42 @@
   align-items: center;
   justify-content: center;
   width: 100vw;
-  background-color: var(--footer-color);
   color: var(--text-color-dark);
   padding: 20px;
   box-sizing: border-box;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
-}
-
-.aboutButton {
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: var(--button-color-light); 
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-top: 5px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
-}
-
-.aboutButton:hover {
-  background: var(--card-hover-light);
-  box-shadow: inset 4px 4px 4px var(--card-shadow), inset -4px -4px 4px var(--card-shadow-2);
-}
-
-.aboutButton:active {
-  background: var(--card-hover-light);
-  box-shadow: inset 2px 2px 2px var(--card-shadow), inset -2px -2px 2px var(--card-shadow-2);
-}
-
-.socialButtonsContainer {
-  display: flex;
-  justify-content: center;
-  gap: 10px; /* Adjust space between buttons */
-  margin-bottom: 10px; /* Space between these buttons and the 'About Website' button */
+  /* Liquid glass footer — mirrors the header */
+  background: rgba(13, 15, 22, 0.815);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 -1px 0 rgba(200, 120, 180, 0.18),
+    0 -2px 0 rgba(120, 158, 220, 0.12),
+    0 -4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .socialButton {
-  display: inline-block;
-  width: 40px; /* Size of the buttons */
-  height: 40px; /* Size of the buttons */
-  border-radius: 50%; /* Makes the buttons circular */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  /* Footer is always dark glass — icons must always be light */
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.18),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 4px 12px rgba(0, 0, 0, 0.28);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.12s;
+  will-change: transform;
   overflow: hidden;
-  background-color: var(--button-color-light); /* Background color, adjust as needed */
-  color: var(--text-color-light);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
-  transition: transform 0.3s ease-in-out;
 }
 
 .socialButton img {
@@ -57,13 +47,67 @@
   height: auto;
 }
 
+.socialButton:active {
+  transform: scale(0.93);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+
 .socialButton:hover {
-  transform: scale(1.1); /* Slightly enlarge buttons on hover */
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.26),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+.aboutButton {
+  padding: 8px 20px;
+  margin-bottom: 10px;
+  margin-top: 8px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.18),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 4px 12px rgba(0, 0, 0, 0.20);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.aboutButton:hover {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 rgba(255, 128, 200, 0.26),
+    0.5px 0.5px 0 rgba(128, 188, 255, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 6px 16px rgba(0, 0, 0, 0.24);
+}
+
+.aboutButton:active {
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.socialButtonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .links {
-  color: var(--text-color-light); 
-  text-decoration: none; 
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
 }
 
 .copyright-info {

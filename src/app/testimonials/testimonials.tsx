@@ -16,9 +16,11 @@ import {
 import styles from "./testimonials.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import VerifiedLabel from "@/../public/verified.png";
+import AvatarImage from "@/components/AvatarImage";
 import { useSession } from "next-auth/react";
 import { db } from "@/../firebase";
 import { motion } from "framer-motion";
+import { loadBannedWords, filterProfanity } from "@/lib/profanity";
 
 const fadeInVariant = {
   visible: {
@@ -78,11 +80,7 @@ const TestimonialsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const { data: session } = useSession();
   const userPhotoURL = session?.user?.image ?? Logo.src;
-  //Scan testimonials for banned words
-  const [bannedWords, setBannedWords] = useState<string[]>([]);
-  const [filteredTestimonials, setFilteredTestimonials] = useState<
-    Testimonial[]
-  >([]);
+  const [filteredTestimonials, setFilteredTestimonials] = useState<Testimonial[]>([]);
 
   //Filter Testinmonials
   const [filter, setFilter] = useState({ sortBy: "time", order: "asc" });
@@ -186,33 +184,6 @@ const TestimonialsPage = () => {
     }
   }, [session]);
 
-  // Effect hook to fetch and set banned words list
-  useEffect(() => {
-    fetch("/NaughtyWords.txt")
-      .then((response) => response.text())
-      .then((text) => {
-        const words = text.split(/\r?\n/);
-        setBannedWords(words);
-      });
-  }, []);
-
-  // Utility function to escape regex special characters in strings
-  const escapeRegExp = (string: string): string => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  };
-
-  // Function to filter profanity from text based on banned words list
-  const filterProfanity = (text: string): string => {
-    let filteredText = text;
-    bannedWords.forEach((word) => {
-      if (word.trim().length > 0) {
-        const escapedWord = escapeRegExp(word.trim());
-        const regex = new RegExp(escapedWord, "gi");
-        filteredText = filteredText.replace(regex, "*".repeat(word.length));
-      }
-    });
-    return filteredText;
-  };
 
   // Handle form submission and add a new testimonial
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -256,7 +227,8 @@ const TestimonialsPage = () => {
 
     // Proceed to create testimonial with additional details
     try {
-      const filteredReview = filterProfanity(formData.review);
+      const words = await loadBannedWords();
+      const { filtered: filteredReview } = filterProfanity(formData.review, words);
       const testimonialData = {
         name: session.user.name ?? "",
         email: session.user.email,
@@ -276,6 +248,12 @@ const TestimonialsPage = () => {
       } else {
         // Add new testimonial
         await addDoc(collection(db, "testimonials"), testimonialData);
+        await addDoc(collection(db, "notifications"), {
+          type: "testimonial",
+          title: "New testimonial",
+          body: `${session.user.name}: ${formData.review.slice(0, 80)}`,
+          time: serverTimestamp(),
+        });
       }
 
       // Reset form data and close modal on successful submission
@@ -365,12 +343,11 @@ const TestimonialsPage = () => {
       >
         {testimonials.map((testimonial) => (
             <div className={styles.card} key={testimonial.id}>
-            <Image
+            <AvatarImage
               src={testimonial.userImageUrl || Logo.src}
               alt={`${testimonial.name}'s testimonial`}
+              size={50}
               className={styles.userImage}
-              width={64}
-              height={64}
               unoptimized
             />
             <div className={styles.verifiedContainer}>

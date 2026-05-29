@@ -91,7 +91,9 @@ export const authOptions: NextAuthOptions = {
         if (token.sub) {
           session.user.id = token.sub;
 
-          const firebaseToken = await adminAuth.createCustomToken(token.sub);
+          const firebaseToken = await adminAuth.createCustomToken(token.sub, {
+            email: session.user.email ?? "",
+          });
           session.firebaseToken = firebaseToken;
         }
       }

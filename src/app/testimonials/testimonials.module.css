@@ -27,19 +27,26 @@
 }
 
 .card {
+  position: relative;
   margin: 30px;
   padding: 30px;
-  background-color: var(--card-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
   border-radius: 60px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  backdrop-filter: blur(10px);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    inset 1px 0 0 rgba(255, 255, 255, 0.10),
+    6px 6px 24px rgba(0, 0, 0, 0.18),
+    -2px -2px 8px rgba(0, 0, 0, 0.08);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
-  background-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: calc(60% - 10px);
   z-index: 4;
 }
-
 
 .buttonContainer {
   display: flex;
@@ -47,85 +54,122 @@
   padding-top: 10px;
   padding-bottom: 30px;
   gap: 30px;
-
 }
 
-.addButton {
+.addButton,
+.filterButton {
   color: var(--text-color-light);
   padding: 0.7em 1.7em;
   font-size: 18px;
   border-radius: 25px;
-  background: var(--button-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  transition: box-shadow 0.2s, background 0.2s;
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
-.addButton:hover {
-  transform: scale(1.03);
-  background-color: var(--card-hover-light);
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
-  z-index: 2;
+.addButton:hover,
+.filterButton:hover {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    0 6px 20px rgba(0, 0, 0, 0.22);
 }
 
-.addButton:active {
-  color: var(--text-color-light);
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+.addButton:active,
+.filterButton:active {
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .editDeleteIcons {
   position: absolute;
-  top: 35px; /* Adjust as needed */
-  right: 35px; /* Adjust as needed */
+  top: 35px;
+  right: 35px;
   display: flex;
-  gap: 10px; /* Space between icons */
+  gap: 10px;
 }
 
 .editIcon,
 .deleteIcon {
   cursor: pointer;
-  fill: currentColor; /* Use the text color for the icons */
-  width: 15px; /* As defined in your SVG */
-  height: 15px; /* As defined in your SVG */
+  fill: currentColor;
+  width: 15px;
+  height: 15px;
 }
 
-/* Optional: Add a hover effect to give feedback when icons are interactable */
-.editIcon:hover{
-  opacity: 0.8; /* Adjust as you see fit */
-  color: yellow;
-}
-.deleteIcon:hover {
-  opacity: 0.8; /* Adjust as you see fit */
-  color: red;
-}
+.editIcon:hover { opacity: 0.8; color: yellow; }
+.deleteIcon:hover { opacity: 0.8; color: red; }
 
-.modalBackdrop {
+/* ── Modals ─────────────────────────────────────────────────── */
+.modalBackdrop,
+.filterModalBackdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  text-align: center;
 }
 
 .modalContent {
-  background-color: var(--card-color-light);
+  position: relative;
   color: var(--text-color-light);
   padding: 20px;
   border-radius: 30px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
   width: 90%;
   max-width: 500px;
+  z-index: 100;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.14);
 }
 
 .modalTitle {
   text-align: center;
   font-size: 1.2rem;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  text-align: left;
+}
+
+.characterLimit {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--text-color-light);
+  opacity: 0.7;
 }
 
 .formButtons {
@@ -134,63 +178,103 @@
   margin-top: 10px;
 }
 
-.characterLimit {
-  text-align: left;
-  font-size: 0.8rem; /* Smaller font size for character limit */
-  color: var(--text-color-light); /* Adjust color based on your theme */
-}
-
 .inputField,
 .textareaField {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
-  background-color: var(--card-hover-light);
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
+  color: var(--text-color-light);
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.12), inset -2px -2px 4px rgba(255,255,255,0.06);
+  box-sizing: border-box;
 }
 
 .submitButton,
 .cancelButton {
   padding: 10px 20px;
-  border: none;
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  backdrop-filter: blur(10px);
+  transition: box-shadow 0.2s, background 0.2s;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 4px 14px rgba(0, 0, 0, 0.14);
 }
 
 .submitButton {
-  background-color: var(--button-color-light);
+  background: rgba(238, 238, 238, 0.75);
   color: var(--text-color-light);
 }
 
 .cancelButton {
-  background-color: #f44336;
-  color: var(--text-color-light);
+  background: rgba(220, 60, 50, 0.80);
+  color: #fff;
+  border-color: rgba(255, 120, 110, 0.40);
 }
 
 .submitButton:hover,
 .cancelButton:hover {
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2) !important; 
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 6px 20px rgba(0, 0, 0, 0.18) !important;
 }
 
 .submitButton:active,
 .cancelButton:active {
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2) !important;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40) !important;
 }
 
+/* ── Filter modal controls ───────────────────────────────────── */
+.filterControls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 0.5em 1em;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  color: var(--text-color-light);
+  cursor: pointer;
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.10), inset -1px -1px 2px rgba(255,255,255,0.06);
+}
+
+.closeButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.modalButtonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* ── Card user info ─────────────────────────────────────────── */
 .userImage {
   margin-top: 8px;
   float: left;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
   margin-right: 15px;
   z-index: 1000;
 }
@@ -214,8 +298,8 @@
 .occupation,
 .employer {
   font-style: italic;
-  font-size: 0.9em; /* Slightly smaller font size */
-  color: var(--text-color-light); /* Assuming you want to use the same text color */
+  font-size: 0.9em;
+  color: var(--text-color-light);
 }
 
 .timeText {
@@ -233,79 +317,6 @@
 
 .starRating span.selected {
   color: rgb(255, 220, 21);
-}
-
-.filter-controls {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-}
-
-.filterButton {
-  color: var(--text-color-light);
-  padding: 0.7em 1.7em;
-  font-size: 18px;
-  border-radius: 25px;
-  background: var(--button-color-light);
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-}
-
-.filterButton:hover {
-  transform: scale(1.03);
-  background-color: var(--card-hover-light);
-  box-shadow: 4px 4px 5px var(--card-shadow), -4px -4px 5px var(--card-shadow-2); 
-  z-index: 2;
-}
-
-.filterButton:active {
-  color: var(--text-color-light);
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
-}
-
-.filter-controls select {
-  margin-right: 10px;
-}
-
-.closeButtonContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 20px;
-}
-
-.modalTitle {
-  font-weight: bold;
-  padding-bottom: 10px;
-}
-
-.filterModalBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.filterDropContainer {
-gap: 20px;
-}
-
-
-.modalButtonContainer {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
 }
 
 @media (max-width: 900px) {

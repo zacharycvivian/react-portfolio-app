@@ -1,12 +1,12 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding-top: 100px;
+  padding-top: 112px;
   padding-left: 20px;
   padding-right: 20px;
-  padding-bottom: 180px;
+  padding-bottom: 60px;
   background-color: var(--secondary-color);
-  min-height: calc(100vh + 140px);
+  min-height: 100vh;
 }
 
 .sectionTitle {
@@ -26,15 +26,21 @@
 }
 
 .card {
+  position: relative;
   margin: 10px 0;
   padding: 30px;
-  background-color: var(--card-color-light);
-  border-radius: 60px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  backdrop-filter: blur(10px);
+  border-radius: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    6px 6px 24px rgba(0, 0, 0, 0.14);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
-    background-color 0.3s ease, width 0.3s ease;
+  transition: box-shadow 0.2s, background 0.2s;
   max-width: 95%;
   width: 95%;
   margin-left: auto;
@@ -43,51 +49,53 @@
   text-justify: inter-word;
 }
 
-.cardFadeInLeft {
-  animation: fadeInLeft 0.5s ease forwards;
+.card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    8px 8px 30px rgba(0, 0, 0, 0.18);
 }
 
-.cardFadeInRight {
-  animation: fadeInRight 0.5s ease forwards;
+[data-theme="dark"] .card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.skillSectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-color-light);
 }
 
 .buttonContainer {
   padding-top: 30px;
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 }
 
 .svgAndTextContainer {
   display: flex;
-  align-items: center; 
-  gap: 25px; 
+  align-items: center;
+  gap: 25px;
 }
 
 .svgContainer {
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
 
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.groupHeader {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-color-light);
+  opacity: 0.4;
+  max-width: 95%;
+  margin: 20px auto 2px;
+  padding-left: 4px;
 }
 
 @media (max-width: 768px) {
@@ -97,5 +105,9 @@
 
   .section {
     flex-direction: column;
+  }
+
+  .card {
+    border-radius: 28px;
   }
 }

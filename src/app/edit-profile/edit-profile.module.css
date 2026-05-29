@@ -8,13 +8,20 @@
 .editProfileContainer {
   flex-direction: column;
   padding: 30px;
-  background-color: var(--card-color-light);
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
   border-radius: 40px;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2); 
-  backdrop-filter: blur(10px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    6px 6px 24px rgba(0, 0, 0, 0.18),
+    -2px -2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .formGroup {
@@ -32,7 +39,7 @@
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-  padding-top:5px;
+  padding-top: 5px;
   padding-bottom: 5px;
   z-index: 6;
 }
@@ -49,15 +56,28 @@
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: var(--card-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--text-color-light);
   border-radius: 60px;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.12), inset -2px -2px 4px rgba(255, 255, 255, 0.06);
+  box-sizing: border-box;
+  transition: box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.12),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.06),
+    0 0 0 2px var(--glass-chroma-b);
 }
 
 .input[disabled] {
-  background-color: var(--input-disabled-background);
-  color: var(--input-disabled-color);
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .phoneInputContainer {
@@ -74,12 +94,23 @@
   max-width: 80px;
   padding: 8px;
   margin-right: 4px;
-  background-color: var(--card-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 60px;
+  border: 1px solid var(--glass-border);
   color: var(--text-color-light);
   text-align: center;
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
-  margin-right: 4px;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.12), inset -2px -2px 4px rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.2s;
+}
+
+.phoneInput:focus {
+  outline: none;
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.12),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.06),
+    0 0 0 2px var(--glass-chroma-b);
 }
 
 .nameWithVerification {
@@ -92,21 +123,34 @@
   padding: 0.9em 1em;
   font-size: 18px;
   border-radius: 60px;
-  background: var(--button-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
-  border: none;
+  transition: box-shadow 0.2s, background 0.2s, transform 0.1s;
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    0 4px 14px rgba(0, 0, 0, 0.18);
+  will-change: transform;
 }
 
 .submitButton:hover {
-  background: var(--card-hover-light);
-  box-shadow: 4px 4px 6px var(--card-shadow), -4px -4px 6px var(--card-shadow-2);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    0 6px 20px rgba(0, 0, 0, 0.22);
 }
 
 .submitButton:active {
-  background: var(--card-hover-light);
-  box-shadow: inset 4px 4px 5px var(--card-shadow), inset -4px -4px 5px var(--card-shadow-2);
+  transform: scale(0.98);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .disclaimer {
@@ -115,19 +159,24 @@
   color: var(--text-color-light);
   padding-bottom: 5px;
   text-align: justify;
+  opacity: 0.75;
 }
 
 .card {
   margin: 10px 0;
   padding: 20px;
-  background-color: var(--card-color-light);
-  border-radius: 10px;
-  border: 1px solid var(--text-color-light);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 4px 14px rgba(0, 0, 0, 0.14);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
-    background-color 0.3s ease, width 0.3s ease;
+  transition: box-shadow 0.2s, background 0.2s;
   max-width: 97.5%;
   width: 80%;
   margin-left: auto;
@@ -135,17 +184,15 @@
 }
 
 .card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background-color: var(--card-hover-light);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    -0.5px -0.5px 0 var(--glass-chroma-a),
+    0.5px 0.5px 0 var(--glass-chroma-b),
+    inset 0 1px 0 var(--glass-specular),
+    0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 @media (max-width: 600px) {
-  .phoneInputContainer {
-    gap: 4px;
-  }
-
-  .phoneInput {
-    padding-right: 10px;
-  }
+  .phoneInputContainer { gap: 4px; }
+  .phoneInput { padding-right: 10px; }
 }

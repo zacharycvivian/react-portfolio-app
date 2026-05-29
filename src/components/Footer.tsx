@@ -98,8 +98,7 @@ const Footer = () => {
       </div>
       <p className={styles["copyright-info"]}>© Zachary Vivian 2026</p>
       <p className={styles.disclaimer}>
-        I only use the social profiles linked above. Any other social profiles
-        are not me.
+        I only use the social media sites linked above. Assume any other profiles claiming to be me are not mine.
       </p>
     </footer>
   );
