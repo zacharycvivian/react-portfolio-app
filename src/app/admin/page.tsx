@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import styles from "./users.module.css";
 import VerifiedLabel from "@/../public/verified.png";
 import DefaultAvatar from "@/../public/defaultavatar.jpg";
+import type { SessionUser } from "@/types";
 
 const TrashIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -37,10 +38,46 @@ const FeedbackIcon = () => (
 
 const BugIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M8 2l1.5 1.5M15.5 3.5 17 2M12 6a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0v-4a4 4 0 0 0-4-4z"/>
-    <path d="M8 10H4M20 10h-4M8 16H5a2 2 0 0 1-2-2M19 14a2 2 0 0 1-2 2h-3M12 20v2"/>
+    <path d="M12 20v-9m2-4a4 4 0 0 1 4 4v3a6 6 0 0 1-12 0v-3a4 4 0 0 1 4-4zm.12-3.12L16 2"/>
+    <path d="M21 21a4 4 0 0 0-3.81-4M21 5a4 4 0 0 1-3.55 3.97M22 13h-4M3 21a4 4 0 0 1 3.81-4M3 5a4 4 0 0 0 3.55 3.97M6 13H2M8 2l1.88 1.88M9 7.13V6a3 3 0 1 1 6 0v1.13"/>
   </svg>
 );
+
+const TerminalIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m7 11 2-2-2-2"/><path d="M11 13h4"/>
+    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+  </svg>
+);
+
+/**
+ * Renders who submitted something: their Google avatar + email when signed in,
+ * otherwise "Guest". The captured IP is always shown (muted) for security
+ * correlation. Field names match the audit metadata written by /api/audit.
+ */
+function AuditIdentity({ ip, userEmail, userImage }: AuditMeta) {
+  const signedIn = Boolean(userEmail || userImage);
+  return (
+    <span className={styles.auditIdentity}>
+      {signedIn ? (
+        <>
+          <Image
+            src={userImage || DefaultAvatar}
+            alt={userEmail ?? "user"}
+            width={20}
+            height={20}
+            className={styles.auditAvatar}
+            unoptimized
+          />
+          <span className={styles.auditEmail}>{userEmail ?? "Signed in"}</span>
+        </>
+      ) : (
+        <span className={styles.auditGuest}>Guest</span>
+      )}
+      <span className={styles.auditIp}>{ip ?? "unknown IP"}</span>
+    </span>
+  );
+}
 
 type UserRecord = {
   id: string;
@@ -53,21 +90,29 @@ type UserRecord = {
   phone?: string;
 };
 
-type FeedbackEntry = {
+// Audit fields stamped server-side by /api/audit (see route + Chatbot).
+type AuditMeta = {
+  ip?: string;
+  userEmail?: string;
+  userName?: string;
+  userImage?: string;
+};
+
+type FeedbackEntry = AuditMeta & {
   id: string;
   email?: string;
   feedback?: string;
   time?: FirebaseFirestore.Timestamp;
 };
 
-type BugEntry = {
+type BugEntry = AuditMeta & {
   id: string;
   email?: string;
   bugs?: string;
   time?: FirebaseFirestore.Timestamp;
 };
 
-type ConnectEntry = {
+type ConnectEntry = AuditMeta & {
   id: string;
   email?: string;
   name?: string;
@@ -75,26 +120,56 @@ type ConnectEntry = {
   time?: FirebaseFirestore.Timestamp;
 };
 
+// A chat with the terminal AI bot, stored in the existing `generate` collection
+// (prompt + the extension's response), enriched with audit metadata.
+type ChatLogEntry = AuditMeta & {
+  id: string;
+  prompt?: string;
+  response?: string;
+  error?: string;
+  createdAt?: FirebaseFirestore.Timestamp;
+};
+
 export const metadata: Metadata = {
   title: "Admin - Zachary Vivian's Portfolio Website",
   robots: { index: false, follow: false },
 };
+
+/**
+ * Resolves the signed-in requester's `users` document, but only if they are an
+ * admin. Returns `null` when there is no session, the user can't be found, or
+ * `isAdmin` is not set.
+ *
+ * This centralises the authorization check that every Server Action and the
+ * page loader below relies on (previously copy-pasted into each). The user is
+ * looked up by NextAuth `id` first, then falls back to a case-insensitive email
+ * match.
+ */
+async function getAdminDoc(): Promise<FirebaseFirestore.DocumentSnapshot | null> {
+  const session = await getServerSession(authOptions);
+  const requesterId = (session?.user as SessionUser | undefined)?.id;
+  const requesterEmail = session?.user?.email?.toLowerCase();
+  if (!requesterId && !requesterEmail) return null;
+
+  let adminDoc: FirebaseFirestore.DocumentSnapshot | null = requesterId
+    ? await adminDb.collection("users").doc(requesterId).get()
+    : null;
+  if (!adminDoc || !adminDoc.exists) {
+    const byEmail = requesterEmail
+      ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get()
+      : null;
+    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
+  }
+  if (!adminDoc?.exists || !adminDoc.data()?.isAdmin) return null;
+  return adminDoc;
+}
 
 async function toggleVerification(formData: FormData) {
   "use server";
   const email = formData.get("email")?.toString();
   const nextValue = formData.get("nextValue") === "true";
   if (!email) return;
-  const session = await getServerSession(authOptions);
-  const requesterId = (session?.user as any)?.id;
-  const requesterEmail = session?.user?.email?.toLowerCase();
-  if (!requesterId && !requesterEmail) return;
-  let adminDoc = requesterId && (await adminDb.collection("users").doc(requesterId).get());
-  if (!adminDoc || !adminDoc.exists) {
-    const byEmail = requesterEmail ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get() : null;
-    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
-  }
-  if (!adminDoc.exists || !adminDoc.data()?.isAdmin) return;
+  if (!(await getAdminDoc())) return;
   const targetSnap = await adminDb.collection("users").doc(email).get();
   if (!targetSnap.exists) return;
   await adminDb.collection("users").doc(email).update({ isVerified: nextValue });
@@ -105,16 +180,7 @@ async function deleteFeedback(formData: FormData) {
   "use server";
   const id = formData.get("id")?.toString();
   if (!id) return;
-  const session = await getServerSession(authOptions);
-  const requesterId = (session?.user as any)?.id;
-  const requesterEmail = session?.user?.email?.toLowerCase();
-  if (!requesterId && !requesterEmail) return;
-  let adminDoc = requesterId && (await adminDb.collection("users").doc(requesterId).get());
-  if (!adminDoc || !adminDoc.exists) {
-    const byEmail = requesterEmail ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get() : null;
-    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
-  }
-  if (!adminDoc.exists || !adminDoc.data()?.isAdmin) return;
+  if (!(await getAdminDoc())) return;
   await adminDb.collection("feedback").doc(id).delete();
   revalidatePath("/admin");
 }
@@ -123,16 +189,7 @@ async function deleteBug(formData: FormData) {
   "use server";
   const id = formData.get("id")?.toString();
   if (!id) return;
-  const session = await getServerSession(authOptions);
-  const requesterId = (session?.user as any)?.id;
-  const requesterEmail = session?.user?.email?.toLowerCase();
-  if (!requesterId && !requesterEmail) return;
-  let adminDoc = requesterId && (await adminDb.collection("users").doc(requesterId).get());
-  if (!adminDoc || !adminDoc.exists) {
-    const byEmail = requesterEmail ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get() : null;
-    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
-  }
-  if (!adminDoc.exists || !adminDoc.data()?.isAdmin) return;
+  if (!(await getAdminDoc())) return;
   await adminDb.collection("bugs").doc(id).delete();
   revalidatePath("/admin");
 }
@@ -141,59 +198,69 @@ async function deleteConnect(formData: FormData) {
   "use server";
   const id = formData.get("id")?.toString();
   if (!id) return;
-  const session = await getServerSession(authOptions);
-  const requesterId = (session?.user as any)?.id;
-  const requesterEmail = session?.user?.email?.toLowerCase();
-  if (!requesterId && !requesterEmail) return;
-  let adminDoc = requesterId && (await adminDb.collection("users").doc(requesterId).get());
-  if (!adminDoc || !adminDoc.exists) {
-    const byEmail = requesterEmail ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get() : null;
-    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
-  }
-  if (!adminDoc.exists || !adminDoc.data()?.isAdmin) return;
+  if (!(await getAdminDoc())) return;
   await adminDb.collection("connect").doc(id).delete();
   revalidatePath("/admin");
 }
 
+async function deleteChatLog(formData: FormData) {
+  "use server";
+  const id = formData.get("id")?.toString();
+  if (!id) return;
+  if (!(await getAdminDoc())) return;
+  await adminDb.collection("generate").doc(id).delete();
+  revalidatePath("/admin");
+}
+
 export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
-  const requesterId = (session?.user as any)?.id;
-  const requesterEmail = session?.user?.email ?? undefined;
-  if (!requesterId && !requesterEmail) redirect("/");
+  const adminDoc = await getAdminDoc();
+  if (!adminDoc) redirect("/");
 
-  let adminDoc = requesterId && (await adminDb.collection("users").doc(requesterId).get());
-  if (!adminDoc || !adminDoc.exists) {
-    const byEmail = requesterEmail
-      ? await adminDb.collection("users").where("email", "==", requesterEmail).limit(1).get()
-      : null;
-    if (byEmail && !byEmail.empty) adminDoc = byEmail.docs[0];
-  }
-  if (!adminDoc || !adminDoc.exists || !adminDoc.data()?.isAdmin) redirect("/");
-
-  const signedInAs = requesterEmail ?? requesterId ?? "";
+  const signedInAs = adminDoc.data()?.email ?? adminDoc.id;
 
   const userSnap = await adminDb.collection("users").get();
-  const users: UserRecord[] = userSnap.docs.map((doc) => {
-    const data = doc.data() as any;
-    return { id: doc.id, ...data, email: data.email ?? doc.id, phone: data.phone, profileImageUrl: data.profileImageUrl };
+  const users: UserRecord[] = userSnap.docs.map((d) => {
+    const data = d.data();
+    return { id: d.id, ...data, email: data.email ?? d.id, phone: data.phone, profileImageUrl: data.profileImageUrl };
   });
 
   const connectSnap = await adminDb.collection("connect").orderBy("time", "desc").limit(50).get();
-  const connectEntries: ConnectEntry[] = connectSnap.docs.map((doc) => {
-    const data = doc.data() as any;
-    return { id: doc.id, email: data.email, name: data.name, message: data.message, time: data.time };
+  const connectEntries: ConnectEntry[] = connectSnap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id, email: data.email, name: data.name, message: data.message, time: data.time,
+      ip: data.ip, userEmail: data.userEmail, userName: data.userName, userImage: data.userImage,
+    };
   });
 
   const feedbackSnap = await adminDb.collection("feedback").orderBy("time", "desc").limit(50).get();
-  const feedbackEntries: FeedbackEntry[] = feedbackSnap.docs.map((doc) => {
-    const data = doc.data() as any;
-    return { id: doc.id, email: data.email, feedback: data.feedback, time: data.time };
+  const feedbackEntries: FeedbackEntry[] = feedbackSnap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id, email: data.email, feedback: data.feedback, time: data.time,
+      ip: data.ip, userEmail: data.userEmail, userName: data.userName, userImage: data.userImage,
+    };
   });
 
   const bugSnap = await adminDb.collection("bugs").orderBy("time", "desc").limit(50).get();
-  const bugEntries: BugEntry[] = bugSnap.docs.map((doc) => {
-    const data = doc.data() as any;
-    return { id: doc.id, email: data.email, bugs: data.bugs, time: data.time };
+  const bugEntries: BugEntry[] = bugSnap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id, email: data.email, bugs: data.bugs, time: data.time,
+      ip: data.ip, userEmail: data.userEmail, userName: data.userName, userImage: data.userImage,
+    };
+  });
+
+  // Terminal AI chats live in the existing `generate` collection (prompt +
+  // the extension's response), now enriched with IP/identity by /api/audit.
+  const chatSnap = await adminDb.collection("generate").orderBy("createdAt", "desc").limit(100).get();
+  const chatLogs: ChatLogEntry[] = chatSnap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id, prompt: data.prompt, response: data.response, error: data.error,
+      createdAt: data.createdAt,
+      ip: data.ip, userEmail: data.userEmail, userName: data.userName, userImage: data.userImage,
+    };
   });
 
   const fmt = (t?: FirebaseFirestore.Timestamp) =>
@@ -219,6 +286,10 @@ export default async function AdminPage() {
         <div className={styles.statCard}>
           <span className={styles.statCount}>{bugEntries.length}</span>
           <span className={styles.statLabel}>Bug Reports</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statCount}>{chatLogs.length}</span>
+          <span className={styles.statLabel}>Terminal Chats</span>
         </div>
       </div>
 
@@ -280,6 +351,7 @@ export default async function AdminPage() {
               <div className={styles.entryTop}>
                 <span className={styles.entrySender}>{c.name ?? "Anonymous"}</span>
                 <span className={styles.entryEmail}>{c.email ?? ""}</span>
+                {c.ip && <span className={styles.auditIp}>{c.ip}</span>}
                 <span className={styles.entryTime}>{fmt(c.time)}</span>
                 <form action={deleteConnect}>
                   <input type="hidden" name="id" value={c.id} />
@@ -305,6 +377,7 @@ export default async function AdminPage() {
             <div key={f.id} className={styles.entryCard}>
               <div className={styles.entryTop}>
                 <span className={styles.entrySender}>{f.email ?? "Anonymous"}</span>
+                {f.ip && <span className={styles.auditIp}>{f.ip}</span>}
                 <span className={styles.entryTime}>{fmt(f.time)}</span>
                 <form action={deleteFeedback}>
                   <input type="hidden" name="id" value={f.id} />
@@ -330,6 +403,7 @@ export default async function AdminPage() {
             <div key={b.id} className={styles.entryCard}>
               <div className={styles.entryTop}>
                 <span className={styles.entrySender}>{b.email ?? "Anonymous"}</span>
+                {b.ip && <span className={styles.auditIp}>{b.ip}</span>}
                 <span className={styles.entryTime}>{fmt(b.time)}</span>
                 <form action={deleteBug}>
                   <input type="hidden" name="id" value={b.id} />
@@ -337,6 +411,39 @@ export default async function AdminPage() {
                 </form>
               </div>
               {b.bugs && <p className={styles.entryBody}>{b.bugs}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Terminal Chats — audit log of the home-page chatbot's /ask usage */}
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <TerminalIcon />
+          <h2 className={styles.sectionTitle}>Terminal Chats</h2>
+          <span className={styles.countBadge}>{chatLogs.length}</span>
+        </div>
+        <div className={styles.itemList}>
+          {chatLogs.length === 0 && <p className={styles.emptyState}>No chats logged yet.</p>}
+          {chatLogs.map((c) => (
+            <div key={c.id} className={styles.entryCard}>
+              <div className={styles.entryTop}>
+                <AuditIdentity ip={c.ip} userEmail={c.userEmail} userImage={c.userImage} />
+                <span className={styles.entryTime}>{fmt(c.createdAt)}</span>
+                <form action={deleteChatLog}>
+                  <input type="hidden" name="id" value={c.id} />
+                  <button type="submit" className={styles.deleteBtn} title="Delete chat log"><TrashIcon /></button>
+                </form>
+              </div>
+              {c.prompt && (
+                <p className={styles.chatQ}><span className={styles.chatLabel}>Asked</span>{c.prompt}</p>
+              )}
+              {c.response && (
+                <p className={styles.chatA}><span className={styles.chatLabel}>Reply</span>{c.response}</p>
+              )}
+              {c.error && (
+                <p className={styles.chatA}><span className={styles.chatLabel}>Error</span>{c.error}</p>
+              )}
             </div>
           ))}
         </div>

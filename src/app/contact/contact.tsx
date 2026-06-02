@@ -87,6 +87,9 @@ const ContactPage = () => {
       }
     };
     fetchProfile();
+    // resolveUserDocId is recreated each render; we intentionally refetch only
+    // when the session changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   if (status === "loading" || status === "unauthenticated") {

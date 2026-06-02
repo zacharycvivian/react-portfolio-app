@@ -157,13 +157,25 @@
   padding: 0 20px 20px;
 }
 
-/* ── Sidebar animation overrides ─────────────────────────────
-   Only override the open animation — leave close timing to Radix
-   so its pointer-events cleanup fires correctly.              */
+/* ── Sidebar morph animation ──────────────────────────────────
+   Morphs from the hamburger button circle (≈34px, 30px in panel)
+   expanding outward. Only override open — leave close timing to
+   Radix so pointer-events cleanup fires correctly.            */
+
+@keyframes sidebarMorphIn {
+  from {
+    clip-path: circle(26px at 34px 30px);
+    opacity: 0.85;
+  }
+  to {
+    clip-path: circle(150% at 34px 30px);
+    opacity: 1;
+  }
+}
+
 .sheetContainer[data-state="open"] {
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
-  animation-duration: 380ms !important;
-  will-change: transform;
+  animation: sidebarMorphIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  will-change: clip-path;
 }
 
 /* Nav item stagger is driven by inline styles in Sidebar.tsx */

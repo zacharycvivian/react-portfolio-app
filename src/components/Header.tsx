@@ -13,22 +13,14 @@ import {
 import DefaultImage from "@/../public/defaultavatar.jpg";
 import AvatarImage from "@/components/AvatarImage";
 import Link from "next/link";
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import ReactDOM from "react-dom";
 import { db } from "@/../firebase";
 import {
   doc, getDoc, collection, query, where, limit, getDocs,
-  onSnapshot, orderBy,
+  onSnapshot, orderBy, updateDoc, writeBatch,
 } from "firebase/firestore";
-
-interface NotifItem {
-  id: string;
-  type: "feedback" | "bug" | "message" | "comment" | "like" | "testimonial";
-  title: string;
-  body?: string;
-  time: Date;
-}
+import type { NotifItem, NotificationType, SessionUser } from "@/types";
 
 function relativeTime(d: Date): string {
   const diff = Date.now() - d.getTime();
@@ -38,7 +30,7 @@ function relativeTime(d: Date): string {
   return `${Math.floor(diff / 86_400_000)}d ago`;
 }
 
-function notifEmoji(type: NotifItem["type"]): string {
+function notifEmoji(type: NotificationType): string {
   switch (type) {
     case "feedback":    return "⭐";
     case "bug":         return "🐛";
@@ -46,6 +38,7 @@ function notifEmoji(type: NotifItem["type"]): string {
     case "comment":     return "💬";
     case "like":        return "♥";
     case "testimonial": return "📝";
+    default:            return "🔔";
   }
 }
 
@@ -81,130 +74,79 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 function Header() {
   const { data: session } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isReportBugModalOpen, setReportBugModalOpen] = useState(false);
-  const [isFeedbackModalOpen, setFeedbackModalOpen] = useState(false);
-  const [characterCount, setCharacterCount] = useState(0);
   const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
   const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
   const originalName = "Zachary Vivian";
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<NotifItem[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const notifWrapperRef = useRef<HTMLDivElement>(null);
-  const notifsAccum = useRef<Map<string, NotifItem>>(new Map());
 
   useEffect(() => {
     setMounted(true);
-    try {
-      const stored = localStorage.getItem("notifReadIds");
-      if (stored) setReadIds(new Set(JSON.parse(stored)));
-    } catch {}
   }, []);
 
-  const persistReadIds = (ids: Set<string>) => {
-    setReadIds(ids);
-    try { localStorage.setItem("notifReadIds", JSON.stringify(Array.from(ids))); } catch {}
-  };
-
+  // Single source of truth: the `notifications` collection. Every notifiable
+  // event (feedback/bug/message via the server audit route; like/comment/
+  // testimonial written by their pages) creates a doc here with a `read` flag,
+  // so read-state is authoritative and synced across devices.
   useEffect(() => {
     if (!isAdmin) return;
-    notifsAccum.current.clear();
-    setNotifications([]);
-
-    const unsubs: (() => void)[] = [];
-
-    const flush = () => {
-      const all = Array.from(notifsAccum.current.values());
-      all.sort((a, b) => b.time.getTime() - a.time.getTime());
-      setNotifications(all);
-    };
-
-    const addItems = (prefix: string, snap: any, mapFn: (id: string, data: any) => NotifItem | null) => {
-      snap.docs.forEach((d: any) => {
-        const item = mapFn(d.id, d.data());
-        if (item) notifsAccum.current.set(prefix + d.id, item);
-      });
-      flush();
-    };
-
-    unsubs.push(onSnapshot(
-      query(collection(db, "feedback"), orderBy("time", "desc"), limit(50)),
-      snap => addItems("fb_", snap, (id, data) => ({
-        id: "fb_" + id, type: "feedback",
-        title: "New feedback",
-        body: [data.email, data.feedback?.slice(0, 80)].filter(Boolean).join(": "),
-        time: data.time?.toDate?.() ?? new Date(0),
-      }))
-    ));
-
-    unsubs.push(onSnapshot(
-      query(collection(db, "bugs"), orderBy("time", "desc"), limit(50)),
-      snap => addItems("bug_", snap, (id, data) => ({
-        id: "bug_" + id, type: "bug",
-        title: "New bug report",
-        body: [data.email, data.bugs?.slice(0, 80)].filter(Boolean).join(": "),
-        time: data.time?.toDate?.() ?? new Date(0),
-      }))
-    ));
-
-    unsubs.push(onSnapshot(
-      query(collection(db, "connect"), orderBy("time", "desc"), limit(50)),
-      snap => addItems("con_", snap, (id, data) => ({
-        id: "con_" + id, type: "message",
-        title: "New message",
-        body: [data.name ?? data.email, data.message?.slice(0, 80)].filter(Boolean).join(": "),
-        time: data.time?.toDate?.() ?? new Date(0),
-      }))
-    ));
-
-    unsubs.push(onSnapshot(
-      query(collection(db, "testimonials"), orderBy("time", "desc"), limit(50)),
-      snap => addItems("test_", snap, (id, data) => ({
-        id: "test_" + id, type: "testimonial",
-        title: "New testimonial",
-        body: [data.name, data.review?.slice(0, 80)].filter(Boolean).join(": "),
-        time: data.time?.toDate?.() ?? new Date(0),
-      }))
-    ));
-
-    unsubs.push(onSnapshot(
+    const unsub = onSnapshot(
       query(collection(db, "notifications"), orderBy("time", "desc"), limit(50)),
-      snap => addItems("notif_", snap, (id, data) => ({
-        id: "notif_" + id, type: data.type,
-        title: data.title,
-        body: data.body,
-        time: data.time?.toDate?.() ?? new Date(0),
-      }))
-    ));
-
-    return () => unsubs.forEach(u => u());
+      (snap) => {
+        setNotifications(
+          snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              type: data.type,
+              title: data.title,
+              body: data.body,
+              time: data.time?.toDate?.() ?? new Date(0),
+              read: data.read === true,
+            } as NotifItem;
+          }),
+        );
+      },
+    );
+    return () => unsub();
   }, [isAdmin]);
 
   useEffect(() => {
     if (!notifOpen) return;
-    const handler = (e: MouseEvent) => {
+    // Listen on `pointerdown` (not `mousedown`): Radix dropdown triggers call
+    // preventDefault on pointerdown, which suppresses the synthetic mousedown —
+    // so a mousedown listener never fired when opening the theme/profile menu,
+    // leaving this panel stuck open. pointerdown always fires.
+    const handler = (e: PointerEvent) => {
       if (notifWrapperRef.current && !notifWrapperRef.current.contains(e.target as Node)) {
         setNotifOpen(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("pointerdown", handler);
+    return () => document.removeEventListener("pointerdown", handler);
   }, [notifOpen]);
 
+  // Read-state lives on the Firestore docs (synced across devices). The
+  // onSnapshot subscription above reflects these updates back into the UI.
   const markOneRead = (id: string) => {
-    persistReadIds(new Set(Array.from(readIds).concat(id)));
+    updateDoc(doc(db, "notifications", id), { read: true }).catch(() => {});
   };
 
   const markAllRead = () => {
-    persistReadIds(new Set(Array.from(readIds).concat(notifications.map(n => n.id))));
+    const unread = notifications.filter((n) => !n.read);
+    if (unread.length === 0) return;
+    const batch = writeBatch(db);
+    unread.forEach((n) => batch.update(doc(db, "notifications", n.id), { read: true }));
+    batch.commit().catch(() => {});
   };
 
-  const unreadCount = notifications.filter(n => !readIds.has(n.id)).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
     const fetchAdmin = async () => {
-      const uid = (session?.user as any)?.id;
+      const uid = (session?.user as SessionUser | undefined)?.id;
       const email = session?.user?.email;
       if (uid) {
         const snap = await getDoc(doc(db, "users", uid));
@@ -280,10 +222,8 @@ function Header() {
   const handleAuthAction = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
-      console.log("string" + session);
     } else {
       signIn("google", { callbackUrl: "/", prompt: "select_account" });
-      console.log("string" + session);
     }
   };
 
@@ -292,9 +232,17 @@ function Header() {
 
   const { theme, setTheme, resolvedTheme } = useTheme();
   const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const activeTheme = theme; // track the actual selected setting (light/dark/system)
 
   if (!mounted) {
-    return null;
+    return (
+      <header className={styles.header}>
+        <div className={styles.headertext}>
+          <h2>Zachary Vivian<span className={styles.cursor}>|</span></h2>
+        </div>
+        <div className={styles.profileAndToggleContainer} />
+      </header>
+    );
   }
 
   return (
@@ -313,8 +261,8 @@ function Header() {
               onClick={() => setNotifOpen(o => !o)}
               aria-label="Notifications"
             >
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7.5 0.875C7.5 0.875 7.22 0.91 7.08 0.98C6.35 1.34 6 2.06 6 2.78C4.1 3.43 2.75 5.25 2.75 7.375V10.5L1.25 12H13.75L12.25 10.5V7.375C12.25 5.25 10.9 3.43 9 2.78C9 2.06 8.65 1.34 7.92 0.98C7.78 0.91 7.5 0.875 7.5 0.875ZM5.75 12.5C5.75 13.466 6.534 14.25 7.5 14.25C8.466 14.25 9.25 13.466 9.25 12.5H5.75Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"/>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.268 21a2 2 0 0 0 3.464 0m-10.47-5.674A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>
               </svg>
               {unreadCount > 0 && (
                 <span className={styles.notifBadge}>
@@ -335,7 +283,7 @@ function Header() {
                     <p className={styles.notifEmpty}>All caught up!</p>
                   ) : (
                     notifications.map(n => {
-                      const isRead = readIds.has(n.id);
+                      const isRead = n.read;
                       return (
                         <div key={n.id} className={`${styles.notifItem} ${isRead ? styles.notifItemRead : ""}`}>
                           <span className={styles.notifIcon}>{notifEmoji(n.type)}</span>
@@ -364,30 +312,49 @@ function Header() {
             )}
           </div>
         )}
-        <DropdownMenu>
+        <DropdownMenu onOpenChange={(open) => { if (open) setNotifOpen(false); }}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className={styles.iconButton}>
-              {currentTheme === "dark" ? ( // Use currentTheme to decide the icon
-                <MoonIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+              {activeTheme === "system" ? (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v2m2.837 12.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4m7-3l-1.256 1.256M20 12h2"/>
+                </svg>
+              ) : currentTheme === "dark" ? (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+                </svg>
               ) : (
-                <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
               )}
               <span className="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className={styles.dropdownContent}>
-            <DropdownMenuItem onClick={() => setTheme("light")}>
+            <DropdownMenuItem onClick={() => setTheme("light")} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
               Light Mode
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
+            <DropdownMenuItem onClick={() => setTheme("dark")} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+              </svg>
               Dark Mode
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              System Setting
+            <DropdownMenuItem onClick={() => setTheme("system")} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M12 2v2m2.837 12.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4m7-3l-1.256 1.256M20 12h2"/>
+              </svg>
+              System
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <DropdownMenu>
+        <DropdownMenu onOpenChange={(open) => { if (open) setNotifOpen(false); }}>
           <DropdownMenuTrigger asChild>
             <button
               className={`${styles.iconButton} ${

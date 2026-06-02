@@ -233,6 +233,79 @@
   overflow-y: auto;
 }
 
+/* ── Terminal chat audit entries ───────────────────────── */
+
+/* Who submitted: avatar + email (or "Guest"), plus the captured IP. */
+.auditIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.auditAvatar {
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.auditEmail {
+  font-size: 0.82rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auditGuest {
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+/* Monospace IP tag, used in every audited section. */
+.auditIp {
+  font-family: var(--font-fira), monospace;
+  font-size: 0.7rem;
+  opacity: 0.55;
+  background: var(--card-hover-light);
+  padding: 1px 7px;
+  border-radius: 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chatQ,
+.chatA {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.chatA {
+  opacity: 0.8;
+}
+
+.chatLabel {
+  width: fit-content;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: var(--card-hover-light);
+  opacity: 0.75;
+}
+
 .entryMeta {
   display: flex;
   align-items: center;

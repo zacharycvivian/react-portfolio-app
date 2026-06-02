@@ -1,70 +1,35 @@
-"use client";
+/**
+ * About page content — a Server Component.
+ *
+ * All of the copy and inline SVGs below are static, so they render to HTML on
+ * the server. Only the scroll-in animation wrappers (imported from
+ * `@/components/motion/Animated`) hydrate on the client.
+ */
 import React from "react";
 import styles from "./about.module.css";
-import { motion } from "framer-motion";
+import {
+  AnimatedCard as Card,
+  AnimatedGroupHeader,
+  AnimatedTitle,
+} from "@/components/motion/Animated";
 
-const fadeInVariant = {
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-  },
-  hidden: {
-    opacity: 0,
-    scale: 0.97,
-    y: 28,
-  },
-};
-
-const vp = { once: true, margin: "-60px" } as const;
-
-function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      className={styles.card}
-      variants={fadeInVariant}
-      initial="hidden"
-      whileInView="visible"
-      viewport={vp}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
+/** Thin wrapper so existing markup can keep using `<GroupHeader label=… />`. */
 function GroupHeader({ label }: { label: string }) {
-  return (
-    <motion.p
-      className={styles.groupHeader}
-      variants={fadeInVariant}
-      initial="hidden"
-      whileInView="visible"
-      viewport={vp}
-    >
-      {label}
-    </motion.p>
-  );
+  return <AnimatedGroupHeader label={label} className={styles.groupHeader} />;
 }
 
 const AboutPage = () => {
   return (
     <div className={styles.container}>
-      <motion.h2
-        className={styles.sectionTitle}
-        variants={fadeInVariant}
-        initial="hidden"
-        whileInView="visible"
-        viewport={vp}
-      >
+      <AnimatedTitle className={styles.sectionTitle}>
         About This Website:
-      </motion.h2>
+      </AnimatedTitle>
       <div className={styles.section}>
 
         {/* ── Frontend Framework ── */}
         <GroupHeader label="Frontend" />
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg viewBox="0 0 256 228" width="40" height="40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" fill="currentColor">
@@ -78,7 +43,7 @@ const AboutPage = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
@@ -109,16 +74,12 @@ const AboutPage = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
-              {/* TypeScript – monochrome: bg uses currentColor, letters use page bg color */}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="40" height="40">
-                <rect width="256" height="256" rx="16" fill="currentColor" />
-                <path
-                  style={{ fill: "var(--secondary-color)" }}
-                  d="M150.8 200.3v27.6c4.5 2.3 9.8 4 15.9 5.2 6.1 1.2 12.6 1.7 19.4 1.7 6.6 0 12.9-.6 18.9-1.9 6-1.3 11.2-3.4 15.7-6.3 4.5-2.9 8-6.8 10.7-11.7 2.6-4.9 3.9-10.8 3.9-17.8 0-5.2-.8-9.8-2.3-13.8-1.6-4-3.8-7.5-6.7-10.7-2.9-3.2-6.3-6-10.4-8.6-4-2.5-8.5-5-13.4-7.3-3.6-1.6-6.9-3.1-9.8-4.6-2.9-1.5-5.3-3-7.3-4.5-2-1.5-3.6-3.2-4.7-4.9-1.1-1.7-1.7-3.8-1.7-6.1 0-2.1.5-3.9 1.6-5.6 1-1.7 2.5-3.1 4.3-4.3 1.8-1.2 3.9-2.2 6.4-2.9 2.4-.7 5-.1 7.8-.1 2.1 0 4.2.2 6.4.5 2.2.3 4.4.8 6.7 1.4 2.3.6 4.5 1.5 6.6 2.5 2.1 1 4.1 2.2 6 3.5v-26c-4-1.5-8.3-2.7-13-3.4-4.7-.7-10.1-1.1-16.1-1.1-6.6 0-12.8.7-18.6 2.1-5.9 1.4-11 3.6-15.6 6.5-4.5 3-8.1 6.8-10.7 11.6-2.6 4.8-3.9 10.5-3.9 17.1 0 8.5 2.4 15.7 7.3 21.8 4.9 6.1 12.3 11.2 22.3 15.4 3.7 1.5 7.2 3 10.5 4.5 3.3 1.5 6.1 3 8.6 4.6 2.4 1.6 4.4 3.4 5.8 5.3 1.5 1.9 2.2 4.2 2.2 6.7 0 2-.5 3.8-1.4 5.4-.9 1.6-2.3 3-4.1 4.2-1.8 1.2-4 2.1-6.6 2.8-2.6.7-5.5 1-8.8 1-5.8 0-11.5-1-17.2-3-5.7-2-10.9-5.1-15.7-9.2zM88 128.1H66.5v-27H134v27h-21.5V224H88z"
-                />
+              {/* TypeScript – official Simple Icons path; TS letters are winding-rule holes */}
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor">
+                <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/>
               </svg>
             </div>
             <div>
@@ -131,7 +92,7 @@ const AboutPage = () => {
         {/* ── Styling & UI ── */}
         <GroupHeader label="Styling & UI" />
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg viewBox="0 0 256 154" width="40" height="40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
@@ -151,7 +112,7 @@ const AboutPage = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="h-10 w-10">
@@ -167,11 +128,12 @@ const AboutPage = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="40" height="40" fill="currentColor">
-                <path d="M4 18L11 7L18 18L11 29L4 18ZM18 18L25 7L32 18L25 29L18 18Z" />
+              {/* Framer – official Simple Icons path */}
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor">
+                <path d="M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z"/>
               </svg>
             </div>
             <div>
@@ -181,17 +143,30 @@ const AboutPage = () => {
           </div>
         </Card>
 
+        <Card className={styles.card}>
+          <div className={styles.svgAndTextContainer}>
+            <div className={styles.svgContainer}>
+              {/* Lucide – official Simple Icons path */}
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor">
+                <path d="M18.483 1.123a1.09 1.09 0 0 0-.752.362 1.09 1.09 0 0 0 .088 1.54 11.956 11.956 0 0 1 4 8.946 7.62 7.62 0 0 1-7.637 7.636 7.62 7.62 0 0 1-7.637-7.636 3.255 3.255 0 0 1 3.273-3.273c1.82 0 3.273 1.45 3.273 3.273a1.09 1.09 0 0 0 1.09 1.09 1.09 1.09 0 0 0 1.092-1.09c0-3-2.455-5.455-5.455-5.455s-5.454 2.455-5.454 5.455c0 5.408 4.408 9.818 9.818 9.818 5.41 0 9.818-4.41 9.818-9.818A14.16 14.16 0 0 0 19.272 1.4a1.09 1.09 0 0 0-.789-.277ZM9.818 2.15C4.408 2.151 0 6.561 0 11.97a14.16 14.16 0 0 0 4.8 10.637 1.09 1.09 0 0 0 1.54-.096 1.09 1.09 0 0 0-.095-1.54 11.957 11.957 0 0 1-4.063-9 7.62 7.62 0 0 1 7.636-7.637 7.62 7.62 0 0 1 7.637 7.636 3.256 3.256 0 0 1-3.273 3.273 3.256 3.256 0 0 1-3.273-3.273 1.09 1.09 0 0 0-1.09-1.09 1.09 1.09 0 0 0-1.092 1.09c0 3 2.455 5.455 5.455 5.455s5.454-2.455 5.454-5.455c0-5.408-4.408-9.818-9.818-9.818z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 className={styles.skillSectionTitle}>Lucide</h3>
+              <p>Lucide is the open-source icon library that supplies the interface icons across this site — navigation, the theme toggle, the carousel arrows, and action buttons. It provides a clean, consistent, and fully customizable set of SVG icons through the <code>lucide-react</code> package.</p>
+            </div>
+          </div>
+        </Card>
+
         {/* ── Backend & Auth ── */}
         <GroupHeader label="Backend & Auth" />
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
-              <svg viewBox="0 0 256 262" width="40" height="40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
-                <path d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" fill="currentColor" />
-                <path d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" fill="currentColor" />
-                <path d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" fill="currentColor" />
-                <path d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" fill="currentColor" />
+              {/* Firebase – official Simple Icons path */}
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor">
+                <path d="M19.455 8.369c-.538-.748-1.778-2.285-3.681-4.569-.826-.991-1.535-1.832-1.884-2.245a146 146 0 0 0-.488-.576l-.207-.245-.113-.133-.022-.032-.01-.005L12.57 0l-.609.488c-1.555 1.246-2.828 2.851-3.681 4.64-.523 1.064-.864 2.105-1.043 3.176-.047.241-.088.489-.121.738-.209-.017-.421-.028-.632-.033-.018-.001-.035-.002-.059-.003a7.46 7.46 0 0 0-2.28.274l-.317.089-.163.286c-.765 1.342-1.198 2.869-1.252 4.416-.07 2.01.477 3.954 1.583 5.625 1.082 1.633 2.61 2.882 4.42 3.611l.236.095.071.025.003-.001a9.59 9.59 0 0 0 2.941.568q.171.006.342.006c1.273 0 2.513-.249 3.69-.742l.008.004.313-.145a9.63 9.63 0 0 0 3.927-3.335c1.01-1.49 1.577-3.234 1.641-5.042.075-2.161-.643-4.304-2.133-6.371m-7.083 6.695c.328 1.244.264 2.44-.191 3.558-1.135-1.12-1.967-2.352-2.475-3.665-.543-1.404-.87-2.74-.974-3.975.48.157.922.366 1.315.622 1.132.737 1.914 1.902 2.325 3.461zm.207 6.022c.482.368.99.712 1.513 1.028-.771.21-1.565.302-2.369.273a8 8 0 0 1-.373-.022c.458-.394.869-.823 1.228-1.279zm1.347-6.431c-.516-1.957-1.527-3.437-3.002-4.398-.647-.421-1.385-.741-2.194-.95.011-.134.026-.268.043-.4.014-.113.03-.216.046-.313.133-.689.332-1.37.589-2.025.099-.25.206-.499.321-.74l.004-.008c.177-.358.376-.719.61-1.105l.092-.152-.003-.001c.544-.851 1.197-1.627 1.942-2.311l.288.341c.672.796 1.304 1.548 1.878 2.237 1.291 1.549 2.966 3.583 3.612 4.48 1.277 1.771 1.893 3.579 1.83 5.375-.049 1.395-.461 2.755-1.195 3.933-.694 1.116-1.661 2.05-2.8 2.708-.636-.318-1.559-.839-2.539-1.599.79-1.575.952-3.28.479-5.072zm-2.575 5.397c-.725.939-1.587 1.55-2.09 1.856-.081-.029-.163-.06-.243-.093l-.065-.026c-1.49-.616-2.747-1.656-3.635-3.01-.907-1.384-1.356-2.993-1.298-4.653.041-1.19.338-2.327.882-3.379.316-.07.638-.114.96-.131l.084-.002c.162-.003.324-.003.478 0 .227.011.454.035.677.07.073 1.513.445 3.145 1.105 4.852.637 1.644 1.694 3.162 3.144 4.515z"/>
               </svg>
             </div>
             <div>
@@ -201,7 +176,7 @@ const AboutPage = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" width="40" height="40" fill="none">
@@ -218,7 +193,7 @@ const AboutPage = () => {
         {/* ── Deployment ── */}
         <GroupHeader label="Deployment" />
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
               <svg viewBox="0 0 256 222" width="40" height="40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
@@ -235,18 +210,12 @@ const AboutPage = () => {
         {/* ── AI Tooling ── */}
         <GroupHeader label="AI Development" />
 
-        <Card>
+        <Card className={styles.card}>
           <div className={styles.svgAndTextContainer}>
             <div className={styles.svgContainer}>
-              {/* Claude product icon — 5-arm asterisk mark */}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="40" height="40" fill="currentColor">
-                <g transform="translate(18,18)">
-                  <rect x="-2.5" y="-16" width="5" height="13" rx="2.5" transform="rotate(0)" />
-                  <rect x="-2.5" y="-16" width="5" height="13" rx="2.5" transform="rotate(72)" />
-                  <rect x="-2.5" y="-16" width="5" height="13" rx="2.5" transform="rotate(144)" />
-                  <rect x="-2.5" y="-16" width="5" height="13" rx="2.5" transform="rotate(216)" />
-                  <rect x="-2.5" y="-16" width="5" height="13" rx="2.5" transform="rotate(288)" />
-                </g>
+              {/* Claude – official Simple Icons path */}
+              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor">
+                <path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/>
               </svg>
             </div>
             <div>

@@ -12,8 +12,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import FirebaseAuthProvider from "@/components/FirebaseAuthProvider";
 
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
-const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
+const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.zacharycvivian.com"),

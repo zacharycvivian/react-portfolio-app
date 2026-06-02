@@ -253,6 +253,7 @@ const TestimonialsPage = () => {
           title: "New testimonial",
           body: `${session.user.name}: ${formData.review.slice(0, 80)}`,
           time: serverTimestamp(),
+          read: false,
         });
       }
 

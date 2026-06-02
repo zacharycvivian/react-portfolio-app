@@ -84,6 +84,9 @@ const EditProfilePage = () => {
     };
 
     fetchProfile();
+    // resolveUserDocId is recreated each render; we intentionally refetch only
+    // when the session changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   // Splits phone number into parts for separate input fields when profile state changes

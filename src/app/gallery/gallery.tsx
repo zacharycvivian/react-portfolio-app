@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   collection, query, orderBy, onSnapshot, addDoc, deleteDoc,
   doc, serverTimestamp, updateDoc, arrayUnion, arrayRemove, deleteField,
@@ -10,9 +10,15 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/../firebase";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./gallery.module.css";
 import { loadBannedWords, filterProfanity } from "@/lib/profanity";
+import type {
+  Photo,
+  PhotoComment,
+  PhotoMetadata,
+  FirestoreTimestamp,
+} from "@/types";
 
 const ADMIN_EMAIL = "zacharycvivian@gmail.com";
 
@@ -36,7 +42,7 @@ function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0 }: {
       initial={{ opacity: 0, scale: 0.92, y: 10 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true, amount: 0.05 }}
-      transition={{ delay: animDelay, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ delay: animDelay, duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
     >
       {!imgLoaded && <div className={styles.imageShimmer} />}
       <Image
@@ -79,46 +85,22 @@ function ShimmerAvatar({ src, alt, size }: { src: string; alt: string; size: "lg
   );
 }
 
-interface PhotoMetadata {
-  fileSize?: number;
-  width?: number;
-  height?: number;
-  dateTaken?: string;
-  camera?: string;
-  location?: string;
+/** Photo (`Photo`), comment (`PhotoComment`) and metadata (`PhotoMetadata`)
+ * shapes are shared across the app — see `src/types/index.ts`. */
+
+/** Subset of EXIF fields we read off an uploaded file. */
+interface ExifData {
+  Make?: string;
+  Model?: string;
+  DateTimeOriginal?: Date | string;
+  ExifImageWidth?: number;
+  ExifImageHeight?: number;
+}
+
+/** GPS coordinates extracted from EXIF. */
+interface GpsData {
   latitude?: number;
   longitude?: number;
-}
-
-interface LikerDetail {
-  email: string;
-  name: string;
-  image: string;
-}
-
-interface Comment {
-  id: string;
-  text: string;
-  email: string;
-  name: string;
-  userImage?: string;
-  occupation?: string;
-  employer?: string;
-  createdAt: any;
-  likedBy?: string[];
-}
-
-interface Photo {
-  id: string;
-  url: string;
-  storagePath: string;
-  caption?: string;
-  createdAt: any;
-  likedBy?: string[];
-  metadata?: PhotoMetadata;
-  hideMetadata?: boolean;
-  uploaderName?: string;
-  uploaderImage?: string;
 }
 
 // Extract EXIF + file metadata from a File object
@@ -128,9 +110,9 @@ async function extractMetadata(file: File): Promise<PhotoMetadata> {
   try {
     const exifr = (await import("exifr")).default;
 
-    const exif = await exifr.parse(file, {
+    const exif = (await exifr.parse(file, {
       pick: ["Make", "Model", "DateTimeOriginal", "ExifImageWidth", "ExifImageHeight"],
-    }) as any;
+    })) as ExifData | undefined;
 
     if (exif) {
       if (exif.Make || exif.Model)
@@ -143,7 +125,7 @@ async function extractMetadata(file: File): Promise<PhotoMetadata> {
       if (exif.ExifImageHeight) meta.height = exif.ExifImageHeight;
     }
 
-    const gps = await exifr.gps(file) as any;
+    const gps = (await exifr.gps(file)) as GpsData | undefined;
     if (gps?.latitude && gps?.longitude) {
       meta.latitude  = gps.latitude;
       meta.longitude = gps.longitude;
@@ -151,7 +133,7 @@ async function extractMetadata(file: File): Promise<PhotoMetadata> {
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${gps.latitude}&lon=${gps.longitude}&zoom=10`
         );
-        const geo = await res.json();
+        const geo: { address?: Record<string, string> } = await res.json();
         const { city, town, village, county, state, country } = geo.address ?? {};
         meta.location = [city ?? town ?? village ?? county, state, country]
           .filter(Boolean).join(", ");
@@ -172,7 +154,9 @@ async function extractMetadata(file: File): Promise<PhotoMetadata> {
       meta.width  = img.naturalWidth;
       meta.height = img.naturalHeight;
       URL.revokeObjectURL(url);
-    } catch {}
+    } catch {
+      // Dimensions are best-effort; ignore if the image can't be decoded.
+    }
   }
 
   return meta;
@@ -186,18 +170,21 @@ function formatBytes(bytes: number): string {
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleDateString("en-US", {
-      year: "numeric", month: "long", day: "numeric",
-    });
+    const date = new Date(iso);
+    return (
+      date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) +
+      " · " +
+      date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+    );
   } catch {
     return iso;
   }
 }
 
-function formatTimestamp(ts: any): string {
+function formatTimestamp(ts: FirestoreTimestamp | null | undefined): string {
   if (!ts) return "";
   try {
-    const date = ts.toDate ? ts.toDate() : new Date(ts);
+    const date = ts.toDate();
     return (
       date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) +
       " · " +
@@ -237,6 +224,18 @@ export default function Gallery() {
   const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
 
+  // Fullscreen mode
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fsUIVisible, setFsUIVisible] = useState(true);
+  const fsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Lightbox image loading
+  const [lightboxImgLoaded, setLightboxImgLoaded] = useState(false);
+
+  // Wheel zoom in fullscreen
+  const [zoom, setZoom] = useState(1);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+
   // Lightbox
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const selectedPhoto = selectedPhotoId
@@ -248,7 +247,7 @@ export default function Gallery() {
 
   const [showInfo, setShowInfo] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<PhotoComment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
   const [profanityWarning, setProfanityWarning] = useState(false);
@@ -279,7 +278,7 @@ export default function Gallery() {
       orderBy("createdAt", "asc")
     );
     return onSnapshot(q, (snapshot) => {
-      setComments(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Comment)));
+      setComments(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PhotoComment)));
     });
   }, [selectedPhotoId]);
 
@@ -304,30 +303,58 @@ export default function Gallery() {
       .catch(() => {});
   }, [session?.user?.email]);
 
+  const showFsUI = () => {
+    setFsUIVisible(true);
+    if (fsTimerRef.current) clearTimeout(fsTimerRef.current);
+    fsTimerRef.current = setTimeout(() => setFsUIVisible(false), 3000);
+  };
+
   const showNavBriefly = () => {
     setNavVisible(true);
     if (navTimerRef.current) clearTimeout(navTimerRef.current);
     navTimerRef.current = setTimeout(() => setNavVisible(false), 3000);
   };
 
+  // Enter fullscreen: show UI briefly then auto-hide
+  useEffect(() => {
+    if (!isFullscreen) {
+      if (fsTimerRef.current) clearTimeout(fsTimerRef.current);
+      setFsUIVisible(true);
+      return;
+    }
+    showFsUI();
+    return () => { if (fsTimerRef.current) clearTimeout(fsTimerRef.current); };
+  }, [isFullscreen]);
+
+  // Reset fullscreen / shimmer / zoom when photo changes
+  useEffect(() => {
+    if (!selectedPhotoId) setIsFullscreen(false);
+    setLightboxImgLoaded(false);
+    setZoom(1);
+  }, [selectedPhotoId]);
+
+  useEffect(() => { if (!isFullscreen) setZoom(1); }, [isFullscreen]);
+
+  // Declared before the keydown effect below so the effect can list it as a
+  // dependency; memoised so its identity only changes with photos/selection.
+  const navigate = useCallback((dir: 1 | -1) => {
+    if (!photos.length) return;
+    const next = (selectedIndex + dir + photos.length) % photos.length;
+    setSelectedPhotoId(photos[next].id);
+    setCommentText("");
+  }, [photos, selectedIndex]);
+
   useEffect(() => {
     if (!selectedPhotoId) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedPhotoId(null);
+      if (e.key === "Escape") { if (isFullscreen) setIsFullscreen(false); else setSelectedPhotoId(null); }
       if (e.key === "ArrowRight") navigate(1);
       if (e.key === "ArrowLeft")  navigate(-1);
       if (e.key === "i" || e.key === "I") setShowInfo(v => !v);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [selectedPhotoId, selectedIndex, photos.length]);
-
-  const navigate = (dir: 1 | -1) => {
-    if (!photos.length) return;
-    const next = (selectedIndex + dir + photos.length) % photos.length;
-    setSelectedPhotoId(photos[next].id);
-    setCommentText("");
-  };
+  }, [selectedPhotoId, isFullscreen, navigate]);
 
   const handleLike = async () => {
     if (!session?.user?.email || !selectedPhoto) return;
@@ -343,6 +370,7 @@ export default function Gallery() {
         title: "New like on a photo",
         body: `${session.user.name ?? session.user.email} liked "${selectedPhoto.caption ?? "your photo"}"`,
         time: serverTimestamp(),
+        read: false,
       });
     }
   };
@@ -383,6 +411,7 @@ export default function Gallery() {
         title: "New comment on a photo",
         body: `${session.user.name ?? session.user.email}: ${filtered.slice(0, 80)}`,
         time: serverTimestamp(),
+        read: false,
       });
     }
     setCommentText("");
@@ -401,24 +430,26 @@ export default function Gallery() {
       url: window.location.href,
     };
     if (navigator.share) {
-      try { await navigator.share(shareData); return; } catch {}
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // User dismissed the share sheet — fall back to copying the link.
+      }
     }
     await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownload = async (photo: Photo) => {
-    const response = await fetch(photo.url);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+  const handleDownload = (photo: Photo) => {
+    const filename = photo.caption ? `${photo.caption}.jpg` : `photo-${photo.id}.jpg`;
     const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = photo.caption ? `${photo.caption}.jpg` : `photo-${photo.id}.jpg`;
+    link.href = `/api/download?url=${encodeURIComponent(photo.url)}&filename=${encodeURIComponent(filename)}`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
   };
 
   const handleDelete = async (photo: Photo, e: React.MouseEvent) => {
@@ -432,6 +463,13 @@ export default function Gallery() {
     if (!selectedPhoto) return;
     await updateDoc(doc(db, "photos", selectedPhoto.id), { caption: editCaptionText.trim() });
     setEditingCaption(false);
+  };
+
+  const handleToggleComments = async () => {
+    if (!selectedPhoto) return;
+    await updateDoc(doc(db, "photos", selectedPhoto.id), {
+      commentsEnabled: selectedPhoto.commentsEnabled === false ? true : false,
+    });
   };
 
   const handleStripMetadata = async () => {
@@ -524,31 +562,71 @@ export default function Gallery() {
       )}
 
       {/* Lightbox */}
+      <AnimatePresence>
       {selectedPhoto && (
-        <div className={styles.lightboxBackdrop} onClick={() => setSelectedPhotoId(null)}>
-          <div className={styles.lightbox} onClick={e => e.stopPropagation()}>
+        <motion.div
+          className={styles.lightboxBackdrop}
+          style={isFullscreen ? { cursor: fsUIVisible ? "default" : "none" } : undefined}
+          onClick={() => isFullscreen ? showFsUI() : setSelectedPhotoId(null)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div
+            className={`${styles.lightbox} ${isFullscreen ? styles.lightboxFull : ""}`}
+            onClick={e => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94, y: 12 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+          >
 
             {/* Image pane */}
             <div
               className={styles.lightboxImageSection}
-              onMouseMove={showNavBriefly}
-              onTouchStart={e => { touchStartX.current = e.touches[0].clientX; showNavBriefly(); }}
+              onMouseMove={() => { showNavBriefly(); if (isFullscreen) showFsUI(); }}
+              onTouchStart={e => { touchStartX.current = e.touches[0].clientX; showNavBriefly(); if (isFullscreen) showFsUI(); }}
               onTouchEnd={e => {
                 const diff = touchStartX.current - e.changedTouches[0].clientX;
                 if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
               }}
+              onWheel={isFullscreen ? (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.2 : 0.2;
+                setZoom(z => Math.max(1, Math.min(5, z + delta)));
+                const rect = e.currentTarget.getBoundingClientRect();
+                setZoomOrigin({
+                  x: ((e.clientX - rect.left) / rect.width) * 100,
+                  y: ((e.clientY - rect.top) / rect.height) * 100,
+                });
+              } : undefined}
             >
               <div className={styles.lightboxImageWrapper}>
+                {!lightboxImgLoaded && <div className={styles.lightboxShimmer} />}
                 <Image
                   src={selectedPhoto.url}
                   alt={selectedPhoto.caption || "Gallery photo"}
-                  fill className={styles.lightboxImage}
+                  fill
+                  className={styles.lightboxImage}
+                  style={isFullscreen && zoom > 1 ? {
+                    transform: `scale(${zoom})`,
+                    transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+                    transition: "transform 0.12s ease-out",
+                  } : undefined}
+                  onLoad={() => setLightboxImgLoaded(true)}
                 />
               </div>
 
-              <div className={styles.lightboxTopBar}>
-                <button className={styles.downloadBtn} onClick={() => handleDownload(selectedPhoto)}>
-                  ↓ Download
+              <div
+                className={styles.lightboxTopBar}
+                style={isFullscreen ? { opacity: fsUIVisible ? 1 : 0, transition: "opacity 0.4s ease", pointerEvents: fsUIVisible ? "auto" : "none" } : undefined}
+              >
+                <button className={styles.downloadBtn} onClick={() => handleDownload(selectedPhoto)} title="Download">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 15V3m9 12v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <path d="m7 10l5 5l5-5"/>
+                  </svg>
                 </button>
                 <div className={styles.lightboxTopRight}>
                   <button
@@ -559,8 +637,8 @@ export default function Gallery() {
                     {copied ? (
                       <span className={styles.copiedText}>Copied!</span>
                     ) : (
-                      <svg width="14" height="14" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.5 5.00006C3.22386 5.00006 3 5.22392 3 5.50006V11.5001C3 11.7762 3.22386 12.0001 3.5 12.0001H11.5C11.7761 12.0001 12 11.7762 12 11.5001V5.50006C12 5.22392 11.7761 5.00006 11.5 5.00006H10C9.72386 5.00006 9.5 4.7762 9.5 4.50006C9.5 4.22392 9.72386 4.00006 10 4.00006H11.5C12.3284 4.00006 13 4.67163 13 5.50006V11.5001C13 12.3285 12.3284 13.0001 11.5 13.0001H3.5C2.67157 13.0001 2 12.3285 2 11.5001V5.50006C2 4.67163 2.67157 4.00006 3.5 4.00006H5C5.27614 4.00006 5.5 4.22392 5.5 4.50006C5.5 4.7762 5.27614 5.00006 5 5.00006H3.5ZM7.50003 1.00006C7.63264 1.00006 7.75982 1.05274 7.85358 1.14651L9.85358 3.14651C10.0488 3.34177 10.0488 3.65835 9.85358 3.85361C9.65832 4.04887 9.34174 4.04887 9.14648 3.85361L7.50003 2.20716L5.85358 3.85361C5.65832 4.04887 5.34174 4.04887 5.14648 3.85361C4.95122 3.65835 4.95122 3.34177 5.14648 3.14651L7.14648 1.14651C7.24025 1.05274 7.36743 1.00006 7.50003 1.00006ZM7.50003 1.00006V7.50006C7.50003 7.7762 7.27617 8.00006 7.00003 8.00006C6.72389 8.00006 6.50003 7.7762 6.50003 7.50006V1.00006C6.50003 0.723921 6.72389 0.500061 7.00003 0.500061C7.27617 0.500061 7.50003 0.723921 7.50003 1.00006Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v13m4-9l-4-4l-4 4m-4 6v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                       </svg>
                     )}
                   </button>
@@ -570,10 +648,29 @@ export default function Gallery() {
                       onClick={() => setShowInfo(v => !v)}
                       title="Photo info (i)"
                     >
-                      ⓘ
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4m0-4h.01"/>
+                      </svg>
                     </button>
                   )}
-                  <button className={styles.closeBtn} onClick={() => setSelectedPhotoId(null)}>✕</button>
+                  {!isFullscreen && (
+                    <button className={styles.closeBtn} onClick={() => setIsFullscreen(true)} title="Enter fullscreen">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+                        <rect width="10" height="8" x="7" y="8" rx="1"/>
+                      </svg>
+                    </button>
+                  )}
+                  <button
+                    className={styles.closeBtn}
+                    onClick={() => isFullscreen ? setIsFullscreen(false) : setSelectedPhotoId(null)}
+                    title={isFullscreen ? "Exit fullscreen" : "Close"}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
                 </div>
               </div>
 
@@ -629,10 +726,12 @@ export default function Gallery() {
                 <>
                   <button
                     className={`${styles.navBtn} ${styles.navLeft} ${!navVisible ? styles.navBtnHidden : ""}`}
+                    style={isFullscreen ? { opacity: fsUIVisible ? undefined : 0, transition: "opacity 0.4s ease", pointerEvents: fsUIVisible ? "auto" : "none" } : undefined}
                     onClick={() => { navigate(-1); showNavBriefly(); }}
                   >‹</button>
                   <button
                     className={`${styles.navBtn} ${styles.navRight} ${!navVisible ? styles.navBtnHidden : ""}`}
+                    style={isFullscreen ? { opacity: fsUIVisible ? undefined : 0, transition: "opacity 0.4s ease", pointerEvents: fsUIVisible ? "auto" : "none" } : undefined}
                     onClick={() => { navigate(1); showNavBriefly(); }}
                   >›</button>
                 </>
@@ -640,7 +739,7 @@ export default function Gallery() {
             </div>
 
             {/* Side panel */}
-            <div className={styles.lightboxPanel}>
+            <div className={styles.lightboxPanel} style={isFullscreen ? { display: "none" } : undefined}>
               {(selectedPhoto.uploaderName || selectedPhoto.caption || session?.user?.image) && (
                 <div className={styles.uploaderRow}>
                   {(selectedPhoto.uploaderImage ?? session?.user?.image) && (
@@ -656,9 +755,11 @@ export default function Gallery() {
                         {selectedPhoto.uploaderName ?? session?.user?.name}
                       </span>
                     )}
-                    {selectedPhoto.createdAt && (
+                    {(selectedPhoto.metadata?.dateTaken || selectedPhoto.createdAt) && (
                       <span className={styles.uploadTimestamp}>
-                        {formatTimestamp(selectedPhoto.createdAt)}
+                        {selectedPhoto.metadata?.dateTaken
+                          ? formatDate(selectedPhoto.metadata.dateTaken)
+                          : formatTimestamp(selectedPhoto.createdAt)}
                       </span>
                     )}
                     {isAdmin && editingCaption ? (
@@ -705,15 +806,15 @@ export default function Gallery() {
                       {selectedPhoto.hideMetadata ? "Hidden" : "Visible"}
                     </button>
                   </div>
-                  {meta && (
-                    <div className={styles.adminActRow}>
-                      <span className={styles.adminActLabel}>Remove metadata permanently</span>
-                      <button
-                        className={`${styles.adminActBtn} ${styles.adminActBtnDanger}`}
-                        onClick={handleStripMetadata}
-                      >Strip</button>
-                    </div>
-                  )}
+                  <div className={styles.adminActRow}>
+                    <span className={styles.adminActLabel}>Comments</span>
+                    <button
+                      className={`${styles.adminActBtn} ${selectedPhoto.commentsEnabled === false ? styles.adminActBtnActive : ""}`}
+                      onClick={handleToggleComments}
+                    >
+                      {selectedPhoto.commentsEnabled === false ? "Off" : "On"}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -783,7 +884,10 @@ export default function Gallery() {
                     Your comment contained inappropriate language and was filtered.
                   </p>
                 )}
-                {session && (
+                {selectedPhoto.commentsEnabled === false && (
+                  <p className={styles.noComments}>Comments are turned off for this photo.</p>
+                )}
+                {session && selectedPhoto.commentsEnabled !== false && (
                   <form className={styles.commentForm} onSubmit={handleComment}>
                     <input
                       className={styles.commentInput}
@@ -800,9 +904,10 @@ export default function Gallery() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Upload modal */}
       {showUploadModal && (

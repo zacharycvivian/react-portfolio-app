@@ -43,6 +43,11 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 
+> The `NEXT_PUBLIC_*` Firebase values are the client SDK config and are safe to
+> ship to the browser. The un-prefixed `FIREBASE_*` and `GOOGLE_*` values are
+> **server-only secrets** — keep them out of the repo and set them in Vercel for
+> production.
+
 ## Install Packages (In Main Directory)
 You will need to install all necessary packages before being able to run the application
 
@@ -58,3 +63,52 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Scripts
+
+| Command           | What it does |
+| ----------------- | ------------ |
+| `npm run dev`     | Start the dev server with hot reload |
+| `npm run build`   | Production build |
+| `npm run start`   | Serve the production build |
+| `npm run lint`    | Lint with ESLint (flat config — fails on any warning) |
+| `ANALYZE=true npm run build` | Build with the [`@next/bundle-analyzer`](https://www.npmjs.com/package/@next/bundle-analyzer) report |
+
+## Project structure
+
+```
+src/
+├── app/                       # App Router routes (file-based routing)
+│   ├── page.tsx               # Home — Server Component
+│   ├── home/                  # Home's client islands: Chatbot, HomeCarousel,
+│   │                          #   HeroText, HeroButtons, ResumeButton, Skills
+│   ├── about/                 # About — Server Component (about.tsx) + page.tsx
+│   ├── gallery/               # Photo gallery (client: Firestore + Storage)
+│   ├── contact/               # Auth-gated contact form
+│   ├── testimonials/          # Testimonials list + submission
+│   ├── admin/                 # Admin dashboard — Server Component + Server Actions
+│   ├── edit-profile/          # Profile editor
+│   ├── cyberwordle/ snake/ pong/   # Browser games
+│   ├── api/                   # Route handlers: auth, resume, image download
+│   ├── robots.ts / sitemap.ts # SEO metadata routes
+│   └── layout.tsx             # Root layout (providers, header, sidebar, footer)
+├── components/
+│   ├── motion/Animated.tsx    # Shared client motion wrappers (fade-in cards)
+│   ├── ui/                    # shadcn/ui primitives (button, card, sheet, …)
+│   └── Header.tsx / Sidebar.tsx / Footer.tsx / …
+├── types/index.ts             # Shared TypeScript interfaces (see ARCHITECTURE.md)
+└── lib/                       # Utilities (profanity filter, `cn` class helper)
+firebase.ts                    # Firebase client SDK init (browser)
+firebase-admin.ts              # Firebase Admin SDK init (server only)
+auth.ts                        # NextAuth (Google OAuth) configuration
+```
+
+## Architecture
+
+For the Server vs Client component strategy, the shared-types convention, and
+how Firebase/auth are wired, see **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+
+## Deployment
+Deployed on **Vercel** — every push to `main` ships a production build. All
+environment variables above must be configured in the Vercel project settings
+(the `NEXT_PUBLIC_*` ones are required at build time).

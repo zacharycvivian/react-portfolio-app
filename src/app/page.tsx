@@ -1,19 +1,32 @@
-"use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useSession, signIn } from "next-auth/react";
+/**
+ * Home page — a Server Component.
+ *
+ * The marketing content (bio, work-experience timeline, senior project, hobbies
+ * and the technical-skills list) is static and renders to HTML on the server for
+ * fast first paint. The interactive pieces are isolated into small client
+ * "islands" under `./home` so only they ship/​hydrate JavaScript:
+ *   - <Greeting> / <RotatingWord>  animated hero copy
+ *   - <HomeCarousel>               embla image carousel
+ *   - <HeroButtons>                auth-gated nav buttons
+ *   - <ResumeButton>               sign-in-gated resume download
+ *   - <Chatbot>                    floating terminal (lazy-loads Firebase)
+ *
+ * Scroll-in card animations come from the shared <AnimatedCard> / <AnimatedDiv>
+ * wrappers, which are the only client code the static sections depend on.
+ */
+import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import type { Firestore } from "firebase/firestore";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import { AnimatePresence, motion } from "framer-motion";
-import { createPortal } from "react-dom";
+  AnimatedDiv,
+  AnimatedStagger,
+  AnimatedItem,
+} from "@/components/motion/Animated";
+import { Greeting, RotatingWord } from "./home/HeroText";
+import HeroButtons from "./home/HeroButtons";
+import HomeCarousel, { type CarouselSlide } from "./home/HomeCarousel";
+import ResumeButton from "./home/ResumeButton";
+import Chatbot from "./home/Chatbot";
+import Skills from "./home/Skills";
 import styles from "./page.module.css";
 import Logo from "@/../public/HeaderLogo.png";
 import Zach from "@/../public/Zach.jpg";
@@ -21,636 +34,32 @@ import Turbo from "@/../public/Turbo.jpg";
 import Squad from "@/../public/Squad.jpg";
 import Mountains from "@/../public/Mountains.jpg";
 
-// Animation variants
-const fadeInVariant = {
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+const carouselSlides: CarouselSlide[] = [
+  {
+    src: Mountains,
+    alt: "A photo of Zachary Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado",
+    priority: true,
   },
-  hidden: { opacity: 0, scale: 0.97, y: 36 },
-};
-
-const chatBotVariant = {
-  hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 20 },
+  {
+    src: Zach,
+    alt: "A picture of Zachary Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado",
   },
-  exit: {
-    opacity: 0,
-    scale: 0.5,
-    x: 200,
-    y: 200,
-    transition: { duration: 0.5 },
+  {
+    src: Squad,
+    alt: "Zachary Vivian and his buddies on a hike near Nederland, Colorado",
   },
-};
-
-interface Skill {
-  skill: string;
-  level: number;
-}
-
-const getSkillLevelLabel = (level: number): string => {
-  if (level <= 40) return "Beginner";
-  if (level <= 60) return "Intermediate";
-  if (level <= 85) return "Advanced";
-  return "Proficient";
-};
-
-const SkillBar: React.FC<Skill> = ({ skill, level }) => {
-  const levelLabel = getSkillLevelLabel(level);
-  return (
-    <div className={styles.skillRow}>
-      <div className={styles.skillNameContainer}>
-        <div className={styles.skillName}>{skill}</div>
-        <div className={styles.skillLevelLabel}>{levelLabel}</div>
-      </div>
-      <div className={styles.skillBarContainer}>
-        <progress
-          className={styles.skillBar}
-          value={level}
-          max={100}
-        ></progress>
-      </div>
-    </div>
-  );
-};
-
-type FirestoreDeps = {
-  db: Firestore;
-  collection: typeof import("firebase/firestore").collection;
-  addDoc: typeof import("firebase/firestore").addDoc;
-  onSnapshot: typeof import("firebase/firestore").onSnapshot;
-  serverTimestamp: typeof import("firebase/firestore").serverTimestamp;
-};
-
-let firestoreDepsPromise: Promise<FirestoreDeps> | null = null;
-
-const loadFirestoreDeps = async (): Promise<FirestoreDeps> => {
-  if (!firestoreDepsPromise) {
-    firestoreDepsPromise = Promise.all([
-      import("@/../firebase"),
-      import("firebase/firestore"),
-    ]).then(([firebaseClient, firestore]) => ({
-      db: firebaseClient.db as Firestore,
-      collection: firestore.collection,
-      addDoc: firestore.addDoc,
-      onSnapshot: firestore.onSnapshot,
-      serverTimestamp: firestore.serverTimestamp,
-    }));
-  }
-  return firestoreDepsPromise;
-};
-
-const getTimeGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
-};
+  {
+    src: Turbo,
+    alt: "Image of Zachary Vivian's dog, Turbo",
+  },
+];
 
 export default function Home() {
-  const { data: session } = useSession();
-  const greeting = useMemo(() => getTimeGreeting(), []);
-  const [isChatVisible, setIsChatVisible] = useState(false);
-  const [currentInput, setCurrentInput] = useState("");
-  const [terminalOutput, setTerminalOutput] = useState("");
-  const [lastCommand, setLastCommand] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
-  const texts = useMemo(
-    () => [
-      "SOFTWARE IMPLEMENTATION",
-      "RISK MANAGEMENT",
-      "IT/CUSTOMER SUPPORT",
-      "TECHNICAL TRAINING",
-      "DOCUMENTATION",
-      "SQL DATABASES",
-      "WINDOWS + SERVER",
-      "NETWORKING",
-    ],
-    [],
-  );
-  const [displayWord, setDisplayWord] = useState(texts[0]);
-  const [transitionIndex, setTransitionIndex] = useState(0);
-  const [messageStep, setMessageStep] = useState(0);
-  const [messageData, setMessageData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [askTimestamps, setAskTimestamps] = useState<number[]>([]);
-
-  // Firestore helpers
-  const addFeedback = async (feedback: string): Promise<void> => {
-    const { db, collection, addDoc, serverTimestamp } =
-      await loadFirestoreDeps();
-    const email = session?.user?.email || "user not logged in";
-    await addDoc(collection(db, "feedback"), {
-      email,
-      feedback,
-      time: serverTimestamp(),
-    });
-  };
-
-  const addBugReport = async (bugDescription: string): Promise<void> => {
-    const { db, collection, addDoc, serverTimestamp } =
-      await loadFirestoreDeps();
-    const email = session?.user?.email || "user not logged in";
-    await addDoc(collection(db, "bugs"), {
-      email,
-      bugs: bugDescription,
-      time: serverTimestamp(),
-    });
-  };
-
-  // Hero text transitions
-  useEffect(() => {
-    const currentWord = texts[index];
-    const nextWord = texts[(index + 1) % texts.length];
-    const maxTransitionLength = Math.max(currentWord.length, nextWord.length);
-
-    if (transitionIndex <= maxTransitionLength) {
-      const timeoutId = setTimeout(() => {
-        const newChars =
-          nextWord.slice(0, transitionIndex) +
-          currentWord.slice(transitionIndex);
-        setDisplayWord(newChars);
-        setTransitionIndex(transitionIndex + 1);
-      }, 75);
-      return () => clearTimeout(timeoutId);
-    } else {
-      const pauseTimeoutId = setTimeout(() => {
-        setIndex((index + 1) % texts.length);
-        setTransitionIndex(0);
-        setDisplayWord(nextWord);
-      }, 2000);
-      return () => clearTimeout(pauseTimeoutId);
-    }
-  }, [transitionIndex, index, texts]);
-
-  // Loading animation for chatbot
-  useEffect(() => {
-    let dotCount = 0;
-    let intervalId: NodeJS.Timeout | undefined;
-    if (isLoading) {
-      intervalId = setInterval(() => {
-        dotCount = (dotCount % 3) + 1;
-        setTerminalOutput("Generating Response" + ".".repeat(dotCount));
-      }, 500);
-    }
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [isLoading]);
-
-  // Terminal input handling
-  const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      if (messageStep > 0) {
-        handleMessageInput();
-      } else {
-        processCommand();
-      }
-      setCurrentInput("");
-    }
-  };
-
-  const handleMessageInput = () => {
-    const input = currentInput.trim();
-    switch (messageStep) {
-      case 1:
-        setMessageData({ ...messageData, name: input });
-        setTerminalOutput("Please enter your email:");
-        setMessageStep(2);
-        break;
-      case 2:
-        setMessageData({ ...messageData, email: input });
-        setTerminalOutput("Please enter your message:");
-        setMessageStep(3);
-        break;
-      case 3:
-        setMessageData({ ...messageData, message: input });
-        setTerminalOutput(
-          `Confirm sending this message (Y/N):\nName: ${messageData.name}\nEmail: ${messageData.email}\nMessage: \n${input}`,
-        );
-        setMessageStep(4);
-        break;
-      case 4:
-        if (input.toLowerCase() === "y") {
-          handleSubmitMessage();
-        } else if (input.toLowerCase() === "n") {
-          setTerminalOutput("Message sending canceled.");
-          resetMessageProcess();
-        } else {
-          setTerminalOutput("Invalid input. Please type 'Y' or 'N'.");
-        }
-        break;
-      default:
-        setTerminalOutput("An error occurred. Please try the command again.");
-        resetMessageProcess();
-        break;
-    }
-  };
-
-  const handleHelpCommand = () => {
-    setTerminalOutput(
-      "/help - Shows a list of commands\n" +
-        "/message - Share a message/job opportunity with me\n" +
-        "/ask <question> - Ask a Chatbot a question about this site\n" +
-        "/play <game> - Play one of my games\n" +
-        "/bug <report> - Leave notice of a bug you found\n" +
-        "/feedback <suggestion> - Suggest improvements\n",
-    );
-  };
-
-  // Ask command: write prompt to Firestore and wait for response
-  const handleAskCommand = async (argument: string) => {
-    const MAX_PROMPT_LENGTH = 1200;
-    const MAX_REQUESTS = 5;
-    const WINDOW_MS = 5 * 60 * 1000;
-
-    if (!argument) {
-      setTerminalOutput(
-        "Glad you'd like to learn more!\n" +
-          "Please provide a question after '/ask'. For example, \n" +
-          "\n" +
-          "'/ask How do I leave a testimonial?'\n" +
-          "\n" +
-          "This utilizes Google Gemini with custom instructions to answer most questions you may have!",
-      );
-      return;
-    }
-
-    if (argument.length > MAX_PROMPT_LENGTH) {
-      setTerminalOutput("Please shorten your question (max ~1200 characters).");
-      return;
-    }
-
-    const now = Date.now();
-    const recent = askTimestamps.filter((t) => now - t < WINDOW_MS);
-    if (recent.length >= MAX_REQUESTS) {
-      setTerminalOutput(
-        "You've hit the limit for now. Please wait a few minutes before sending another question.",
-      );
-      return;
-    }
-
-    setAskTimestamps([...recent, now]);
-    setIsLoading(true);
-    let unsubscribe: (() => void) | undefined;
-
-    try {
-      const { db, collection, addDoc, onSnapshot, serverTimestamp } =
-        await loadFirestoreDeps();
-      const prompt = argument;
-      const docRef = await addDoc(collection(db, "generate"), {
-        prompt,
-        createdAt: serverTimestamp(),
-        status: "pending",
-      });
-
-      unsubscribe = onSnapshot(docRef, (snap) => {
-        const data = snap.data();
-        if (!data) return;
-        if (data.error) {
-          setTerminalOutput("Error: " + data.error);
-          setIsLoading(false);
-          unsubscribe?.();
-          return;
-        }
-        if (data.response) {
-          setTerminalOutput("Website Support: " + data.response);
-          setIsLoading(false);
-          unsubscribe?.();
-        }
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        setTerminalOutput("Error: " + error.message);
-      } else {
-        setTerminalOutput("An unknown error occurred.");
-      }
-      setIsLoading(false);
-    }
-  };
-
-  const handleMessageCommand = () => {
-    if (session?.user?.email) {
-      setMessageData({
-        name: session.user.name || "",
-        email: session.user.email,
-        message: "",
-      });
-      setTerminalOutput("Please enter your message:");
-      setMessageStep(3);
-    } else {
-      setTerminalOutput("Please enter your name:");
-      setMessageStep(1);
-    }
-  };
-
-  const handlePlayCommand = (argument: string) => {
-    if (argument) {
-      switch (argument.toLowerCase()) {
-        case "cyberwordle":
-          window.location.href = "/cyberwordle";
-          break;
-        case "snake":
-          window.location.href = "/snake";
-          break;
-        case "pong":
-          window.location.href = "/pong";
-          break;
-        default:
-          setTerminalOutput(
-            "Unknown game. Available games: CyberWordle, Snake, Pong.",
-          );
-      }
-    } else {
-      setTerminalOutput(
-        "A thrill-seeker I see! I have a few options for you!\n" +
-          "You must specify a game after '/play'. For example,\n" +
-          "\n" +
-          "'/play CyberWordle'\n" +
-          "\n" +
-          "CyberWordle, Pong, Snake\n" +
-          "More games coming in the future!",
-      );
-    }
-  };
-
-  const handleBugCommand = (argument: string) => {
-    if (argument) {
-      addBugReport(argument).then(() => {
-        setTerminalOutput(`Bug report submitted! Your report: ${argument}`);
-      });
-    } else {
-      setTerminalOutput(
-        "Ah! You found a pesky bug, did you?\n" +
-          "Please provide a report after '/bug'. For example, \n" +
-          "\n" +
-          "'/bug Profile information not updating after saving changes'\n" +
-          "\n" +
-          "You submit the report, I'll get to squishing!",
-      );
-    }
-  };
-
-  const handleFeedbackCommand = (argument: string) => {
-    if (argument) {
-      addFeedback(argument).then(() => {
-        setTerminalOutput(`Feedback submitted! Your suggestion: ${argument}`);
-      });
-    } else {
-      setTerminalOutput(
-        "Creative genius! You want to suggest improvements?\n" +
-          "Please provide a suggestion after '/feedback'. For example, \n" +
-          "\n" +
-          "'/feedback Add some new games!'\n" +
-          "\n" +
-          "I'm always open to suggestions!",
-      );
-    }
-  };
-
-  const processCommand = () => {
-    setLastCommand(currentInput);
-    const inputParts = currentInput.trim().split(" ");
-    const command = inputParts[0];
-    const argument = inputParts.slice(1).join(" ");
-
-    switch (command) {
-      case "/help":
-        handleHelpCommand();
-        break;
-      case "/ask":
-        handleAskCommand(argument);
-        break;
-      case "/message":
-        handleMessageCommand();
-        break;
-      case "/play":
-        handlePlayCommand(argument);
-        break;
-      case "/bug":
-        handleBugCommand(argument);
-        break;
-      case "/feedback":
-        handleFeedbackCommand(argument);
-        break;
-      default:
-        setTerminalOutput(
-          "Unknown command. Type /help for a list of commands.",
-        );
-    }
-    setCurrentInput("");
-  };
-
-  const resetMessageProcess = () => {
-    setMessageStep(0);
-    setMessageData({ name: "", email: "", message: "" });
-  };
-
-  const handleSubmitMessage = async () => {
-    try {
-      const { db, collection, addDoc, serverTimestamp } =
-        await loadFirestoreDeps();
-      await addDoc(collection(db, "connect"), {
-        name: messageData.name,
-        email: messageData.email,
-        message: messageData.message,
-        time: serverTimestamp(),
-      });
-      setTerminalOutput("Message sent successfully!");
-      resetMessageProcess();
-    } catch (error) {
-      console.error("Failed to send message:", error);
-      setTerminalOutput("Failed to send message. Please try again.");
-      resetMessageProcess();
-    }
-  };
-
-  const chatButtonOffset = 20;
-  const chatButtonSize = 50;
-  const chatSpacing = 16;
-  const terminalOffset = chatButtonOffset + chatButtonSize + chatSpacing;
-  const terminalId = "chatbotTerminal";
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const applyFixedPositions = () => {
-      const btn = document.getElementById("chatbotButton");
-      const terminal = document.getElementById(terminalId);
-      if (btn) {
-        btn.style.position = "fixed";
-        btn.style.bottom = `${chatButtonOffset}px`;
-        btn.style.right = "20px";
-        btn.style.left = "";
-        btn.style.top = "";
-        btn.style.zIndex = "1200";
-      }
-      if (terminal) {
-        terminal.style.position = "fixed";
-        terminal.style.bottom = `${terminalOffset}px`;
-        terminal.style.right = "20px";
-        terminal.style.left = "";
-        terminal.style.top = "";
-        terminal.style.zIndex = "1100";
-      }
-    };
-    // Add a style tag as a final override to survive unexpected CSS
-    const styleEl = document.createElement("style");
-    styleEl.setAttribute("data-chatbot-style", "true");
-    styleEl.innerHTML = `
-#chatbotButton { position: fixed !important; bottom: ${chatButtonOffset}px !important; right: 20px !important; z-index: 1200 !important; }
-#${terminalId} { position: fixed !important; bottom: ${terminalOffset}px !important; right: 20px !important; z-index: 1100 !important; }
-`;
-    document.head.appendChild(styleEl);
-
-    applyFixedPositions();
-    window.addEventListener("scroll", applyFixedPositions);
-    window.addEventListener("resize", applyFixedPositions);
-    return () => {
-      window.removeEventListener("scroll", applyFixedPositions);
-      window.removeEventListener("resize", applyFixedPositions);
-      document.head.removeChild(styleEl);
-    };
-  }, [chatButtonOffset, terminalOffset, terminalId]);
-
-  const formatUsername = (username: string | null | undefined): string => {
-    return username ? username.toLowerCase().replace(/ /g, "") : "guest";
-  };
-
-  const handleDownloadClick = () => {
-    if (session) {
-      window.open("/api/resume", "_blank");
-    } else {
-      signIn("google", {
-        callbackUrl: `${window.location.origin}/`,
-        prompt: "select_account",
-      });
-    }
-  };
-
-  const technicalSkills = [
-    { skill: "Custom Software Implementation", level: 85 },
-    { skill: "IT/Customer Support", level: 90 },
-    { skill: "Technical Training", level: 90 },
-    { skill: "Virtualization/Lab Environment", level: 75 },
-    { skill: "Networking", level: 65 },
-    { skill: "Risk Management", level: 80 },
-    { skill: "Installation and Support Documentation", level: 85 },
-    { skill: "Oracle Simphony POS/EMC", level: 65 },
-    { skill: "Support Ticket/Implementation Tracking", level: 65 },
-    { skill: "Javascript, HTML, Tailwind CSS", level: 75 },
-    { skill: "SQLExpress, MySQL, SQLLite", level: 75 },
-    { skill: "Google Firebase", level: 75 },
-    { skill: "Scripting (Batch, SQL, PowerShell, Python)", level: 75 },
-    { skill: "Office 365 Suite", level: 95 },
-    { skill: "Windows 7 + Up, Windows Server 2016 + Up", level: 90 },
-    { skill: "Ubuntu, Kali Linux", level: 80 },
-  ];
-
   return (
     <>
-      {isMounted &&
-        createPortal(
-          <>
-            <motion.button
-              id="chatbotButton"
-              className={styles.chatbotbutton}
-              style={{
-                position: "fixed",
-                bottom: chatButtonOffset,
-                right: 20,
-                zIndex: 1200,
-              }}
-              onClick={() => setIsChatVisible(!isChatVisible)}
-              variants={chatBotVariant}
-              initial="visible"
-              viewport={{ once: true }}
-            >
-              Chat
-            </motion.button>
-            <AnimatePresence>
-              {isChatVisible && (
-                <motion.div
-                  id={terminalId}
-                  className={styles.terminalcontainer}
-                  style={{
-                    position: "fixed",
-                    bottom: terminalOffset,
-                    right: 20,
-                    zIndex: 1100,
-                  }}
-                  variants={chatBotVariant}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                >
-                  <div className={styles.terminal_toolbar}>
-                    <div className={styles.close_button}>
-                      <button
-                        className={`${styles.btn} ${styles["btn-color"]}`}
-                        onClick={() => setIsChatVisible(!isChatVisible)}
-                      ></button>
-                      <button className={styles.btn}></button>
-                      <button className={styles.btn}></button>
-                    </div>
-                    <p className={styles.user}>
-                      {formatUsername(session?.user?.name)}@terminal: ~
-                    </p>
-                    <div className={styles.add_tab}>+</div>
-                  </div>
-                  <div className={styles.terminal_body}>
-                    <div className={styles.terminal_prompt}>
-                      <span className={styles.terminal_user}>
-                        {formatUsername(session?.user?.name)}@terminal/main/:
-                      </span>
-                      <span className={styles.terminal_location}>~</span>
-                      <span className={styles.terminal_bling}>$</span>
-                      <span>{lastCommand}</span>
-                    </div>
-                    <div className={styles.terminal_output}>
-                      <pre className={styles.output_text}>{terminalOutput}</pre>
-                    </div>
-                    <div className={styles.terminal_input}>
-                      <input
-                        placeholder="Type '/help' here to get started..."
-                        className={styles.input_text}
-                        type="text"
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
-                        onKeyDown={handleEnterKey}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </>,
-          document.body,
-        )}
-
       <div className={styles.layoutContainer}>
         <div className={styles.heroSection}>
-          <motion.div
-            className={styles.logoContainer}
-            variants={fadeInVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <AnimatedDiv className={styles.logoContainer}>
             <Image
               src={Logo}
               alt="Zach Vivian's Logo"
@@ -660,36 +69,12 @@ export default function Home() {
               priority
               style={{ objectFit: "contain" }}
             />
-          </motion.div>
+          </AnimatedDiv>
 
-          <motion.div
-            className={styles.homeContainer}
-            variants={fadeInVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.h1
-              className={styles.welcomeMessage}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              {greeting}, I'm <strong>Zachary Vivian</strong>
-            </motion.h1>
-            <motion.div
-              className={styles.infoContainer}
-              variants={fadeInVariant}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <div className={styles.textLoopContainer}>
-                <h2>
-                  <strong>{displayWord}</strong>
-                </h2>
-              </div>
+          <AnimatedDiv className={styles.homeContainer}>
+            <Greeting />
+            <AnimatedDiv className={styles.infoContainer}>
+              <RotatingWord />
               <p className={styles.infoContainerText}>
                 I am a cybersecurity professional currently working for On The
                 Mark Solutions as an Implementation and Support Specialist. If
@@ -698,110 +83,27 @@ export default function Home() {
                 lower right corner to open a terminal window to ask AI any
                 questions you have about my site.
               </p>
+              <HeroButtons />
+            </AnimatedDiv>
 
-              <div className={styles.buttonContainer}>
-                <Link
-                  className={styles.button}
-                  href={session ? "/contact" : "#"}
-                  onClick={(e) => {
-                    if (!session) {
-                      e.preventDefault();
-                      signIn("google", {
-                        callbackUrl: "/contact",
-                        prompt: "select_account",
-                      });
-                    }
-                  }}
-                >
-                  Contact
-                </Link>
-                <Link href="/testimonials" passHref>
-                  <button className={styles.button}>Testimonials</button>
-                </Link>
-                <Link href="/gallery" passHref>
-                  <button className={styles.button}>Gallery</button>
-                </Link>
-              </div>
-            </motion.div>
-
-            <Carousel
-              className={styles.carouselItem}
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[
-                Autoplay({
-                  delay: 3000,
-                }),
-              ]}
-            >
-              <CarouselContent>
-                <CarouselItem className={styles.image}>
-                  <Image
-                    src={Mountains}
-                    alt="A photo of Zachary Vivian at the Garden of the Gods overlooking Pike's Peak in Colorado Springs, Colorado"
-                    placeholder="blur"
-                    priority
-                    sizes="(max-width: 900px) 85vw, 800px"
-                  />
-                </CarouselItem>
-                <CarouselItem className={styles.image}>
-                  <Image
-                    src={Zach}
-                    alt="A picture of Zachary Vivian on a hike near Fish Creek Falls in Steamboat Springs, Colorado"
-                    placeholder="blur"
-                    sizes="(max-width: 900px) 85vw, 800px"
-                  />
-                </CarouselItem>
-                <CarouselItem className={styles.image}>
-                  <Image
-                    src={Squad}
-                    alt="Zachary Vivian and his buddies on a hike near Nederland, Colorado"
-                    placeholder="blur"
-                    sizes="(max-width: 900px) 85vw, 800px"
-                  />
-                </CarouselItem>
-                <CarouselItem className={styles.image}>
-                  <Image
-                    src={Turbo}
-                    alt="Image of Zachary Vivian's dog, Turbo"
-                    placeholder="blur"
-                    sizes="(max-width: 900px) 85vw, 800px"
-                  />
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </motion.div>
+            <HomeCarousel slides={carouselSlides} />
+          </AnimatedDiv>
         </div>
 
         <div className={styles.secondarySection}>
           <div className={styles.cardsGrid}>
-            {/* Column 1 — all work experience here so it stacks together on mobile */}
-            <div className={styles.cardsColumn}>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
+            {/* Column 1 — all work experience here so it stacks together on mobile.
+                AnimatedStagger makes these cards cascade in top-to-bottom. */}
+            <AnimatedStagger className={styles.cardsColumn}>
+              <AnimatedItem className={styles.card} index={0}>
                 <p>
                   <strong>Education: </strong>I graduated from The University of
                   Wisconsin - Platteville, with a Bachelor of Science in
                   Cybersecurity and a Minor in Business Administration in May
                   2024.
                 </p>
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
+              </AnimatedItem>
+              <AnimatedItem className={styles.card} index={1}>
                 <p>
                   <strong>About Me: </strong>My academic journey has fueled a
                   passion for specializing in either penetration testing or
@@ -817,19 +119,13 @@ export default function Home() {
                   cyber attacks through robust security protocols but also
                   ensuring a resilient and adaptive security infrastructure.
                 </p>
-              </motion.div>
+              </AnimatedItem>
               <h3 className={styles.timelineSectionTitle}>Work Experience</h3>
               <div className={styles.timeline}>
                 <div className={styles.timelineItem}>
                   <div className={styles.timelineDot} />
                   <div className={styles.timelineDateBadge}>2024–Now</div>
-                  <motion.div
-                    className={styles.card}
-                    variants={fadeInVariant}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
+                  <AnimatedItem className={styles.card} index={2}>
                     <p>
                       <strong>
                         On The Mark Solutions — Implementation &amp; Support
@@ -847,36 +143,24 @@ export default function Home() {
                       quality assurance testing software and interfaces before
                       client deployment to ensure reliability and accuracy.
                     </p>
-                  </motion.div>
+                  </AnimatedItem>
                 </div>
                 <div className={styles.timelineItem}>
                   <div className={styles.timelineDot} />
                   <div className={styles.timelineDateBadge}>2022–2024</div>
-                  <motion.div
-                    className={styles.card}
-                    variants={fadeInVariant}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
+                  <AnimatedItem className={styles.card} index={3}>
                     <p>
                       <strong>Lands&apos; End — Orderfiller:</strong> Worked
                       independently in a fast-paced environment picking clothing
                       orders and sorting pieces. Also worked in the shipping
                       department loading truck trailers with packed merchandise.
                     </p>
-                  </motion.div>
+                  </AnimatedItem>
                 </div>
                 <div className={styles.timelineItem}>
                   <div className={styles.timelineDot} />
                   <div className={styles.timelineDateBadge}>2019–2023</div>
-                  <motion.div
-                    className={styles.card}
-                    variants={fadeInVariant}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
+                  <AnimatedItem className={styles.card} index={4}>
                     <p>
                       <strong>
                         Blain&apos;s Farm &amp; Fleet — Automotive Sales Associate:
@@ -891,18 +175,12 @@ export default function Home() {
                       Also worked in the Automotive Service Center as an advisor to
                       set up vehicle appointments and order tires.
                     </p>
-                  </motion.div>
+                  </AnimatedItem>
                 </div>
                 <div className={styles.timelineItem}>
                   <div className={styles.timelineDot} />
                   <div className={styles.timelineDateBadge}>2017–2019</div>
-                  <motion.div
-                    className={styles.card}
-                    variants={fadeInVariant}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
+                  <AnimatedItem className={styles.card} index={5}>
                     <p>
                       <strong>
                         House on the Rock — Food Service Worker:
@@ -914,37 +192,16 @@ export default function Home() {
                       seasonal events. Ended up working in the pizza restaurant as
                       well as the ice cream shop serving guests.
                     </p>
-                  </motion.div>
+                  </AnimatedItem>
                 </div>
               </div>
-            </div>
-            {/* Column 2 — skills, projects, hobbies */}
-            <div className={styles.cardsColumn}>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <h3 className={styles.skillSectionTitle}>
-                  <strong>Technical Skills:</strong>
-                </h3>
-                {technicalSkills.map((techSkill) => (
-                  <SkillBar
-                    key={techSkill.skill}
-                    skill={techSkill.skill}
-                    level={techSkill.level}
-                  />
-                ))}
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
+            </AnimatedStagger>
+            {/* Column 2 — skills, projects, hobbies (also cascades top-to-bottom) */}
+            <AnimatedStagger className={styles.cardsColumn}>
+              <AnimatedItem className={styles.card} index={0}>
+                <Skills />
+              </AnimatedItem>
+              <AnimatedItem className={styles.card} index={1}>
                 <p>
                   <strong>Senior Project:</strong> Our senior project integrates
                   our cumulative knowledge of the software development
@@ -976,14 +233,8 @@ export default function Home() {
                   MySQL database, or the Proxmox VE environment built in with it
                   since it's being shown publicly on my GitHub profile.
                 </p>
-              </motion.div>
-              <motion.div
-                className={styles.card}
-                variants={fadeInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
+              </AnimatedItem>
+              <AnimatedItem className={styles.card} index={2}>
                 <p>
                   <strong>Hobbies:</strong> In my leisure hours, I'm passionate
                   about exploring the great outdoors, often found backpacking
@@ -996,26 +247,15 @@ export default function Home() {
                   skills. Besides that, I enjoy spending the rest of my time
                   playing video games and spending time with family and friends.
                 </p>
-              </motion.div>
-            </div>
+              </AnimatedItem>
+            </AnimatedStagger>
           </div>
 
-          <motion.div
-            className={styles.buttonContainer}
-            variants={fadeInVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <button
-              onClick={handleDownloadClick}
-              className={styles.downloadResumeButton}
-            >
-              {session ? "Download Resume" : "Log In to Download Resume"}
-            </button>
-          </motion.div>
+          <ResumeButton />
         </div>
       </div>
+
+      <Chatbot />
     </>
   );
 }
