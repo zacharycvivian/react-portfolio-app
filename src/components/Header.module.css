@@ -19,7 +19,6 @@
   /* Liquid glass header — dark glass */
   background: rgba(13, 15, 22, 0.815);
   backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     /* Chromatic aberration at bottom edge */
@@ -67,7 +66,6 @@
   /* Liquid glass modal */
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--glass-border);
   box-shadow:
     -2px -2px 0 var(--glass-chroma-a),
@@ -143,7 +141,6 @@
   z-index: 1;
   /* Liquid glass buttons */
   backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
   box-shadow:
     -1px -1px 0 rgba(255, 128, 200, 0.35),
     1px 1px 0 rgba(128, 188, 255, 0.28),
@@ -196,7 +193,6 @@
 .dropdownContent {
   background: var(--glass-bg);
   backdrop-filter: blur(80px) saturate(240%);
-  -webkit-backdrop-filter: blur(80px) saturate(240%);
   border: 1px solid var(--glass-border);
   color: var(--text-color-light);
   border-radius: 20px;
@@ -227,7 +223,6 @@
   /* Liquid glass icon button */
   background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   color: var(--text-color-dark);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.22),
@@ -371,7 +366,6 @@
   z-index: 200;
   background: var(--glass-bg);
   backdrop-filter: blur(80px) saturate(240%);
-  -webkit-backdrop-filter: blur(80px) saturate(240%);
   border: 1px solid var(--glass-border);
   box-shadow:
     -1px -1px 0 var(--glass-chroma-a),

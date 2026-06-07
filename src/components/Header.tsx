@@ -81,6 +81,14 @@ function Header() {
   const [notifications, setNotifications] = useState<NotifItem[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
   const notifWrapperRef = useRef<HTMLDivElement>(null);
+  const notifPanelRef = useRef<HTMLDivElement>(null);
+  // The panel is portaled to <body> (so its backdrop-filter can blur the page
+  // instead of being trapped inside the header's own backdrop-filter), so we
+  // position it manually beneath the bell.
+  const [panelPos, setPanelPos] = useState<{ top: number; right: number }>({
+    top: 72,
+    right: 16,
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -120,12 +128,30 @@ function Header() {
     // so a mousedown listener never fired when opening the theme/profile menu,
     // leaving this panel stuck open. pointerdown always fires.
     const handler = (e: PointerEvent) => {
-      if (notifWrapperRef.current && !notifWrapperRef.current.contains(e.target as Node)) {
-        setNotifOpen(false);
-      }
+      const target = e.target as Node;
+      const inBell = notifWrapperRef.current?.contains(target);
+      const inPanel = notifPanelRef.current?.contains(target);
+      if (!inBell && !inPanel) setNotifOpen(false);
     };
     document.addEventListener("pointerdown", handler);
     return () => document.removeEventListener("pointerdown", handler);
+  }, [notifOpen]);
+
+  // Position the portaled panel beneath the bell, right-aligned to it.
+  useEffect(() => {
+    if (!notifOpen) return;
+    const place = () => {
+      const r = notifWrapperRef.current?.getBoundingClientRect();
+      if (r) {
+        setPanelPos({
+          top: r.bottom + 10,
+          right: Math.max(8, window.innerWidth - r.right),
+        });
+      }
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
   }, [notifOpen]);
 
   // Read-state lives on the Firestore docs (synced across devices). The
@@ -270,8 +296,12 @@ function Header() {
                 </span>
               )}
             </button>
-            {notifOpen && (
-              <div className={styles.notifPanel}>
+            {notifOpen && mounted && ReactDOM.createPortal(
+              <div
+                ref={notifPanelRef}
+                className={styles.notifPanel}
+                style={{ position: "fixed", top: panelPos.top, right: panelPos.right }}
+              >
                 <div className={styles.notifPanelHeader}>
                   <span className={styles.notifPanelTitle}>Notifications</span>
                   <button className={styles.notifMarkRead} onClick={markAllRead}>
@@ -308,7 +338,8 @@ function Header() {
                     })
                   )}
                 </div>
-              </div>
+              </div>,
+              document.body,
             )}
           </div>
         )}

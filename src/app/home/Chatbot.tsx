@@ -38,6 +38,7 @@ type FirestoreDeps = {
   db: Firestore;
   collection: typeof import("firebase/firestore").collection;
   addDoc: typeof import("firebase/firestore").addDoc;
+  doc: typeof import("firebase/firestore").doc;
   onSnapshot: typeof import("firebase/firestore").onSnapshot;
   serverTimestamp: typeof import("firebase/firestore").serverTimestamp;
 };
@@ -54,6 +55,7 @@ const loadFirestoreDeps = async (): Promise<FirestoreDeps> => {
       db: firebaseClient.db as Firestore,
       collection: firestore.collection,
       addDoc: firestore.addDoc,
+      doc: firestore.doc,
       onSnapshot: firestore.onSnapshot,
       serverTimestamp: firestore.serverTimestamp,
     }));
@@ -225,18 +227,27 @@ export default function Chatbot() {
     let unsubscribe: (() => void) | undefined;
 
     try {
-      const { db, collection, addDoc, onSnapshot, serverTimestamp } =
-        await loadFirestoreDeps();
-      const prompt = argument;
-      const docRef = await addDoc(collection(db, "generate"), {
-        prompt,
-        createdAt: serverTimestamp(),
-        status: "pending",
+      // Create the chat server-side so the IP rate limit + validation can't be
+      // bypassed; the server stamps IP/identity and returns the new doc id.
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: argument }),
       });
-      // Tag this chat with the requester's IP + identity for the admin audit log.
-      auditDoc("generate", docRef.id);
 
-      unsubscribe = onSnapshot(docRef, (snap) => {
+      if (res.status === 429) {
+        setTerminalOutput(
+          "You've hit the limit for now. Please wait a few minutes before sending another question.",
+        );
+        setIsLoading(false);
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to submit your question.");
+
+      const { id } = (await res.json()) as { id: string };
+      const { db, doc, onSnapshot } = await loadFirestoreDeps();
+
+      unsubscribe = onSnapshot(doc(db, "generate", id), (snap) => {
         const data = snap.data();
         if (!data) return;
         if (data.error) {

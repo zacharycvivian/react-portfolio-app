@@ -33,7 +33,6 @@
   padding: 30px;
   background: var(--glass-bg);
   backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--glass-border);
   border-radius: 60px;
   box-shadow:
@@ -107,7 +106,6 @@
   border-radius: 25px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid var(--glass-border);
   cursor: pointer;
   transition: box-shadow 0.2s, background 0.2s;

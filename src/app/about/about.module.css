@@ -19,6 +19,36 @@
   z-index: 2;
 }
 
+/* "View source on GitHub" link under the section title */
+.repoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: center;
+  margin: 4px auto 24px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color-light);
+  text-decoration: none;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-specular),
+    0 6px 18px rgba(0, 0, 0, 0.18);
+  transition: transform 0.12s, box-shadow 0.2s;
+  z-index: 2;
+}
+
+.repoLink:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 var(--glass-specular),
+    0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
 .section {
   display: flex;
   flex-direction: column;
@@ -32,7 +62,6 @@
   border-radius: 40px;
   background: var(--glass-bg);
   backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow:
     -0.5px -0.5px 0 var(--glass-chroma-a),

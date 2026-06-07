@@ -447,7 +447,6 @@
   /* Liquid glass */
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
@@ -480,7 +479,6 @@
   /* Liquid glass */
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.26),
@@ -528,7 +526,6 @@
   /* Liquid glass */
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.36);
   box-shadow:
     -0.6px -0.6px 0 rgba(255, 128, 200, 0.28),
@@ -593,7 +590,6 @@
   /* Liquid glass */
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
@@ -738,7 +734,6 @@
   padding: 0;
   transition: background 0.2s, box-shadow 0.2s;
   backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
     0.5px 0.5px 0 rgba(128, 188, 255, 0.18),
