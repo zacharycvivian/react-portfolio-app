@@ -137,6 +137,14 @@ body::-webkit-scrollbar {
   will-change: opacity;
 }
 
+/* On touch devices there is no cursor, so drop the pointer-following ambient
+   glow. The per-element reflections stay (driven by device tilt on mobile). */
+@media (hover: none) and (pointer: coarse) {
+  #reactive-glow {
+    display: none;
+  }
+}
+
 /* Per-glass reflection layer: a directional rim highlight on the edge facing
    the light, a specular glint that tracks the cursor across the surface, and a
    faint prismatic chroma edge on the shadow side — clipped to the host's
