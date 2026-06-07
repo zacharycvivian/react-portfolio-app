@@ -26,6 +26,12 @@
   --glass-chroma-a: rgba(255, 128, 200, 0.18);
   --glass-chroma-b: rgba(128, 188, 255, 0.14);
   --glass-specular: rgba(255, 255, 255, 0.32);
+  /* Reactivity: pointer/tilt-driven light position + strength */
+  --reactive-x: 50%;
+  --reactive-y: 30%;
+  --reactive-intensity: 0;
+  /* Per-theme reflection gain — light glass reads well at full strength. */
+  --rg-gain: 1;
 }
 
 [data-theme="dark"] {
@@ -49,6 +55,8 @@
   --glass-chroma-a: rgba(200, 120, 180, 0.14);
   --glass-chroma-b: rgba(120, 158, 220, 0.10);
   --glass-specular: rgba(255, 255, 255, 0.14);
+  /* Dark glass already has high contrast, so dial the reflection back. */
+  --rg-gain: 0.5;
 }
 
 body {
@@ -102,11 +110,76 @@ body::-webkit-scrollbar {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* ── Reactivity: liquid-glass light model ──────────────────── */
+
+/* Faint ambient wash that follows the light source across the page. The
+   per-element panes below carry most of the effect, so this stays subtle. */
+#reactive-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: calc(var(--reactive-intensity) * var(--rg-gain, 1));
+  transition: opacity 0.5s ease;
+  background:
+    radial-gradient(
+      circle 30vmax at var(--reactive-x) var(--reactive-y),
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.02) 32%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle 20vmax at var(--reactive-x) var(--reactive-y),
+      var(--glass-chroma-a),
+      transparent 55%
+    );
+  mix-blend-mode: soft-light;
+  will-change: opacity;
+}
+
+/* Per-glass reflection layer: a directional rim highlight on the edge facing
+   the light, a specular glint that tracks the cursor across the surface, and a
+   faint prismatic chroma edge on the shadow side — clipped to the host's
+   rounded corners. Driven by --rg-* vars set per element each frame. */
+.reactive-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 5;
+  opacity: calc(var(--reactive-intensity, 0) * var(--rg-gain, 1));
+  transition: opacity 0.4s ease;
+  background:
+    /* travelling specular glint that follows the light across the surface */
+    radial-gradient(
+      240px 240px at var(--rg-sx, 50%) var(--rg-sy, 50%),
+      rgba(255, 255, 255, calc(0.22 * var(--rg-li, 0))),
+      rgba(255, 255, 255, 0) 60%
+    );
+  box-shadow:
+    /* soft rim glow on the light-facing edge */
+    inset calc(var(--rg-lx, 0) * 18px) calc(var(--rg-ly, 0) * 18px) 30px -14px
+      rgba(255, 255, 255, calc(0.7 * var(--rg-li, 0))),
+    /* crisp hairline highlight at the very edge (iOS bevel) */
+    inset calc(var(--rg-lx, 0) * 5px) calc(var(--rg-ly, 0) * 5px) 1px -0.5px
+      rgba(255, 255, 255, calc(0.75 * var(--rg-li, 0))),
+    /* prismatic dispersion on the opposite edge — gated by --rg-li so it fully
+       disappears when the cursor is far (no colour edge drifting on the header) */
+    inset calc(var(--rg-lx, 0) * -13px) calc(var(--rg-ly, 0) * -13px) 22px -14px
+      rgba(122, 160, 222, calc(0.16 * var(--rg-li, 0)));
+  mix-blend-mode: screen;
+  will-change: box-shadow, background;
+}
+
 /* Respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  #reactive-glow {
+    opacity: 0 !important;
   }
 }

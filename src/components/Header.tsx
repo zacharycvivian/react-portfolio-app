@@ -8,12 +8,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DefaultImage from "@/../public/defaultavatar.jpg";
 import AvatarImage from "@/components/AvatarImage";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useReactivity } from "@/components/ReactivityProvider";
 import ReactDOM from "react-dom";
 import { db } from "@/../firebase";
 import {
@@ -259,6 +261,7 @@ function Header() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const currentTheme = theme === "system" ? resolvedTheme : theme;
   const activeTheme = theme; // track the actual selected setting (light/dark/system)
+  const { enabled: reactive, toggle: toggleReactive } = useReactivity();
 
   if (!mounted) {
     return (
@@ -382,6 +385,27 @@ function Header() {
                 <path d="M12 2v2m2.837 12.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4m7-3l-1.256 1.256M20 12h2"/>
               </svg>
               System
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={(e) => {
+                // Keep the menu open and preserve the user gesture (needed for
+                // iOS motion-sensor permission) instead of closing on select.
+                e.preventDefault();
+                toggleReactive();
+              }}
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="m16.24 7.76l-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span style={{ flex: 1 }}>Reactivity</span>
+              {reactive && (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
