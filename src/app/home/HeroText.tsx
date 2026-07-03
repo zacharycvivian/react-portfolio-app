@@ -9,7 +9,7 @@
  * The surrounding layout and static paragraph live in the Home Server Component.
  */
 import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { fadeInVariant } from "@/components/motion/Animated";
 import styles from "../page.module.css";
 
@@ -47,42 +47,49 @@ const ROTATING_TEXTS = [
   "NETWORKING",
 ];
 
-/** Cycles through {@link ROTATING_TEXTS}, re-typing one character at a time. */
+/**
+ * Cycles through {@link ROTATING_TEXTS} with a vertical roll: the current
+ * skill springs up and out while the next one rolls in beneath it. Unlike the
+ * old character-splice (which showed "RISK MANAGEMENTTION"-style hybrids
+ * mid-transition), every frame shows a real, readable word. Respects
+ * prefers-reduced-motion (static first word) and pauses in hidden tabs.
+ */
 export function RotatingWord() {
   const texts = useMemo(() => ROTATING_TEXTS, []);
   const [index, setIndex] = useState(0);
-  const [displayWord, setDisplayWord] = useState(texts[0]);
-  const [transitionIndex, setTransitionIndex] = useState(0);
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
-    const currentWord = texts[index];
-    const nextWord = texts[(index + 1) % texts.length];
-    const maxTransitionLength = Math.max(currentWord.length, nextWord.length);
-
-    if (transitionIndex <= maxTransitionLength) {
-      const timeoutId = setTimeout(() => {
-        const newChars =
-          nextWord.slice(0, transitionIndex) +
-          currentWord.slice(transitionIndex);
-        setDisplayWord(newChars);
-        setTransitionIndex(transitionIndex + 1);
-      }, 75);
-      return () => clearTimeout(timeoutId);
-    }
-
-    const pauseTimeoutId = setTimeout(() => {
-      setIndex((index + 1) % texts.length);
-      setTransitionIndex(0);
-      setDisplayWord(nextWord);
-    }, 2000);
-    return () => clearTimeout(pauseTimeoutId);
-  }, [transitionIndex, index, texts]);
+    if (prefersReduced) return;
+    const id = setInterval(() => {
+      if (document.hidden) return; // don't churn in background tabs
+      setIndex((i) => (i + 1) % texts.length);
+    }, 2800);
+    return () => clearInterval(id);
+  }, [prefersReduced, texts.length]);
 
   return (
     <div className={styles.textLoopContainer}>
-      <h2>
-        <strong>{displayWord}</strong>
+      <span className={styles.rotatingLabel} aria-hidden="true">
+        Specializing in
+      </span>
+      {/* The rolling word is decorative noise for screen readers; give them
+          one static, meaningful heading instead. */}
+      <h2 className={styles.rotatingViewport} aria-hidden="true">
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.strong
+            key={texts[index]}
+            className={styles.rotatingWord}
+            initial={{ y: "1.1em", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "-1.1em", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          >
+            {texts[index]}
+          </motion.strong>
+        </AnimatePresence>
       </h2>
+      <h2 className="sr-only">My specialties</h2>
     </div>
   );
 }

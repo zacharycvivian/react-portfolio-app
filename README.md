@@ -103,6 +103,15 @@ firebase-admin.ts              # Firebase Admin SDK init (server only)
 auth.ts                        # NextAuth (Google OAuth) configuration
 ```
 
+## Design system — liquid glass
+
+The UI uses a "liquid glass" theme: translucent panes that *refract* the
+content behind them (SVG displacement lens with chromatic aberration on
+Chromium, frosted blur fallback elsewhere), an opt-in pointer/tilt-reactive
+lighting model, and a shared set of glass/motion design tokens in
+`src/app/globals.css`. See the **Liquid-glass design system** section of
+[ARCHITECTURE.md](./ARCHITECTURE.md) before styling new surfaces.
+
 ## Architecture
 
 For the Server vs Client component strategy, the shared-types convention, and

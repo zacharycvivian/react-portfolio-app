@@ -13,15 +13,13 @@ const STORAGE_KEY = "reactivity";
 
 // Tuning knobs for the liquid-glass light model.
 const TILT_MAX = 4.5; // max parallax tilt in degrees
-const FALLOFF = 140; // px beyond a pane's edge where its light fades to nothing
-const BASE_LIGHT = 0; // no ambient rim — a pane only lights as the cursor nears it
+const FALLOFF = 520; // px beyond a pane's edge where its light fades to nothing
+const BASE_LIGHT = 0.1; // faint ambient rim so every pane reads as glass
 const EASE = 0.12; // light-position smoothing per frame
 
 // Extra non-glass surfaces that should still catch the reactive light
 // (e.g. the gallery photo tiles, which use solid backgrounds, not blur).
 const OPT_IN_SELECTOR = '[class*="photoCard"]';
-// Subtrees that should never react (the chatbot terminal keeps its own look).
-const EXCLUDE_SELECTOR = "#chatbotTerminal";
 
 export function useReactivity() {
   const ctx = React.useContext(ReactivityContext);
@@ -99,7 +97,6 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
 
     const decorate = (el: HTMLElement) => {
       if (el.dataset.reactiveGlass || el.classList.contains("reactive-sheen")) return;
-      if (el.closest(EXCLUDE_SELECTOR)) return;
       // The header/footer bars are flat chrome with no real depth, so skip the
       // bar itself — but still let their buttons (children) catch the light.
       if (el.tagName === "HEADER" || el.tagName === "FOOTER") return;
@@ -159,6 +156,14 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
 
     scan(document.body);
 
+    // Anything that can move a pane or the light marks the frame dirty; the
+    // rAF loop below skips all layout reads/writes on clean, settled frames so
+    // an idle page costs (almost) nothing.
+    let dirty = true;
+    const markDirty = () => {
+      dirty = true;
+    };
+
     // Catch glass that mounts later (modals, dropdowns, route changes, chatbot).
     const mo = new MutationObserver((mutations) => {
       for (const m of mutations) {
@@ -166,8 +171,12 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
           if (n instanceof HTMLElement) scan(n);
         });
       }
+      dirty = true;
     });
     mo.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener("scroll", markDirty, { passive: true, capture: true });
+    window.addEventListener("resize", markDirty, { passive: true });
 
     // Shared light source position, in viewport percentages, eased per frame.
     let targetX = 50;
@@ -198,8 +207,19 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
     let frame = 0;
 
     const tick = () => {
-      curX += (targetX - curX) * EASE;
-      curY += (targetY - curY) * EASE;
+      // Idle early-out: when the light has settled and nothing scrolled,
+      // resized, or mounted since the last frame, skip the whole read/write
+      // pass instead of re-measuring every pane at 60fps.
+      const settled =
+        Math.abs(targetX - curX) < 0.02 && Math.abs(targetY - curY) < 0.02;
+      if (settled && !dirty) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      dirty = false;
+
+      curX = settled ? targetX : curX + (targetX - curX) * EASE;
+      curY = settled ? targetY : curY + (targetY - curY) * EASE;
       root.style.setProperty("--reactive-x", `${curX.toFixed(2)}%`);
       root.style.setProperty("--reactive-y", `${curY.toFixed(2)}%`);
 
@@ -231,7 +251,11 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
         const exDist = Math.max(r.left - lightX, 0, lightX - r.right);
         const eyDist = Math.max(r.top - lightY, 0, lightY - r.bottom);
         const edgeDist = Math.hypot(exDist, eyDist);
-        const falloff = Math.max(0, 1 - edgeDist / FALLOFF);
+        // Broad, lantern-like falloff: 1 - x² holds near-full brightness for
+        // the first half of the radius, so neighbouring panes light together
+        // instead of a single pane flaring under the cursor.
+        const x = Math.min(1, edgeDist / FALLOFF);
+        const falloff = 1 - x * x;
         const li = Math.min(1, BASE_LIGHT + (1 - BASE_LIGHT) * falloff);
         const sx = Math.max(-20, Math.min(120, ((lightX - r.left) / r.width) * 100));
         const sy = Math.max(-20, Math.min(120, ((lightY - r.top) / r.height) * 100));
@@ -267,6 +291,8 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
       mo.disconnect();
       window.removeEventListener("mousemove", onMouse);
       window.removeEventListener("deviceorientation", onOrient);
+      window.removeEventListener("scroll", markDirty, { capture: true });
+      window.removeEventListener("resize", markDirty);
       root.style.setProperty("--reactive-intensity", "0");
       // Tear down injected layers + restored inline styles immediately so a
       // quick off→on toggle never leaves orphaned sheens behind.

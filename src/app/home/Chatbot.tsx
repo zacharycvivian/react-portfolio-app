@@ -16,21 +16,27 @@ import { createPortal } from "react-dom";
 import type { Firestore } from "firebase/firestore";
 import styles from "../page.module.css";
 
+/* Gel morph: the terminal buds out of the chat button in the corner and
+ * wobbles into place like a droplet (underdamped spring), then gets sucked
+ * back into the button on close. transformOrigin is set on the element. */
 const chatBotVariant = {
-  hidden: { opacity: 0, scale: 0.5, x: 200, y: 200 },
+  hidden: {
+    opacity: 0,
+    scale: 0.12,
+    y: 24,
+    transition: { type: "spring" as const, stiffness: 380, damping: 30 },
+  },
   visible: {
     opacity: 1,
     scale: 1,
-    x: 0,
     y: 0,
-    transition: { type: "spring" as const, stiffness: 400, damping: 20 },
+    transition: { type: "spring" as const, stiffness: 270, damping: 16, mass: 0.9 },
   },
   exit: {
     opacity: 0,
-    scale: 0.5,
-    x: 200,
-    y: 200,
-    transition: { duration: 0.5 },
+    scale: 0.12,
+    y: 24,
+    transition: { duration: 0.3 },
   },
 };
 
@@ -474,9 +480,8 @@ export default function Chatbot() {
           zIndex: 1200,
         }}
         onClick={() => setIsChatVisible(!isChatVisible)}
-        variants={chatBotVariant}
-        initial="visible"
-        viewport={{ once: true }}
+        whileTap={{ scale: 0.82 }}
+        transition={{ type: "spring", stiffness: 500, damping: 14 }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092a10 10 0 1 0-4.777-4.719"/>
@@ -491,6 +496,8 @@ export default function Chatbot() {
           right: 20,
           zIndex: 1100,
           pointerEvents: isChatVisible ? "auto" : "none",
+          // Grow from the bottom-right corner, where the chat button lives.
+          transformOrigin: "100% 110%",
         }}
         variants={chatBotVariant}
         initial="hidden"

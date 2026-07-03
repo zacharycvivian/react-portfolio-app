@@ -73,12 +73,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 };
 
 
+const NAME = "Zachary Vivian";
+const DECODE_GLYPHS = "abcdefghijklmnopqrstuvwxyz0123456789$#%&";
+const DECODE_TICK_MS = 45; // glyph-flip cadence
+const DECODE_REVEAL_PER_TICK = 0.4; // characters resolved per tick (≈1.6s total)
+
 function Header() {
   const { data: session } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [animatedTitle, setAnimatedTitle] = useState("Zachary Vivian");
-  const [animationPhase, setAnimationPhase] = useState(0); // Now includes Phase 5 for pausing
-  const originalName = "Zachary Vivian";
+  const [animatedTitle, setAnimatedTitle] = useState(NAME);
+  const decodeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<NotifItem[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -189,63 +193,49 @@ function Header() {
     fetchAdmin();
   }, [session?.user]);
 
-  useEffect(() => {
-    let timeoutId: number;
-
-    // Backspacing for Phase 1 and Phase 3
-    if (animationPhase === 1 || animationPhase === 3) {
-      if (animatedTitle.length > 0) {
-        const backspaceSpeed = Math.random() * (250 - 50) + 50; // Randomize between 50ms and 150ms
-        timeoutId = window.setTimeout(() => {
-          setAnimatedTitle(animatedTitle.slice(0, -1));
-        }, backspaceSpeed);
-      } else {
-        setAnimationPhase(animationPhase + 1); // Proceed to the next phase
+  // "Decode" the title in place: every unresolved letter flips through random
+  // glyphs while the real name resolves left-to-right. Constant width (the
+  // name never disappears or grows), ~1.6s total, and skipped entirely for
+  // reduced-motion users. Runs once on load, and again on hover/tap.
+  const runDecode = React.useCallback(() => {
+    if (decodeTimerRef.current) return; // already running
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      document.hidden
+    ) {
+      return;
+    }
+    let tick = 0;
+    decodeTimerRef.current = setInterval(() => {
+      tick++;
+      const revealed = Math.floor(tick * DECODE_REVEAL_PER_TICK);
+      if (revealed >= NAME.length) {
+        setAnimatedTitle(NAME);
+        if (decodeTimerRef.current) clearInterval(decodeTimerRef.current);
+        decodeTimerRef.current = null;
+        return;
       }
-    }
-    // Encrypting (Phase 2)
-    else if (animationPhase === 2) {
-      if (animatedTitle.length < originalName.length) {
-        timeoutId = window.setTimeout(() => {
-          // Add a random character or space
-          const nextChar = Math.random().toString(36)[2];
-          setAnimatedTitle(
-            (prev) => prev + (prev.length === 6 ? " " : nextChar)
-          );
-        }, 100);
-      } else {
-        setAnimationPhase(animationPhase + 1); // Move to Phase 3
-      }
-    }
-    // Retyping "Zachary Vivian" (Phase 4)
-    else if (animationPhase === 4) {
-      if (animatedTitle.length < originalName.length) {
-        timeoutId = window.setTimeout(() => {
-          setAnimatedTitle(originalName.slice(0, animatedTitle.length + 1));
-        }, 100);
-      } else {
-        // After completing the name, wait for a bit before restarting
-        setAnimationPhase(5); // Move to pause phase
-      }
-    }
-    // Pause (Phase 5)
-    else if (animationPhase === 5) {
-      timeoutId = window.setTimeout(() => {
-        setAnimationPhase(1); // Restart the sequence
-      }, 12000); // Adjust this duration to control the length of the pause
-    }
-
-    return () => clearTimeout(timeoutId);
-  }, [animatedTitle, animationPhase]);
-
-  useEffect(() => {
-    // Initiate the sequence after a short delay
-    const delayId = setTimeout(() => {
-      setAnimationPhase(1);
-    }, 2000); // Initial delay before starting
-
-    return () => clearTimeout(delayId);
+      setAnimatedTitle(
+        NAME.split("")
+          .map((ch, i) => {
+            if (ch === " " || i < revealed) return ch;
+            return DECODE_GLYPHS[Math.floor(Math.random() * DECODE_GLYPHS.length)];
+          })
+          .join("")
+      );
+    }, DECODE_TICK_MS);
   }, []);
+
+  // Run once shortly after load, and clean up if we unmount mid-decode.
+  useEffect(() => {
+    const delayId = setTimeout(runDecode, 1200);
+    return () => {
+      clearTimeout(delayId);
+      if (decodeTimerRef.current) clearInterval(decodeTimerRef.current);
+      decodeTimerRef.current = null;
+    };
+  }, [runDecode]);
 
   const handleAuthAction = () => {
     if (session) {
@@ -267,7 +257,10 @@ function Header() {
     return (
       <header className={styles.header}>
         <div className={styles.headertext}>
-          <h2>Zachary Vivian<span className={styles.cursor}>|</span></h2>
+          <h2>
+            <span aria-hidden="true">Zachary Vivian<span className={styles.cursor}>|</span></span>
+            <span className="sr-only">Zachary Vivian</span>
+          </h2>
         </div>
         <div className={styles.profileAndToggleContainer} />
       </header>
@@ -277,9 +270,14 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.headertext}>
-        <h2>
-          {animatedTitle}
-          <span className={styles.cursor}>|</span>
+        {/* The animated glyphs are decorative; screen readers get the static
+            name and never hear the mid-decode noise. */}
+        <h2 onPointerEnter={runDecode}>
+          <span aria-hidden="true">
+            {animatedTitle}
+            <span className={styles.cursor}>|</span>
+          </span>
+          <span className="sr-only">Zachary Vivian</span>
         </h2>
       </div>
       <div className={styles.profileAndToggleContainer}>

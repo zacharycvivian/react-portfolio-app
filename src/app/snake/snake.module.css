@@ -49,10 +49,16 @@
 .gameCanvas {
   width: 100%; /* Fill the container width */
   height: auto; /* Adjusted to fill available container height */
-  background-color: #0000007b; /* Background for visibility */
-  border: 2px solid white; /* Adds a white border around the canvas */
+  /* Liquid glass pane over the matrix rain */
+  background-color: rgba(13, 15, 24, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 20px;
-  backdrop-filter: blur(10px); /* Apply the blur effect */
+  backdrop-filter: var(--glass-filter);
+  box-shadow:
+    -1.5px -1.5px 0 rgba(255, 128, 200, 0.24),
+    1.5px 1.5px 0 rgba(128, 188, 255, 0.20),
+    inset 0 1.5px 0 rgba(228, 238, 255, 0.24),
+    0 16px 48px rgba(0, 0, 0, 0.40);
   box-sizing: border-box; /* Ensures the border is included in the element's total width and height */
   object-fit: contain; /* Ensures the content is scaled properly within the container */
 }
@@ -63,12 +69,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent overlay */
+  background-color: rgba(10, 12, 20, 0.55);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: var(--glass-filter-popover);
+  border-radius: 20px;
   z-index: 10; /* Ensure it's above all other content */
 }
 
@@ -92,14 +99,30 @@
 
 .restartButton {
   padding: 10px 15px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 25px;
-  background-color: var(--button-color-light);
-  color: var(--text-color-light);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: var(--glass-filter-button);
+  color: #fff;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s;
+  box-shadow:
+    -1px -1px 0 rgba(255, 128, 200, 0.22),
+    1px 1px 0 rgba(128, 188, 255, 0.18),
+    inset 0 1px 0 rgba(228, 238, 255, 0.22),
+    0 4px 14px rgba(0, 0, 0, 0.30);
+  transition: background var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
   margin-top:10px;
+}
+
+.restartButton:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.restartButton:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 @media (max-width: 768px) {

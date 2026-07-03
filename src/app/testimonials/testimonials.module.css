@@ -31,18 +31,12 @@
   margin: 30px;
   padding: 30px;
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-radius: 60px;
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1.5px 0 var(--glass-specular),
-    inset 1px 0 0 rgba(255, 255, 255, 0.10),
-    6px 6px 24px rgba(0, 0, 0, 0.18),
-    -2px -2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--glass-shadow-panel);
   color: var(--text-color-light);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--dur-med) var(--ease-glass), box-shadow var(--dur-med) var(--ease-glass);
   width: calc(60% - 10px);
   z-index: 4;
 }
@@ -62,32 +56,24 @@
   font-size: 18px;
   border-radius: 25px;
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: var(--glass-filter-button);
   border: 1px solid var(--glass-border);
   cursor: pointer;
-  transition: box-shadow 0.2s, background 0.2s;
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1.5px 0 var(--glass-specular),
-    0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: box-shadow var(--dur-fast), background var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
+  box-shadow: var(--glass-shadow-button);
 }
 
 .addButton:hover,
 .filterButton:hover {
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1.5px 0 var(--glass-specular),
-    0 6px 20px rgba(0, 0, 0, 0.22);
+  background: var(--glass-bg-hover);
+  box-shadow: var(--glass-shadow-button-hover);
+  transform: translateY(-2px);
 }
 
 .addButton:active,
 .filterButton:active {
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: var(--glass-shadow-pressed);
+  transform: translateY(0) scale(0.97);
 }
 
 .editDeleteIcons {
@@ -110,8 +96,21 @@
 .deleteIcon:hover { opacity: 0.8; color: red; }
 
 /* ── Modals ─────────────────────────────────────────────────── */
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Gel entrance: overshoots slightly and settles, like a droplet landing */
+@keyframes modalPop {
+  0%   { opacity: 0; transform: scale(0.88) translateY(20px); }
+  70%  { opacity: 1; transform: scale(1.015) translateY(-3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 .modalBackdrop,
 .filterModalBackdrop {
+  animation: backdropIn var(--dur-med) ease both;
   position: fixed;
   top: 0;
   left: 0;
@@ -136,14 +135,10 @@
   max-width: 500px;
   z-index: 100;
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1.5px 0 var(--glass-specular),
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 4px 16px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--glass-shadow-modal);
+  animation: modalPop 380ms var(--ease-glass) both;
 }
 
 .modalTitle {
@@ -197,13 +192,9 @@
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  transition: box-shadow 0.2s, background 0.2s;
-  backdrop-filter: blur(12px) saturate(140%);
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1px 0 var(--glass-specular),
-    0 4px 14px rgba(0, 0, 0, 0.14);
+  transition: box-shadow var(--dur-fast), background var(--dur-fast);
+  backdrop-filter: var(--glass-filter-button);
+  box-shadow: var(--glass-shadow-button);
 }
 
 .submitButton {
@@ -219,18 +210,12 @@
 
 .submitButton:hover,
 .cancelButton:hover {
-  box-shadow:
-    -0.5px -0.5px 0 var(--glass-chroma-a),
-    0.5px 0.5px 0 var(--glass-chroma-b),
-    inset 0 1px 0 var(--glass-specular),
-    0 6px 20px rgba(0, 0, 0, 0.18) !important;
+  box-shadow: var(--glass-shadow-button-hover);
 }
 
 .submitButton:active,
 .cancelButton:active {
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.40) !important;
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 /* ── Filter modal controls ───────────────────────────────────── */

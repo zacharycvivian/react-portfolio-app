@@ -19,19 +19,31 @@
   line-height: 1.5;
 }
 
-/* ── Photo wall ── */
+/* ── Photo wall — tight Instagram-style square grid ── */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 4px;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .photoCard {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
+  background-color: var(--card-color-light);
+}
+
+/* Loading placeholder tile — same footprint as a photo */
+.skeletonTile {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
   background-color: var(--card-color-light);
 }
 
@@ -431,7 +443,10 @@
   z-index: 2;
 }
 
-.downloadBtn {
+/* Shared base for the 32px circular glass buttons in the lightbox chrome
+   (download, close, info, share). The lightbox is always dark, so these keep
+   fixed white-glass colours instead of the theme vars. */
+.glassCircleBtn {
   position: relative;
   color: #fff;
   width: 32px;
@@ -442,11 +457,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.83rem;
-  transition: background 0.2s, box-shadow 0.2s;
-  /* Liquid glass */
+  transition: background var(--dur-fast), box-shadow var(--dur-fast);
   background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: var(--glass-filter-button);
   border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
@@ -455,7 +468,16 @@
     0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
-.downloadBtn:hover {
+.glassCircleBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 30% -5%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 42%, transparent 65%);
+  pointer-events: none;
+}
+
+.glassCircleBtn:hover {
   background: rgba(255, 255, 255, 0.22);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.32),
@@ -464,47 +486,14 @@
     0 4px 18px rgba(0, 0, 0, 0.35);
 }
 
+.downloadBtn {
+  composes: glassCircleBtn;
+  font-size: 0.83rem;
+}
+
 .closeBtn {
-  position: relative;
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
+  composes: glassCircleBtn;
   font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, box-shadow 0.2s;
-  /* Liquid glass */
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(18px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  box-shadow:
-    -0.5px -0.5px 0 rgba(255, 128, 200, 0.26),
-    0.5px 0.5px 0 rgba(128, 188, 255, 0.20),
-    -2px -2px 6px rgba(255, 100, 180, 0.06),
-    2px 2px 6px rgba(100, 168, 255, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    0 4px 14px rgba(0, 0, 0, 0.28);
-}
-
-.closeBtn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 30% -5%, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.08) 42%, transparent 65%);
-  pointer-events: none;
-}
-
-.closeBtn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  box-shadow:
-    -0.5px -0.5px 0 rgba(255, 128, 200, 0.34),
-    0.5px 0.5px 0 rgba(128, 188, 255, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.40),
-    0 4px 18px rgba(0, 0, 0, 0.35);
 }
 
 .navBtn {
@@ -522,16 +511,14 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  transition: background 0.2s, opacity 0.4s, box-shadow 0.2s;
+  transition: background var(--dur-fast), opacity 0.4s, box-shadow var(--dur-fast);
   /* Liquid glass */
   background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: var(--glass-filter-button);
   border: 1px solid rgba(255, 255, 255, 0.36);
   box-shadow:
     -0.6px -0.6px 0 rgba(255, 128, 200, 0.28),
     0.6px 0.6px 0 rgba(128, 188, 255, 0.22),
-    -2px -2px 8px rgba(255, 100, 180, 0.08),
-    2px 2px 8px rgba(100, 168, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.36),
     0 6px 24px rgba(0, 0, 0, 0.32);
 }
@@ -554,8 +541,6 @@
   box-shadow:
     -0.6px -0.6px 0 rgba(255, 128, 200, 0.36),
     0.6px 0.6px 0 rgba(128, 188, 255, 0.28),
-    -2px -2px 8px rgba(255, 100, 180, 0.10),
-    2px 2px 8px rgba(100, 168, 255, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
     0 8px 28px rgba(0, 0, 0, 0.38);
 }
@@ -576,38 +561,10 @@
 }
 
 .infoBtn {
-  position: relative;
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
+  composes: glassCircleBtn;
   font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, box-shadow 0.2s;
-  /* Liquid glass */
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(18px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  box-shadow:
-    -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
-    0.5px 0.5px 0 rgba(128, 188, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
-.infoBtn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 30% -5%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 42%, transparent 65%);
-  pointer-events: none;
-}
-
-.infoBtn:hover,
 .infoBtnActive {
   background: rgba(255, 255, 255, 0.22) !important;
   box-shadow:
@@ -720,43 +677,7 @@
 
 /* Share button */
 .shareBtn {
-  position: relative;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: background 0.2s, box-shadow 0.2s;
-  backdrop-filter: blur(18px) saturate(150%);
-  box-shadow:
-    -0.5px -0.5px 0 rgba(255, 128, 200, 0.24),
-    0.5px 0.5px 0 rgba(128, 188, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 4px 14px rgba(0, 0, 0, 0.28);
-}
-
-.shareBtn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 30% -5%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 42%, transparent 65%);
-  pointer-events: none;
-}
-
-.shareBtn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  box-shadow:
-    -0.5px -0.5px 0 rgba(255, 128, 200, 0.32),
-    0.5px 0.5px 0 rgba(128, 188, 255, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.38),
-    0 4px 18px rgba(0, 0, 0, 0.35);
+  composes: glassCircleBtn;
 }
 
 /* SVGs inside all lightbox icon buttons sit above the ::before specular layer.
@@ -795,12 +716,42 @@
   gap: 6px;
   padding: 4px 8px;
   border-radius: 20px;
-  transition: background 0.2s;
+  transition: background var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
   line-height: 1;
 }
 
 .likeBtn:hover:not(:disabled) {
   background: rgba(128, 128, 128, 0.15);
+}
+
+.likeBtn:active:not(:disabled) {
+  transform: scale(0.85);
+}
+
+/* Pop when a like lands (class flips on → animation runs once) */
+@keyframes likePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.liked {
+  animation: likePop 0.35s var(--ease-glass);
+}
+
+/* Instagram-style heart burst on double-tap, centered over the photo */
+.heartBurst {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(4rem, 18vw, 7rem);
+  color: #fff;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 4;
+  user-select: none;
 }
 
 .likeBtn:disabled {
@@ -1010,6 +961,11 @@
 }
 
 /* ── Upload modal ── */
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -1019,6 +975,7 @@
   align-items: center;
   z-index: 300;
   backdrop-filter: blur(10px);
+  animation: backdropIn var(--dur-med) ease both;
 }
 
 .modalContent {
@@ -1148,8 +1105,21 @@
 }
 
 @media (max-width: 500px) {
+  /* Instagram keeps 3 columns on phones — tiles get small but scannable,
+     with hairline gaps and square corners. */
   .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .photoCard,
+  .skeletonTile,
+  .addTile {
+    border-radius: 2px;
+  }
+
+  .container {
+    padding-left: 8px;
+    padding-right: 8px;
   }
 }

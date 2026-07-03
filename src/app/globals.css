@@ -20,12 +20,49 @@
   --input-disabled-background: #c9c9c9;
   /* Liquid Glass */
   --glass-bg: rgba(238, 240, 244, 0.72);
+  --glass-bg-hover: rgba(255, 255, 255, 0.18);
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-blur: 32px;
   --glass-saturate: 180%;
-  --glass-chroma-a: rgba(255, 128, 200, 0.18);
-  --glass-chroma-b: rgba(128, 188, 255, 0.14);
-  --glass-specular: rgba(255, 255, 255, 0.32);
+  --glass-chroma-a: rgba(255, 128, 200, 0.28);
+  --glass-chroma-b: rgba(128, 188, 255, 0.22);
+  --glass-specular: rgba(228, 238, 255, 0.30);
+
+  /* Motion tokens — one easing + two durations for the whole site */
+  --ease-glass: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Gel: overshoots and settles like a droplet — used for transforms only */
+  --ease-gel: cubic-bezier(0.34, 1.8, 0.44, 1);
+  --dur-fast: 150ms;
+  --dur-med: 240ms;
+  --dur-gel: 420ms;
+
+  /* Glass backdrop recipes. The blur+saturate pair is the cross-browser
+     fallback; Chromium swaps in the refraction lens below. */
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  --glass-filter-button: blur(16px) saturate(160%);
+  --glass-filter-popover: blur(48px) saturate(200%);
+  --glass-filter-bar: blur(24px) saturate(180%);
+
+  /* Shared shadow stacks: chromatic dispersion edge + specular bevel, then a
+     depth shadow sized to the surface's elevation. */
+  /* Chromatic dispersion edge, a cool-tinted specular bevel, and a dark
+     counter-bevel on the bottom — glass shades itself opposite the light. */
+  --glass-edge:
+    -1.5px -1.5px 0 var(--glass-chroma-a),
+    1.5px 1.5px 0 var(--glass-chroma-b),
+    inset 0 1.5px 0 var(--glass-specular),
+    inset 0 -1.5px 0 rgba(9, 12, 24, 0.18);
+  --glass-shadow-panel: var(--glass-edge), inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    6px 6px 24px rgba(0, 0, 0, 0.18), -2px -2px 8px rgba(0, 0, 0, 0.08);
+  --glass-shadow-panel-hover: var(--glass-edge), inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    8px 8px 30px rgba(0, 0, 0, 0.22), -2px -2px 10px rgba(0, 0, 0, 0.10);
+  --glass-shadow-button: var(--glass-edge), 0 4px 14px rgba(0, 0, 0, 0.18);
+  --glass-shadow-button-hover: var(--glass-edge), 0 6px 20px rgba(0, 0, 0, 0.22);
+  --glass-shadow-pressed: inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --glass-shadow-popover: var(--glass-edge), 0 12px 40px rgba(0, 0, 0, 0.30);
+  --glass-shadow-modal: var(--glass-edge), 0 20px 60px rgba(0, 0, 0, 0.25),
+    0 4px 16px rgba(0, 0, 0, 0.14);
   /* Reactivity: pointer/tilt-driven light position + strength */
   --reactive-x: 50%;
   --reactive-y: 30%;
@@ -51,12 +88,23 @@
   --input-disabled-background: #3d3d3d;
   /* Liquid Glass - dark mode */
   --glass-bg: rgba(22, 22, 30, 0.72);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.11);
-  --glass-chroma-a: rgba(200, 120, 180, 0.14);
-  --glass-chroma-b: rgba(120, 158, 220, 0.10);
-  --glass-specular: rgba(255, 255, 255, 0.14);
+  --glass-chroma-a: rgba(200, 120, 180, 0.22);
+  --glass-chroma-b: rgba(120, 158, 220, 0.17);
+  --glass-specular: rgba(210, 226, 255, 0.14);
   /* Dark glass already has high contrast, so dial the reflection back. */
   --rg-gain: 0.5;
+}
+
+/* Real liquid-glass refraction: Chromium supports SVG filters inside
+   backdrop-filter, so glass surfaces bend the backdrop through a displacement
+   lens (see LiquidGlassDefs). Set at runtime by LiquidGlassDefs after feature
+   detection; every other browser keeps the blur+saturate fallback above. */
+html[data-liquid-glass="on"] {
+  --glass-filter: url(#glass-lens) blur(6px) saturate(var(--glass-saturate));
+  --glass-filter-button: url(#glass-lens) blur(2px) saturate(160%);
+  --glass-filter-popover: url(#glass-lens) blur(24px) saturate(200%);
 }
 
 body {
@@ -93,21 +141,10 @@ body::-webkit-scrollbar {
 }
 
 /* ── Glass UI animation keyframes ──────────────────────────── */
-@keyframes glassDropIn {
-  from { opacity: 0; transform: scale(0.94) translateY(-6px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
-}
-@keyframes glassDropOut {
-  from { opacity: 1; transform: scale(1)    translateY(0); }
-  to   { opacity: 0; transform: scale(0.94) translateY(-6px); }
-}
+/* Sidebar nav reveal (referenced from Sidebar.tsx inline styles). */
 @keyframes navItemIn {
   from { opacity: 0; transform: translateX(-22px); }
   to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes fadeScaleIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
 }
 
 /* ── Reactivity: liquid-glass light model ──────────────────── */
@@ -123,15 +160,15 @@ body::-webkit-scrollbar {
   transition: opacity 0.5s ease;
   background:
     radial-gradient(
-      circle 30vmax at var(--reactive-x) var(--reactive-y),
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.02) 32%,
-      transparent 60%
+      circle 55vmax at var(--reactive-x) var(--reactive-y),
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.025) 45%,
+      transparent 75%
     ),
     radial-gradient(
-      circle 20vmax at var(--reactive-x) var(--reactive-y),
+      circle 38vmax at var(--reactive-x) var(--reactive-y),
       var(--glass-chroma-a),
-      transparent 55%
+      transparent 70%
     );
   mix-blend-mode: soft-light;
   will-change: opacity;
@@ -159,23 +196,30 @@ body::-webkit-scrollbar {
   opacity: calc(var(--reactive-intensity, 0) * var(--rg-gain, 1));
   transition: opacity 0.4s ease;
   background:
-    /* travelling specular glint that follows the light across the surface */
+    /* travelling specular glint — broad and diffuse, like a soft lamp rather
+       than a laser pointer, so several panes catch it at once. Slightly cool
+       so it reads as glass reflecting sky, not white paint. */
     radial-gradient(
-      240px 240px at var(--rg-sx, 50%) var(--rg-sy, 50%),
-      rgba(255, 255, 255, calc(0.22 * var(--rg-li, 0))),
-      rgba(255, 255, 255, 0) 60%
+      480px 480px at var(--rg-sx, 50%) var(--rg-sy, 50%),
+      rgba(214, 230, 255, calc(0.14 * var(--rg-li, 0))),
+      rgba(214, 230, 255, calc(0.045 * var(--rg-li, 0))) 45%,
+      rgba(214, 230, 255, 0) 78%
     );
   box-shadow:
-    /* soft rim glow on the light-facing edge */
-    inset calc(var(--rg-lx, 0) * 18px) calc(var(--rg-ly, 0) * 18px) 30px -14px
-      rgba(255, 255, 255, calc(0.7 * var(--rg-li, 0))),
+    /* soft rim glow on the light-facing edge — kept dim; the colour fringes
+       below carry most of the edge light so it doesn't read flat white */
+    inset calc(var(--rg-lx, 0) * 22px) calc(var(--rg-ly, 0) * 22px) 44px -16px
+      rgba(226, 236, 255, calc(0.32 * var(--rg-li, 0))),
     /* crisp hairline highlight at the very edge (iOS bevel) */
-    inset calc(var(--rg-lx, 0) * 5px) calc(var(--rg-ly, 0) * 5px) 1px -0.5px
-      rgba(255, 255, 255, calc(0.75 * var(--rg-li, 0))),
-    /* prismatic dispersion on the opposite edge — gated by --rg-li so it fully
-       disappears when the cursor is far (no colour edge drifting on the header) */
-    inset calc(var(--rg-lx, 0) * -13px) calc(var(--rg-ly, 0) * -13px) 22px -14px
-      rgba(122, 160, 222, calc(0.16 * var(--rg-li, 0)));
+    inset calc(var(--rg-lx, 0) * 5px) calc(var(--rg-ly, 0) * 5px) 1.5px -0.5px
+      rgba(240, 246, 255, calc(0.42 * var(--rg-li, 0))),
+    /* prismatic dispersion: warm fringe just inside the light-facing edge... */
+    inset calc(var(--rg-lx, 0) * 11px) calc(var(--rg-ly, 0) * 11px) 20px -10px
+      rgba(255, 140, 205, calc(0.38 * var(--rg-li, 0))),
+    /* ...and a cool fringe on the shadow edge — gated by --rg-li so both fully
+       disappear when the light is far (no colour edge drifting on the header) */
+    inset calc(var(--rg-lx, 0) * -15px) calc(var(--rg-ly, 0) * -15px) 30px -12px
+      rgba(120, 170, 255, calc(0.46 * var(--rg-li, 0)));
   mix-blend-mode: screen;
   will-change: box-shadow, background;
 }

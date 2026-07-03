@@ -45,18 +45,34 @@
 
 .sourceButton {
   padding: 8px 16px;
-  border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  background: transparent;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: var(--glass-filter-button);
   color: white;
   font-weight: 600;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  box-shadow:
+    -1px -1px 0 rgba(255, 128, 200, 0.22),
+    1px 1px 0 rgba(128, 188, 255, 0.18),
+    inset 0 1px 0 rgba(228, 238, 255, 0.22),
+    0 4px 14px rgba(0, 0, 0, 0.30);
+  transition: background var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
+}
+
+.sourceButton:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.sourceButton:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 .sourceButtonActive {
-  background-color: var(--button-color-light);
-  color: var(--text-color-light);
-  border-color: var(--button-color-light);
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
 }
 
 .game {
@@ -70,9 +86,17 @@
   padding-top: 20px;
   padding-bottom: 20px;
   width: 60%;
-  border: 2px solid white; /* Adds a white border around the canvas */
-  backdrop-filter: blur(10px); /* Apply the blur effect */
-  border-radius: 20px;
+  /* Liquid glass pane over the matrix rain */
+  background: rgba(13, 15, 24, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: var(--glass-filter);
+  border-radius: 28px;
+  box-shadow:
+    -1.5px -1.5px 0 rgba(255, 128, 200, 0.24),
+    1.5px 1.5px 0 rgba(128, 188, 255, 0.20),
+    inset 0 1.5px 0 rgba(228, 238, 255, 0.24),
+    inset 0 -1.5px 0 rgba(9, 12, 24, 0.30),
+    0 16px 48px rgba(0, 0, 0, 0.40);
 }
 
 .inputBoxes {
@@ -92,36 +116,37 @@
   color: black;
 }
 
-.submitButton {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: var(--button-color-light);
-  color: var(--text-color-light);
-  text-align: center;
-  text-decoration: none;
-  border-radius: 25px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.submitButton:hover {
-  background-color: var(--button-hover-light);
-}
-
+.submitButton,
 .restartButton {
   display: inline-block;
   padding: 10px 20px;
-  background-color: var(--button-color-light);
-  color: var(--text-color-light);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: var(--glass-filter-button);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
   text-align: center;
   text-decoration: none;
   border-radius: 25px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  cursor: pointer;
+  box-shadow:
+    -1px -1px 0 rgba(255, 128, 200, 0.22),
+    1px 1px 0 rgba(128, 188, 255, 0.18),
+    inset 0 1px 0 rgba(228, 238, 255, 0.22),
+    0 4px 14px rgba(0, 0, 0, 0.30);
+  transition: background var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
 }
 
+.submitButton:hover,
 .restartButton:hover {
-  background-color: var(--button-hover-light);
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.submitButton:active,
+.restartButton:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 .guesses {

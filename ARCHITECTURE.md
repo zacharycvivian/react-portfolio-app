@@ -26,7 +26,7 @@ only things that ship/​hydrate JavaScript:
 | ---------------------- | --------------------------- |
 | `Chatbot.tsx`          | Terminal state + **lazy-loads the Firebase SDK** only when opened (`loadFirestoreDeps`) |
 | `HomeCarousel.tsx`     | Embla carousel + autoplay (browser-only) |
-| `HeroText.tsx`         | Time-of-day greeting + per-character word animation |
+| `HeroText.tsx`         | Time-of-day greeting + rolling specialty word (Framer spring; reduced-motion aware) |
 | `HeroButtons.tsx`      | Contact button is auth-gated (`useSession` + `signIn`) |
 | `ResumeButton.tsx`     | Resume download gated behind sign-in |
 | `Skills.tsx`           | **Server** — static data, kept on the server on purpose |
@@ -46,6 +46,46 @@ via **Server Actions** (`"use server"` functions). Authorization is centralized
 in one `getAdminDoc()` helper that every action and the page loader call — it
 resolves the requester's `users` doc (by NextAuth id, then email) and returns
 `null` unless `isAdmin` is set.
+
+## Liquid-glass design system
+
+The visual theme is a "liquid glass" treatment (translucent refractive panes,
+à la iOS 26) built from three layers:
+
+1. **Design tokens — `src/app/globals.css`.** Every glass surface consumes
+   shared custom properties instead of hand-rolling styles:
+   - `--glass-filter` / `--glass-filter-button` / `--glass-filter-popover` /
+     `--glass-filter-bar` — the backdrop recipes (blur + saturate fallback).
+   - `--glass-shadow-panel|button|popover|modal|pressed` (+hover variants) —
+     shadow stacks composed from `--glass-edge` (chromatic-dispersion fringe,
+     cool specular bevel, dark counter-bevel).
+   - Motion tokens: `--ease-glass` (standard), `--ease-gel` (overshooting
+     droplet spring, transforms only), `--dur-fast/med/gel`.
+   When adding a new surface, use these tokens — do not write bespoke
+   backdrop-filter/box-shadow stacks.
+
+2. **Refraction lens — `src/components/LiquidGlassDefs.tsx`.** Real liquid
+   glass refracts: the backdrop bends around each pane's edges with chromatic
+   aberration (R/G/B displaced by slightly different amounts). This is an SVG
+   filter (`#glass-lens`) whose displacement map is generated on a canvas at
+   runtime. Only Chromium supports SVG filters inside `backdrop-filter`, so the
+   component feature-detects the engine and sets `data-liquid-glass="on"` on
+   `<html>`; `globals.css` then swaps the `--glass-filter*` recipes over to the
+   lens. Safari/Firefox silently keep the frosted fallback. It also respects
+   `prefers-reduced-transparency`.
+
+3. **Reactive light — `src/components/ReactivityProvider.tsx`.** An opt-in
+   (theme dropdown → "Reactivity") pointer/tilt-driven light model: it
+   discovers glass surfaces at runtime, injects a `.reactive-sheen` overlay
+   into each, and drives per-pane rim light, a travelling specular glint,
+   prismatic fringes, and a subtle parallax tilt from one shared light source.
+   The rAF loop early-outs on settled frames, so an idle page costs almost
+   nothing.
+
+Text animations follow the same restraint: the header title "decodes" in place
+(constant width, `aria-hidden` glyphs + an `sr-only` static name) and the hero
+skill words roll vertically — both skip themselves under
+`prefers-reduced-motion` and pause in hidden tabs.
 
 ## Shared motion wrappers — `src/components/motion/Animated.tsx`
 

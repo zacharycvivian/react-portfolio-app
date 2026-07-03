@@ -11,6 +11,7 @@ import { Providers } from "./providers.jsx";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import FirebaseAuthProvider from "@/components/FirebaseAuthProvider";
+import LiquidGlassDefs from "@/components/LiquidGlassDefs";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira", display: "swap" });
@@ -34,15 +35,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <FirebaseAuthProvider>
           <Providers>
-            {/* SVG filter for liquid glass refraction distortion */}
-            <svg style={{position:'absolute',width:0,height:0,overflow:'hidden'}} aria-hidden="true">
-              <defs>
-                <filter id="glass-distort" x="-15%" y="-15%" width="130%" height="130%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.022 0.022" numOctaves="3" seed="5" result="noise"/>
-                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-                </filter>
-              </defs>
-            </svg>
+            <LiquidGlassDefs />
             <Header />
             <Sidebar />
             {children}

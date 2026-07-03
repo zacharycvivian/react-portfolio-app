@@ -23,9 +23,25 @@ import type {
 const ADMIN_EMAIL = "zacharycvivian@gmail.com";
 
 const fadeIn = {
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.2 } },
-  hidden: { opacity: 0, scale: 0.65, y: 50 },
+  visible: {
+    opacity: 1, scale: 1, y: 0,
+    transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  },
+  hidden: { opacity: 0, scale: 0.94, y: 20 },
 };
+
+/** Placeholder tiles shown while the photo grid streams in. */
+function SkeletonGrid() {
+  return (
+    <div className={styles.grid} aria-hidden="true">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div key={i} className={styles.skeletonTile}>
+          <div className={styles.imageShimmer} style={{ animationDelay: `${(i % 4) * 0.12}s` }} />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0 }: {
   photo: Photo;
@@ -224,6 +240,10 @@ export default function Gallery() {
   const navTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX = useRef(0);
 
+  // Instagram-style double-tap to like: `heartBurst` keys the burst animation.
+  const lastTapRef = useRef(0);
+  const [heartBurst, setHeartBurst] = useState<number | null>(null);
+
   // Fullscreen mode
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fsUIVisible, setFsUIVisible] = useState(true);
@@ -374,6 +394,22 @@ export default function Gallery() {
       });
     }
   };
+
+  // Double-tap/double-click on the photo: burst the heart and like (never
+  // unlike — matches Instagram). Signed-out users still get the burst as
+  // feedback, just no write.
+  const doubleTapLike = () => {
+    setHeartBurst(n => (n ?? 0) + 1);
+    if (!session?.user?.email || !selectedPhoto) return;
+    if (!selectedPhoto.likedBy?.includes(session.user.email)) void handleLike();
+  };
+
+  // Let the burst play, then unmount it (AnimatePresence animates the exit).
+  useEffect(() => {
+    if (heartBurst == null) return;
+    const t = setTimeout(() => setHeartBurst(null), 750);
+    return () => clearTimeout(t);
+  }, [heartBurst]);
 
   const handleLikeComment = async (commentId: string) => {
     if (!session?.user?.email || !selectedPhoto) return;
@@ -535,7 +571,7 @@ export default function Gallery() {
       </motion.p>
 
       {loading ? (
-        <p className={styles.emptyState}>Loading gallery...</p>
+        <SkeletonGrid />
       ) : (
         <div className={styles.grid}>
           {photos.map((photo, i) => {
@@ -587,9 +623,22 @@ export default function Gallery() {
               className={styles.lightboxImageSection}
               onMouseMove={() => { showNavBriefly(); if (isFullscreen) showFsUI(); }}
               onTouchStart={e => { touchStartX.current = e.touches[0].clientX; showNavBriefly(); if (isFullscreen) showFsUI(); }}
+              onDoubleClick={doubleTapLike}
               onTouchEnd={e => {
                 const diff = touchStartX.current - e.changedTouches[0].clientX;
-                if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+                if (Math.abs(diff) > 50) {
+                  navigate(diff > 0 ? 1 : -1);
+                  return;
+                }
+                // A near-stationary tap: check for a double tap (≤300ms apart).
+                if (Math.abs(diff) < 10) {
+                  if (e.timeStamp - lastTapRef.current < 300) {
+                    doubleTapLike();
+                    lastTapRef.current = 0;
+                  } else {
+                    lastTapRef.current = e.timeStamp;
+                  }
+                }
               }}
               onWheel={isFullscreen ? (e) => {
                 e.preventDefault();
@@ -616,6 +665,21 @@ export default function Gallery() {
                   } : undefined}
                   onLoad={() => setLightboxImgLoaded(true)}
                 />
+                <AnimatePresence>
+                  {heartBurst != null && (
+                    <motion.span
+                      key={heartBurst}
+                      className={styles.heartBurst}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: [0.4, 1.25, 1], opacity: 1 }}
+                      exit={{ scale: 1.5, opacity: 0, transition: { duration: 0.3 } }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                      aria-hidden="true"
+                    >
+                      ♥
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div

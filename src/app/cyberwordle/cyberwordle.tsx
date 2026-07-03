@@ -26,11 +26,11 @@ const CyberWordle: React.FC = () => {
       .then((text) => {
         const words: WordListType = text
           .split("\n")
-          .map((word) => word.trim())
+          .map((word) => word.trim().toUpperCase())
           .filter((word) => word.length === 5);
         if (!words.length) return;
         setWordList(words);
-        setCurrentWord(words[Math.floor(Math.random() * words.length)].toUpperCase());
+        setCurrentWord(words[Math.floor(Math.random() * words.length)]);
         setGuesses([]);
         setInputValues(["", "", "", "", ""]);
         setGameOver(false);
@@ -170,7 +170,9 @@ const CyberWordle: React.FC = () => {
       return;
     }
 
-    if (!validWords.includes(guess)) {
+    // A guess is valid if it's in the classic dictionary OR the active word
+    // list — otherwise cyber-list answers themselves would be rejected.
+    if (!validWords.includes(guess) && !wordList.includes(guess)) {
       alert("Your guess is not a valid word. Please try again.");
       // Clear the input fields after showing the alert.
       setInputValues(["", "", "", "", ""]);
@@ -210,6 +212,16 @@ const CyberWordle: React.FC = () => {
     }
   };
 
+  // Starts a fresh round in place (no full page reload) with a new word.
+  const restartGame = () => {
+    if (!wordList.length) return;
+    setCurrentWord(wordList[Math.floor(Math.random() * wordList.length)]);
+    setGuesses([]);
+    setInputValues(["", "", "", "", ""]);
+    setGameOver(false);
+    inputRefs.current[0]?.focus();
+  };
+
   // Handles the keyboard input for backspace and enter
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && !inputValues[index] && index > 0) {
@@ -241,32 +253,40 @@ const CyberWordle: React.FC = () => {
     ));
   };
 
+  // Wordle-accurate colouring: greens claim their letters first, then yellows
+  // consume what's left — so a guess with repeated letters never shows more
+  // yellow tiles than the answer actually contains.
+  const getGuessStyles = (guess: string): string[] => {
+    const result: string[] = Array(guess.length).fill(styles.gray);
+    const remaining: Record<string, number> = {};
+    for (let i = 0; i < guess.length; i++) {
+      if (guess[i] === currentWord[i]) {
+        result[i] = styles.green;
+      } else {
+        remaining[currentWord[i]] = (remaining[currentWord[i]] ?? 0) + 1;
+      }
+    }
+    for (let i = 0; i < guess.length; i++) {
+      if (result[i] === styles.green) continue;
+      if (remaining[guess[i]]) {
+        result[i] = styles.yellow;
+        remaining[guess[i]]--;
+      }
+    }
+    return result;
+  };
+
   // Generates feedback for each guess to indicate correct letters and positions
   const renderGuessFeedback = (
     guess: string,
     isCorrectWord: boolean = false
   ): React.ReactElement[] => {
-    return guess.split("").map((letter, index) => {
-      const letterStyle = isCorrectWord
-        ? styles.red
-        : getLetterStyle(letter, index);
-      return (
-        <span key={index} className={letterStyle}>
-          {letter.toUpperCase()}
-        </span>
-      );
-    });
-  };
-
-  // Determines the styling for each letter based on its presence and position in the word
-  const getLetterStyle = (letter: string, index: number) => {
-    if (currentWord[index] === letter) {
-      return styles.green;
-    } else if (currentWord.includes(letter)) {
-      return styles.yellow;
-    } else {
-      return styles.gray;
-    }
+    const letterStyles = isCorrectWord ? null : getGuessStyles(guess);
+    return guess.split("").map((letter, index) => (
+      <span key={index} className={letterStyles ? letterStyles[index] : styles.red}>
+        {letter.toUpperCase()}
+      </span>
+    ));
   };
 
   // Automatically scroll down 80 pixels to keep the game in view while keeping header/footer reachable
@@ -347,10 +367,7 @@ const CyberWordle: React.FC = () => {
             )}
           </div>
           {gameOver && (
-            <button
-              className={styles.restartButton}
-              onClick={() => window.location.reload()}
-            >
+            <button className={styles.restartButton} onClick={restartGame}>
               Restart
             </button>
           )}

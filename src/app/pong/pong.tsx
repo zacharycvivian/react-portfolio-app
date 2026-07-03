@@ -4,6 +4,30 @@ import styles from "./pong.module.css"; // Adjust the import path as necessary
 
 type Difficulty = "easy" | "medium" | "hard" | "impossible";
 
+// ── Game constants ────────────────────────────────────────────
+// All speeds are in px/SECOND and integrated with delta time, so the game
+// runs identically on 60Hz and 144Hz displays (the old version moved the
+// ball a fixed distance per frame — hence "way too fast" on fast monitors).
+const CANVAS_W = 600;
+const CANVAS_H = 400;
+const PADDLE_W = 10;
+const BALL_R = 5;
+const WIN_SCORE = 5;
+const MAX_BOUNCE_ANGLE = Math.PI / 3; // 60° off-center deflection
+const SPEED_RAMP = 1.05; // rally speeds up 5% per paddle hit...
+const MAX_RAMP = 1.6; // ...up to +60%
+const SERVE_DELAY = 0.9; // seconds of breathing room between points
+
+const difficultySettings: Record<
+  Difficulty,
+  { paddleHeight: number; ballSpeed: number; aiSpeed: number }
+> = {
+  easy: { paddleHeight: 80, ballSpeed: 250, aiSpeed: 170 },
+  medium: { paddleHeight: 60, ballSpeed: 310, aiSpeed: 240 },
+  hard: { paddleHeight: 45, ballSpeed: 380, aiSpeed: 330 },
+  impossible: { paddleHeight: 30, ballSpeed: 440, aiSpeed: 600 },
+};
+
 const PongGame: React.FC = () => {
   // First useEffect shows instructions to the player and sets a flag in sessionStorage to not show it again
   useEffect(() => {
@@ -137,213 +161,216 @@ const PongGame: React.FC = () => {
   const [difficulty, setDifficulty] = useState<Difficulty | "">(""); // Use the Difficulty type for your state
   const gameCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number>(0);
-  const [paddleHeight, setPaddleHeight] = useState(60); // Initial default value
 
-  // Constants for game settings
-  const paddleWidth = 10;
-  const ballSize = 10;
-
-  const playerPaddleYRef = useRef(50);
-  const computerPaddleYRef = useRef(50);
-  const ballXRef = useRef(50);
-  const ballYRef = useRef(50);
-  const ballSpeedXRef = useRef(5);
-  const ballSpeedYRef = useRef(3);
-  const computerPaddleSpeedRef = useRef(4); // Set a default value that makes sense for your game
-
-  const difficultySettings = {
-    easy: {
-      paddleHeight: 80, // Example size, adjust as needed
-      ballSpeed: { x: 3, y: 2 }, // Example speeds, adjust as needed
-      computerPaddleSpeed: 2, // Example speed, adjust as needed
-    },
-    medium: {
-      paddleHeight: 60, // Example size, adjust as needed
-      ballSpeed: { x: 5, y: 4 }, // Example speeds, adjust as needed
-      computerPaddleSpeed: 4, // Example speed, adjust as needed
-    },
-    hard: {
-      paddleHeight: 40, // Example size, adjust as needed
-      ballSpeed: { x: 7, y: 6 }, // Example speeds, adjust as needed
-      computerPaddleSpeed: 6, // Example speed, adjust as needed
-    },
-    impossible: {
-        paddleHeight: 25, // Example size, adjust as needed
-        ballSpeed: { x: 8, y: 7 }, // Example speeds, adjust as needed
-        computerPaddleSpeed: 10, // Example speed, adjust as needed
-      },
-  };
+  // Mutable game state lives in one ref so the rAF loop never fights React
+  // re-renders. Scores are the only game state React needs to know about.
+  const gameRef = useRef({
+    playerY: (CANVAS_H - 60) / 2,
+    aiY: (CANVAS_H - 60) / 2,
+    ballX: CANVAS_W / 2,
+    ballY: CANVAS_H / 2,
+    velX: 0,
+    velY: 0,
+    paddleH: 60,
+    ballSpeed: 310,
+    aiSpeed: 240,
+    ramp: 1,
+    serveTimer: 0,
+    serveDir: 1 as 1 | -1,
+  });
 
   const startGame = (selectedDifficulty: Difficulty) => {
+    const settings = difficultySettings[selectedDifficulty];
+    const g = gameRef.current;
+    g.paddleH = settings.paddleHeight;
+    g.ballSpeed = settings.ballSpeed;
+    g.aiSpeed = settings.aiSpeed;
+    g.playerY = (CANVAS_H - settings.paddleHeight) / 2;
+    g.aiY = (CANVAS_H - settings.paddleHeight) / 2;
+    g.ballX = CANVAS_W / 2;
+    g.ballY = CANVAS_H / 2;
+    g.velX = 0;
+    g.velY = 0;
+    g.ramp = 1;
+    g.serveTimer = SERVE_DELAY;
+    g.serveDir = Math.random() > 0.5 ? 1 : -1;
+
     setPlayerScore(0);
     setComputerScore(0);
-    setGameStatus("playing");
     setDifficulty(selectedDifficulty);
-  
-    const settings = difficultySettings[selectedDifficulty];
-    setPaddleHeight(settings.paddleHeight); // Update state to trigger re-render
-    ballSpeedXRef.current = settings.ballSpeed.x;
-    ballSpeedYRef.current = settings.ballSpeed.y;
-    computerPaddleSpeedRef.current = settings.computerPaddleSpeed;
-    ballXRef.current = 50;
-    ballYRef.current = 50;
-    playerPaddleYRef.current = 50;
-    computerPaddleYRef.current = 50;
+    setGameStatus("playing");
   };
 
   useEffect(() => {
+    if (gameStatus !== "playing") return;
     const gameCanvas = gameCanvasRef.current;
-    if (!gameCanvas || !gameCanvas.getContext) return;
+    const ctx = gameCanvas?.getContext("2d");
+    if (!gameCanvas || !ctx) return;
 
-    const ctx = gameCanvas.getContext("2d");
-    if (!ctx) return;
+    gameCanvas.width = CANVAS_W;
+    gameCanvas.height = CANVAS_H;
 
-    gameCanvas.width = 600;
-    gameCanvas.height = 400;
+    const g = gameRef.current;
+    const clamp = (v: number, min: number, max: number) =>
+      Math.max(min, Math.min(max, v));
 
-    const resetBall = () => {
-      ballXRef.current = gameCanvas.width / 2;
-      ballYRef.current = gameCanvas.height / 2;
-      ballSpeedXRef.current = 5 * (Math.random() > 0.5 ? 1 : -1);
-      ballSpeedYRef.current = 3 * (Math.random() > 0.5 ? 1 : -1);
+    /** Queue the next serve: ball parks at center until the timer runs out. */
+    const queueServe = (dir: 1 | -1) => {
+      g.ballX = CANVAS_W / 2;
+      g.ballY = CANVAS_H / 2;
+      g.velX = 0;
+      g.velY = 0;
+      g.ramp = 1;
+      g.serveDir = dir;
+      g.serveTimer = SERVE_DELAY;
     };
 
-    const checkCollisionWithPaddles = () => {
-      // Player paddle collision
-      if (
-        ballXRef.current <= paddleWidth &&
-        ballYRef.current > playerPaddleYRef.current &&
-        ballYRef.current < playerPaddleYRef.current + paddleHeight
-      ) {
-        ballSpeedXRef.current = -ballSpeedXRef.current;
-      }
-      // Computer paddle collision
-      if (
-        ballXRef.current >= gameCanvas.width - paddleWidth - ballSize &&
-        ballYRef.current > computerPaddleYRef.current &&
-        ballYRef.current < computerPaddleYRef.current + paddleHeight
-      ) {
-        ballSpeedXRef.current = -ballSpeedXRef.current;
-      }
+    /** Launch the ball at a shallow random angle toward `serveDir`. */
+    const serve = () => {
+      const angle = (Math.random() * 2 - 1) * (Math.PI / 6); // ±30°
+      g.velX = Math.cos(angle) * g.ballSpeed * g.serveDir;
+      g.velY = Math.sin(angle) * g.ballSpeed;
     };
 
-    const moveComputerPaddle = () => {
-      const targetY = ballYRef.current - paddleHeight / 2;
-
-      if (computerPaddleYRef.current + paddleHeight / 2 < targetY) {
-        computerPaddleYRef.current += computerPaddleSpeedRef.current;
-      } else if (computerPaddleYRef.current + paddleHeight / 2 > targetY) {
-        computerPaddleYRef.current -= computerPaddleSpeedRef.current;
-      }
-
-      computerPaddleYRef.current = Math.max(0, computerPaddleYRef.current);
-      computerPaddleYRef.current = Math.min(
-        gameCanvas.height - paddleHeight,
-        computerPaddleYRef.current
+    /** Deflect off a paddle: exit angle depends on where the ball struck, so
+     * players can aim shots with the paddle edge — and each hit speeds the
+     * rally up slightly. */
+    const bounce = (paddleY: number, dir: 1 | -1) => {
+      const offset = clamp(
+        (g.ballY - (paddleY + g.paddleH / 2)) / (g.paddleH / 2 + BALL_R),
+        -1,
+        1
       );
+      g.ramp = Math.min(g.ramp * SPEED_RAMP, MAX_RAMP);
+      const speed = g.ballSpeed * g.ramp;
+      const angle = offset * MAX_BOUNCE_ANGLE;
+      g.velX = Math.cos(angle) * speed * dir;
+      g.velY = Math.sin(angle) * speed;
     };
 
-    const gameLoop = () => {
-      if (gameStatus !== "playing") {
-        return;
+    const step = (dt: number) => {
+      // Serve pause: hold the ball at center, then launch.
+      if (g.serveTimer > 0) {
+        g.serveTimer -= dt;
+        if (g.serveTimer <= 0) serve();
+      } else {
+        g.ballX += g.velX * dt;
+        g.ballY += g.velY * dt;
       }
 
-      ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
+      // Top/bottom walls — clamp position so the ball can't tunnel out and
+      // oscillate against the wall.
+      if (g.ballY - BALL_R < 0) {
+        g.ballY = BALL_R;
+        g.velY = Math.abs(g.velY);
+      } else if (g.ballY + BALL_R > CANVAS_H) {
+        g.ballY = CANVAS_H - BALL_R;
+        g.velY = -Math.abs(g.velY);
+      }
 
-      ballXRef.current += ballSpeedXRef.current;
-      ballYRef.current += ballSpeedYRef.current;
-
-      // Wall collision
+      // Player paddle (left). Only while the ball moves left, and snap the
+      // ball flush with the paddle face so it can never get stuck inside.
       if (
-        ballYRef.current <= 0 ||
-        ballYRef.current >= gameCanvas.height - ballSize
+        g.velX < 0 &&
+        g.ballX - BALL_R <= PADDLE_W &&
+        g.ballX + BALL_R > 0 &&
+        g.ballY > g.playerY - BALL_R &&
+        g.ballY < g.playerY + g.paddleH + BALL_R
       ) {
-        ballSpeedYRef.current = -ballSpeedYRef.current;
+        g.ballX = PADDLE_W + BALL_R;
+        bounce(g.playerY, 1);
       }
 
-      // Score update and ball reset
-      if (ballXRef.current < 0) {
-        setComputerScore((score) => {
-          if (score + 1 === 5) {
-            setGameStatus("ended");
-          }
-          return score + 1;
+      // Computer paddle (right).
+      if (
+        g.velX > 0 &&
+        g.ballX + BALL_R >= CANVAS_W - PADDLE_W &&
+        g.ballX - BALL_R < CANVAS_W &&
+        g.ballY > g.aiY - BALL_R &&
+        g.ballY < g.aiY + g.paddleH + BALL_R
+      ) {
+        g.ballX = CANVAS_W - PADDLE_W - BALL_R;
+        bounce(g.aiY, -1);
+      }
+
+      // Scoring — ball fully past an edge. Point, then serve toward whoever
+      // just conceded.
+      if (g.ballX + BALL_R < 0) {
+        setComputerScore((s) => {
+          if (s + 1 >= WIN_SCORE) setGameStatus("ended");
+          return s + 1;
         });
-        resetBall();
-      } else if (ballXRef.current > gameCanvas.width) {
-        setPlayerScore((score) => {
-          if (score + 1 === 5) {
-            setGameStatus("ended");
-          }
-          return score + 1;
+        queueServe(-1);
+      } else if (g.ballX - BALL_R > CANVAS_W) {
+        setPlayerScore((s) => {
+          if (s + 1 >= WIN_SCORE) setGameStatus("ended");
+          return s + 1;
         });
-        resetBall();
+        queueServe(1);
       }
 
-      checkCollisionWithPaddles();
-      moveComputerPaddle();
+      // AI: chase the ball only while it's incoming; otherwise drift back to
+      // center. The dead-zone stops it vibrating once aligned.
+      const aiTarget = g.velX > 0 ? g.ballY : CANVAS_H / 2;
+      const aiCenter = g.aiY + g.paddleH / 2;
+      const diff = aiTarget - aiCenter;
+      if (Math.abs(diff) > 6) {
+        const move = clamp(diff, -g.aiSpeed * dt, g.aiSpeed * dt);
+        g.aiY = clamp(g.aiY + move, 0, CANVAS_H - g.paddleH);
+      }
+    };
 
-      // Draw paddles and ball
-      ctx.fillStyle = "white";
-      ctx.fillRect(
-        0,
-        playerPaddleYRef.current,
-        paddleWidth,
-        paddleHeight
-      );
-      ctx.fillRect(
-        gameCanvas.width - paddleWidth,
-        computerPaddleYRef.current,
-        paddleWidth,
-        paddleHeight
-      );
+    const draw = () => {
+      ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+      // Center line
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.setLineDash([8, 10]);
       ctx.beginPath();
-      ctx.arc(
-        ballXRef.current,
-        ballYRef.current,
-        ballSize / 2,
-        0,
-        Math.PI * 2,
-        true
-      );
+      ctx.moveTo(CANVAS_W / 2, 0);
+      ctx.lineTo(CANVAS_W / 2, CANVAS_H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, g.playerY, PADDLE_W, g.paddleH);
+      ctx.fillRect(CANVAS_W - PADDLE_W, g.aiY, PADDLE_W, g.paddleH);
+      ctx.beginPath();
+      ctx.arc(g.ballX, g.ballY, BALL_R, 0, Math.PI * 2);
       ctx.fill();
-
-      if (gameStatus === "playing") {
-        animationFrameId.current = requestAnimationFrame(gameLoop);
-      }
     };
 
-    const handleMouseMove = (event: MouseEvent) => {
+    let last = performance.now();
+    const gameLoop = (now: number) => {
+      // Clamp dt so a background-tab pause doesn't teleport the ball.
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+      step(dt);
+      draw();
+      animationFrameId.current = requestAnimationFrame(gameLoop);
+    };
+
+    /** Map a pointer's viewport Y to canvas coordinates. The canvas is CSS
+     * scaled (width: 100%), so clientY must be rescaled — the old code
+     * skipped this, making the paddle drift away from the cursor whenever
+     * the canvas wasn't rendered at exactly 600×400. */
+    const paddleFromClientY = (clientY: number) => {
       const rect = gameCanvas.getBoundingClientRect();
-      playerPaddleYRef.current =
-        event.clientY - rect.top - paddleHeight / 2;
-      playerPaddleYRef.current = Math.max(0, playerPaddleYRef.current);
-      playerPaddleYRef.current = Math.min(
-        gameCanvas.height - paddleHeight,
-        playerPaddleYRef.current
-      );
+      const y = ((clientY - rect.top) / rect.height) * CANVAS_H;
+      g.playerY = clamp(y - g.paddleH / 2, 0, CANVAS_H - g.paddleH);
     };
+
+    const handleMouseMove = (event: MouseEvent) => paddleFromClientY(event.clientY);
     const handleTouchMove = (event: TouchEvent) => {
       if (event.touches.length === 0) return;
-      const touch = event.touches[0];
-      const rect = gameCanvas.getBoundingClientRect();
-      playerPaddleYRef.current =
-        touch.clientY - rect.top - paddleHeight / 2;
-      playerPaddleYRef.current = Math.max(0, playerPaddleYRef.current);
-      playerPaddleYRef.current = Math.min(
-        gameCanvas.height - paddleHeight,
-        playerPaddleYRef.current
-      );
+      paddleFromClientY(event.touches[0].clientY);
       event.preventDefault(); // Prevent scrolling when moving the paddle
     };
 
     document.addEventListener("mousemove", handleMouseMove);
-    gameCanvas.addEventListener("touchmove", handleTouchMove);
+    gameCanvas.addEventListener("touchmove", handleTouchMove, { passive: false });
 
-    if (gameStatus === "playing") {
-      resetBall();
-      animationFrameId.current = requestAnimationFrame(gameLoop);
-    }
+    animationFrameId.current = requestAnimationFrame(gameLoop);
 
     // Cleanup
     return () => {
@@ -351,7 +378,7 @@ const PongGame: React.FC = () => {
       gameCanvas.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(animationFrameId.current);
     };
-  }, [gameStatus, paddleHeight]);
+  }, [gameStatus]);
 
   useEffect(() => {
     // Automatically scroll down 80 pixels to ensure the game is in full view

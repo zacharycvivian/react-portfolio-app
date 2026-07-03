@@ -16,9 +16,10 @@
   box-sizing: border-box;
   z-index: 5;
   font-family: var(--font-fira), monospace !important;
-  /* Liquid glass header — dark glass */
+  /* Liquid glass header — dark glass. Bars keep the plain frost recipe:
+     the refraction lens is for rounded panes, not full-width chrome. */
   background: rgba(13, 15, 22, 0.815);
-  backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: var(--glass-filter-bar);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     /* Chromatic aberration at bottom edge */
@@ -41,6 +42,18 @@
   z-index: 0;
 }
 
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Gel entrance: overshoots slightly and settles, like a droplet landing */
+@keyframes modalPop {
+  0%   { opacity: 0; transform: scale(0.88) translateY(20px); }
+  70%  { opacity: 1; transform: scale(1.015) translateY(-3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 .modalBackdrop {
   position: fixed;
   top: 0;
@@ -53,6 +66,7 @@
   align-items: center;
   z-index: 100;
   backdrop-filter: blur(12px);
+  animation: backdropIn var(--dur-med) ease both;
 }
 
 .modalContent {
@@ -65,17 +79,10 @@
   z-index: 100;
   /* Liquid glass modal */
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
-  box-shadow:
-    -2px -2px 0 var(--glass-chroma-a),
-    2px 2px 0 var(--glass-chroma-b),
-    -4px -4px 12px rgba(255, 100, 180, 0.10),
-    4px 4px 12px rgba(100, 168, 255, 0.10),
-    inset 0 1.5px 0 var(--glass-specular),
-    inset 1px 0 0 rgba(255, 255, 255, 0.18),
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 4px 16px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--glass-shadow-modal);
+  animation: modalPop 380ms var(--ease-glass) both;
 }
 
 .modalContent::before {
@@ -87,7 +94,6 @@
   background:
     radial-gradient(ellipse at 30% -8%, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.08) 38%, transparent 60%),
     linear-gradient(152deg, rgba(255, 255, 255, 0.10) 0%, transparent 46%);
-  filter: url(#glass-distort);
   z-index: 0;
 }
 
@@ -135,17 +141,12 @@
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  transition: box-shadow 0.2s, background 0.2s, transform 0.12s;
-  will-change: transform;
+  transition: box-shadow var(--dur-fast), background var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
   position: relative;
   z-index: 1;
   /* Liquid glass buttons */
-  backdrop-filter: blur(12px) saturate(140%);
-  box-shadow:
-    -1px -1px 0 rgba(255, 128, 200, 0.35),
-    1px 1px 0 rgba(128, 188, 255, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 4px 14px rgba(0, 0, 0, 0.14);
+  backdrop-filter: var(--glass-filter-button);
+  box-shadow: var(--glass-shadow-button);
 }
 
 .submitButton {
@@ -162,19 +163,13 @@
 
 .submitButton:hover,
 .cancelButton:hover {
-  box-shadow:
-    -1.5px -1.5px 0 rgba(255, 128, 200, 0.48),
-    1.5px 1.5px 0 rgba(128, 188, 255, 0.40),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65),
-    0 6px 20px rgba(0, 0, 0, 0.18) !important;
+  box-shadow: var(--glass-shadow-button-hover);
 }
 
 .submitButton:active,
 .cancelButton:active {
   transform: scale(0.97);
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.40) !important;
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 @keyframes dropdownMorph {
@@ -192,21 +187,17 @@
 
 .dropdownContent {
   background: var(--glass-bg);
-  backdrop-filter: blur(80px) saturate(240%);
+  backdrop-filter: var(--glass-filter-popover);
   border: 1px solid var(--glass-border);
   color: var(--text-color-light);
   border-radius: 20px;
   cursor: pointer;
-  box-shadow:
-    -1px -1px 0 var(--glass-chroma-a),
-    1px 1px 0 var(--glass-chroma-b),
-    inset 0 1px 0 var(--glass-specular),
-    0 12px 40px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--glass-shadow-popover);
   transform-origin: top right;
 }
 
 .dropdownContent[data-state="open"] {
-  animation: dropdownMorph 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: dropdownMorph var(--dur-gel) var(--ease-gel) both;
 }
 
 .iconButton {
@@ -222,17 +213,14 @@
   margin-left: 10px;
   /* Liquid glass icon button */
   background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: var(--glass-filter-button);
   color: var(--text-color-dark);
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.22),
     0.5px 0.5px 0 rgba(128, 188, 255, 0.16),
-    -2px -2px 6px rgba(255, 100, 180, 0.06),
-    2px 2px 6px rgba(100, 168, 255, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 4px 14px rgba(0, 0, 0, 0.28);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.12s;
-  will-change: transform;
+  transition: background var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-gel) var(--ease-gel);
 }
 
 .iconButton img,
@@ -258,8 +246,6 @@
   box-shadow:
     -0.5px -0.5px 0 rgba(255, 128, 200, 0.30),
     0.5px 0.5px 0 rgba(128, 188, 255, 0.22),
-    -2px -2px 6px rgba(255, 100, 180, 0.08),
-    2px 2px 6px rgba(100, 168, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 4px 14px rgba(0, 0, 0, 0.32);
 }
@@ -267,9 +253,7 @@
 .iconButton:active {
   transform: scale(0.92);
   background: rgba(255, 255, 255, 0.10);
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: var(--glass-shadow-pressed);
 }
 
 .profileAndToggleContainer {
@@ -365,16 +349,12 @@
   overflow: hidden;
   z-index: 200;
   background: var(--glass-bg);
-  backdrop-filter: blur(80px) saturate(240%);
+  backdrop-filter: var(--glass-filter-popover);
   border: 1px solid var(--glass-border);
-  box-shadow:
-    -1px -1px 0 var(--glass-chroma-a),
-    1px 1px 0 var(--glass-chroma-b),
-    inset 0 1px 0 var(--glass-specular),
-    0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--glass-shadow-popover);
   color: var(--text-color-light);
   transform-origin: top right;
-  animation: dropdownMorph 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: dropdownMorph var(--dur-gel) var(--ease-gel) both;
 }
 
 .notifPanelHeader {

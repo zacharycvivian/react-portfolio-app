@@ -152,6 +152,9 @@ const SnakeGame: React.FC = () => {
   const [score, setScore] = useState<number>(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [showRestartButton, setShowRestartButton] = useState(false);
+  // The snake used to start moving on page load and could die before the
+  // player even touched a key — wait for the first input instead.
+  const [started, setStarted] = useState(false);
 
   // This useEffect is responsible for adjusting the game size to fit the parent container
   useEffect(() => {
@@ -200,6 +203,7 @@ const SnakeGame: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (gameOver) return; // Ignore key presses if game is over
       let shouldPreventDefault = true;
+      if (e.key.startsWith("Arrow")) setStarted(true);
       switch (e.key) {
         // Update direction based on arrow key pressed, preventing reverse movement
         case "ArrowUp":
@@ -244,6 +248,7 @@ const SnakeGame: React.FC = () => {
       const deltaX = e.touches[0].clientX - touchStartRef.current.x;
       const deltaY = e.touches[0].clientY - touchStartRef.current.y;
 
+      setStarted(true);
       // Set the direction based on the swipe gesture, preventing reverse movement
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal movement
@@ -300,6 +305,16 @@ const SnakeGame: React.FC = () => {
     setApple(potentialApple);
   }, [gameSize.height, gameSize.width, snake]);
 
+  // The initial apple is a hardcoded (200, 200); on small screens that can be
+  // outside the canvas entirely, making the game unwinnable. Respawn it
+  // in-bounds once the real canvas size is known (or after a resize).
+  useEffect(() => {
+    if (!gameSize.width || !gameSize.height) return;
+    if (apple.x >= gameSize.width || apple.y >= gameSize.height) {
+      spawnApple();
+    }
+  }, [gameSize, apple, spawnApple]);
+
   // Effect hook for the main game loop
   useEffect(() => {
     const ctx = canvasRef.current?.getContext("2d");
@@ -336,23 +351,27 @@ const SnakeGame: React.FC = () => {
           newSnake.push(newSegment);
         }
         setScore((prev) => prev + 1); // Increment score
+        setSpeed((prev) => Math.max(55, prev - 2)); // Speed up a touch per apple
         spawnApple(); // Generate a new apple position
       }
 
       setSnake(newSnake); // Update the snake's position
     };
 
+    if (!started) return; // Wait for the player's first input before moving
     const gameLoop = setInterval(moveSnake, speed);
     return () => clearInterval(gameLoop);
-  }, [snake, dir, apple, gameOver, gameSize, speed, spawnApple]);
+  }, [snake, dir, apple, gameOver, gameSize, speed, spawnApple, started]);
 
   const restartGame = () => {
     setSnake([{ x: 20, y: 20 }]);
     setDir({ x: 20, y: 0 });
     spawnApple();
     setScore(0);
+    setSpeed(100);
     setGameOver(false);
     setShowRestartButton(false);
+    setStarted(false);
   };
 
   // Effect hook to draw the snake and the apple
