@@ -33,9 +33,15 @@ function isAllowedUrl(raw: string): boolean {
   );
 }
 
+/** Keep only characters that are safe inside a quoted Content-Disposition. */
+function safeFilename(raw: string | null): string {
+  const cleaned = (raw ?? "photo.jpg").replace(/[\r\n"\\\x00-\x1f\x7f]/g, "");
+  return cleaned.slice(0, 150) || "photo.jpg";
+}
+
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url");
-  const filename = request.nextUrl.searchParams.get("filename") ?? "photo.jpg";
+  const filename = safeFilename(request.nextUrl.searchParams.get("filename"));
 
   if (!url) return NextResponse.json({ error: "Missing url" }, { status: 400 });
   if (!isAllowedUrl(url)) {

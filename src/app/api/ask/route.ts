@@ -16,35 +16,11 @@ import { FieldValue } from "firebase-admin/firestore";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import { adminDb } from "@/../firebase-admin";
+import { getClientIp, checkRateLimit } from "@/lib/rateLimit";
 
 const MAX_PROMPT_LENGTH = 1200;
 const RATE_LIMIT_MAX = 5; // requests…
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // …per 5 minutes, per IP
-
-function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
-
-/** Firestore-backed fixed-window rate limit. Returns true if allowed. */
-async function checkRateLimit(ip: string): Promise<boolean> {
-  const key = ip.replace(/[^a-zA-Z0-9_.:-]/g, "_") || "unknown";
-  const ref = adminDb.collection("rateLimits").doc(key);
-  return adminDb.runTransaction(async (tx) => {
-    const snap = await tx.get(ref);
-    const now = Date.now();
-    const data = snap.exists ? snap.data() : null;
-
-    if (!data || now - (data.windowStart ?? 0) > RATE_LIMIT_WINDOW_MS) {
-      tx.set(ref, { windowStart: now, count: 1 });
-      return true;
-    }
-    if ((data.count ?? 0) >= RATE_LIMIT_MAX) return false;
-    tx.update(ref, { count: (data.count ?? 0) + 1 });
-    return true;
-  });
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = getClientIp(request);
-    if (!(await checkRateLimit(ip))) {
+    if (!(await checkRateLimit("ask", ip, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS))) {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
