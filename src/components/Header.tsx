@@ -415,7 +415,7 @@ function Header() {
                 <path d="m16.24 7.76l-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/>
                 <circle cx="12" cy="12" r="10"/>
               </svg>
-              <span style={{ flex: 1 }}>Reactivity</span>
+              <span style={{ flex: 1 }}>Liquid Glass</span>
               {reactive && (
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                   <path d="M20 6 9 17l-5-5"/>

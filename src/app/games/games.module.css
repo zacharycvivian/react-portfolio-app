@@ -80,6 +80,12 @@
     0 0 26px rgba(120, 240, 255, 0.25);
 }
 
+/* Gel press — a quick droplet squish before it springs back. */
+.card:active {
+  transform: translateY(-1px) scale(0.98);
+  transition-duration: var(--dur-fast);
+}
+
 .cardTag {
   font-size: 11px;
   letter-spacing: 2px;

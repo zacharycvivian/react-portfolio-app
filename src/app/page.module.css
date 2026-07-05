@@ -225,30 +225,41 @@
   height: 20px;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: inset 4px 4px 6px var(--card-shadow), inset -4px -4px 6px var(--card-shadow-2);
-  /* Remove browser default appearance so the fill color is consistent */
+  /* Recessed glass track — translucent with an inner bevel, so the fill reads
+     as liquid sitting inside a glass channel. */
   background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16);
   -webkit-appearance: none;
   appearance: none;
 }
 
-/* Track (background) */
+/* Track (background) — transparent so the glass .skillBar shows through. */
 .skillBar::-webkit-progress-bar {
-  background-color: var(--third-color);
+  background: transparent;
   border-radius: 20px;
 }
 
-/* Fill — purple→blue gradient tied to the glass accent palette */
+/* Fill — a lit "liquid glass" column: accent gradient with a top specular
+   highlight + a bottom shade so it reads as a rounded glass bead, plus a soft
+   accent glow. Kept static (no perpetual animation) so 16 bars don't repaint
+   forever. */
 .skillBar::-webkit-progress-value {
-  background: linear-gradient(90deg, #9580b8 0%, #5f8fc7 100%);
   border-radius: 20px;
-  transition: width 0.4s ease;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 44%, rgba(0, 0, 0, 0.14) 100%),
+    linear-gradient(105deg, rgba(255, 255, 255, 0.22) 0%, transparent 45%),
+    linear-gradient(90deg, #9d84d6 0%, #5f9fd6 100%);
+  box-shadow: 0 0 10px rgba(120, 160, 230, 0.35);
 }
 
-/* Firefox */
 .skillBar::-moz-progress-bar {
-  background: linear-gradient(90deg, #9580b8 0%, #5f8fc7 100%);
   border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 44%, rgba(0, 0, 0, 0.14) 100%),
+    linear-gradient(90deg, #9d84d6 0%, #5f9fd6 100%);
 }
 
 .skillLevelLabel {
@@ -342,10 +353,17 @@
 .carouselItem {
   max-width: 800px;
   margin: 20px 0;
-  box-shadow: 6px 6px 8px var(--card-shadow), -6px -6px 8px var(--card-shadow-2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-panel);
   border-radius: 60px;
   overflow: hidden;
   z-index: 1;
+  transition: transform var(--dur-gel) var(--ease-gel), box-shadow var(--dur-fast);
+}
+
+.carouselItem:hover {
+  transform: scale(1.015);
+  box-shadow: var(--glass-shadow-panel-hover);
 }
 
 .carouselItem img {
@@ -445,9 +463,13 @@
   align-items: center;
   padding: 0 10px;
   box-sizing: border-box;
-  border-radius: 14px 14px 0 0;
+  /* Radius flows from a round blob to the terminal's corners during the open
+     morph (--term-radius is animated by Framer on the container). */
+  border-radius: var(--term-radius, 14px) var(--term-radius, 14px) 0 0;
   background: rgba(24, 26, 38, 0.72);
-  backdrop-filter: var(--glass-filter-button);
+  /* Same glass recipe as the terminal body (and the header bar) so the window's
+     title bar reads as one continuous pane, not a different material. */
+  backdrop-filter: var(--glass-filter-bar);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-bottom: none;
   box-shadow:
@@ -516,7 +538,7 @@
   height: 250px;
   width: 400px;
   max-width: calc(100vw - 40px);
-  backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter-bar);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-top: none;
   box-shadow:
@@ -527,8 +549,8 @@
   padding-top: 2px;
   margin-top: -1px;
   font-size: 12px;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
+  border-bottom-left-radius: var(--term-radius, 14px);
+  border-bottom-right-radius: var(--term-radius, 14px);
   display: flex;
   flex-direction: column;
   z-index: 8;

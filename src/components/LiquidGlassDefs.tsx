@@ -29,13 +29,13 @@ const EDGE = 58; // px of refractive bezel on the 256px reference map
 /** How far the backdrop bends at the very edge of a pane. The filter uses
  * objectBoundingBox primitive units, so this is a fraction of the element's
  * normalized diagonal (≈0.22 → roughly 40–55px on a typical card). */
-const REFRACTION_STRENGTH = 0.22;
+const REFRACTION_STRENGTH = 0.26;
 
 /** Per-channel dispersion: red refracts hardest, blue least, so the bent edge
  * splits into a rainbow fringe — real chromatic aberration, not a painted-on
  * shadow. Ratios are relative to REFRACTION_STRENGTH. */
-const DISPERSION_R = 1.12;
-const DISPERSION_B = 0.88;
+const DISPERSION_R = 1.2;
+const DISPERSION_B = 0.8;
 
 /** feColorMatrix rows that isolate one channel (keeping alpha). */
 const KEEP_R = "1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0";

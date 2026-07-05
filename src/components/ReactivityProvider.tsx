@@ -17,9 +17,10 @@ const FALLOFF = 520; // px beyond a pane's edge where its light fades to nothing
 const BASE_LIGHT = 0.1; // faint ambient rim so every pane reads as glass
 const EASE = 0.12; // light-position smoothing per frame
 
-// Extra non-glass surfaces that should still catch the reactive light
-// (e.g. the gallery photo tiles, which use solid backgrounds, not blur).
-const OPT_IN_SELECTOR = '[class*="photoCard"]';
+// Extra non-glass surfaces that should still catch the reactive light + tilt
+// (e.g. the gallery photo tiles and the home hero carousel, which use solid
+// image backgrounds, not blur).
+const OPT_IN_SELECTOR = '[class*="photoCard"], [class*="carouselItem"]';
 
 export function useReactivity() {
   const ctx = React.useContext(ReactivityContext);
@@ -119,8 +120,12 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
         }
         // Only tilt in-flow panels (static/relative). Fixed/absolute glass is
         // typically centered via transform (modals, dropdowns) — leave those be.
+        // Also skip tiles that animate their OWN transform (the gallery's
+        // polaroid tilt) — otherwise the engine and Framer fight for
+        // `el.style.transform` every frame. Those still get the light sheen.
         const inFlow = cs.position === "static" || cs.position === "relative";
-        if (!prefersReduced && inFlow && tiltEligible(r)) {
+        const ownsTransform = el.matches('[class*="photoCard"]');
+        if (!prefersReduced && inFlow && tiltEligible(r) && !ownsTransform) {
           el.dataset.reactiveTilt = "1";
           // Neutralize any transform transition so our per-frame easing reads
           // crisply, and pin the pivot to centre for a natural tip.

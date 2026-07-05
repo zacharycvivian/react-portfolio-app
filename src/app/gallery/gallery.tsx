@@ -43,36 +43,47 @@ function SkeletonGrid() {
   );
 }
 
-function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0 }: {
+function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0, rotation = 0 }: {
   photo: Photo;
   isAdmin: boolean;
   onSelect: () => void;
   onDelete: (e: React.MouseEvent) => void;
   animDelay?: number;
+  rotation?: number;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   return (
     <motion.div
       className={styles.photoCard}
       onClick={onSelect}
-      initial={{ opacity: 0, scale: 0.92, y: 10 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      // Resting state is tilted + upscaled so the polaroids clearly overlap;
+      // hovering straightens, enlarges and lifts the one photo above the rest.
+      initial={{ opacity: 0, scale: 0.88, y: 14, rotate: rotation }}
+      whileInView={{ opacity: 1, scale: 1.08, y: 0, rotate: rotation }}
+      whileHover={{
+        scale: 1.18,
+        rotate: 0,
+        y: -6,
+        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+      }}
       viewport={{ once: true, amount: 0.05 }}
-      transition={{ delay: animDelay, duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+      transition={{ delay: animDelay, duration: 0.45, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
     >
-      {!imgLoaded && <div className={styles.imageShimmer} />}
-      <Image
-        src={photo.url}
-        alt={photo.caption || "Gallery photo"}
-        fill
-        className={styles.image}
-        sizes="(max-width: 500px) 50vw, 33vw"
-        onLoad={() => setImgLoaded(true)}
-      />
-      <div className={styles.photoOverlay}>
-        {!!photo.likedBy?.length && (
-          <span className={styles.overlayLikeCount}>♥ {photo.likedBy.length}</span>
-        )}
+      <div className={styles.polaroidInner}>
+        {!imgLoaded && <div className={styles.imageShimmer} />}
+        <Image
+          src={photo.url}
+          alt={photo.caption || "Gallery photo"}
+          fill
+          className={styles.image}
+          sizes="(max-width: 500px) 50vw, 33vw"
+          onLoad={() => setImgLoaded(true)}
+        />
+        <div className={styles.photoOverlay}>
+          {!!photo.likedBy?.length && (
+            <span className={styles.overlayLikeCount}>♥ {photo.likedBy.length}</span>
+          )}
+        </div>
       </div>
       {isAdmin && (
         <button className={styles.deleteButton} onClick={onDelete} aria-label="Delete photo">
@@ -578,12 +589,15 @@ export default function Gallery() {
             const col = i % 3;
             const row = Math.floor(i / 3);
             const animDelay = Math.min((row + col) * 0.05, 0.7);
+            // Varied tilt so the grid reads like a wall of pinned polaroids.
+            const rotation = [-6, 4.5, -2.5, 5.5, -4, 3][i % 6];
             return (
             <PhotoCard
               key={photo.id}
               photo={photo}
               isAdmin={isAdmin}
               animDelay={animDelay}
+              rotation={rotation}
               onSelect={() => { setSelectedPhotoId(photo.id); setCommentText(""); }}
               onDelete={(e) => handleDelete(photo, e)}
             />

@@ -19,24 +19,50 @@ import styles from "../page.module.css";
 /* Gel morph: the terminal buds out of the chat button in the corner and
  * wobbles into place like a droplet (underdamped spring), then gets sucked
  * back into the button on close. transformOrigin is set on the element. */
+const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.3, 1];
+const EASE_IN: [number, number, number, number] = [0.5, 0, 0.75, 0];
+
+/**
+ * Liquid "bud out of the button" morph, modelled on iOS 26 Liquid Glass. The
+ * pane doesn't just scale up from a point — it flows out of the chat button:
+ *   • squash-and-stretch — the two axes scale differently through the grow, so
+ *     it bulges wide then rebounds tall like a viscous droplet, instead of a
+ *     rigid uniform zoom;
+ *   • corner-radius morph — `--term-radius` flows from a round blob (like the
+ *     circular button) to the terminal's rounded-rect corners as it opens;
+ *   • elastic settle — an overshoot easing so it wobbles into place.
+ * Opacity snaps instant (backdrop-filter is suppressed on any ancestor with
+ * opacity < 1, so a fade-in would leave the pane clear until it lands).
+ */
 const chatBotVariant = {
   hidden: {
     opacity: 0,
-    scale: 0.12,
-    y: 24,
-    transition: { type: "spring" as const, stiffness: 380, damping: 30 },
+    scaleX: 0.22,
+    scaleY: 0.14,
+    y: 22,
+    "--term-radius": "44px",
+    transition: {
+      scaleX: { duration: 0.32, ease: EASE_IN },
+      scaleY: { duration: 0.32, ease: EASE_IN },
+      y: { duration: 0.32, ease: EASE_IN },
+      "--term-radius": { duration: 0.32, ease: EASE_IN },
+      // Fade only after it has mostly collapsed back into the button.
+      opacity: { duration: 0.16, delay: 0.16 },
+    },
   },
   visible: {
     opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 270, damping: 16, mass: 0.9 },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.12,
-    y: 24,
-    transition: { duration: 0.3 },
+    scaleX: [0.22, 1.06, 0.97, 1],
+    scaleY: [0.14, 0.92, 1.05, 1],
+    y: [22, -5, 1, 0],
+    "--term-radius": "16px",
+    transition: {
+      scaleX: { duration: 0.64, ease: EASE_OUT, times: [0, 0.45, 0.75, 1] },
+      scaleY: { duration: 0.64, ease: EASE_OUT, times: [0, 0.45, 0.75, 1] },
+      y: { duration: 0.64, ease: EASE_OUT, times: [0, 0.45, 0.75, 1] },
+      "--term-radius": { duration: 0.42, ease: EASE_OUT },
+      opacity: { duration: 0.01 },
+    },
   },
 };
 

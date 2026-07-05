@@ -22,11 +22,15 @@
   --glass-bg: rgba(238, 240, 244, 0.72);
   --glass-bg-hover: rgba(255, 255, 255, 0.18);
   --glass-border: rgba(255, 255, 255, 0.55);
-  --glass-blur: 32px;
-  --glass-saturate: 180%;
+  --glass-blur: 22px;
+  --glass-saturate: 190%;
+  /* Lift the backdrop a touch so glass reads as lit, not just frosted.
+     Lower blur + more saturation/brightness = closer to real iOS glass and
+     cheaper to composite than a heavy frost. */
+  --glass-brightness: 1.06;
   --glass-chroma-a: rgba(255, 128, 200, 0.28);
   --glass-chroma-b: rgba(128, 188, 255, 0.22);
-  --glass-specular: rgba(228, 238, 255, 0.30);
+  --glass-specular: rgba(232, 242, 255, 0.42);
 
   /* Motion tokens — one easing + two durations for the whole site */
   --ease-glass: cubic-bezier(0.16, 1, 0.3, 1);
@@ -35,13 +39,16 @@
   --dur-fast: 150ms;
   --dur-med: 240ms;
   --dur-gel: 420ms;
+  /* Bounce: a softer overshoot for elements popping into place. */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-bounce: 520ms;
 
   /* Glass backdrop recipes. The blur+saturate pair is the cross-browser
      fallback; Chromium swaps in the refraction lens below. */
-  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  --glass-filter-button: blur(16px) saturate(160%);
-  --glass-filter-popover: blur(48px) saturate(200%);
-  --glass-filter-bar: blur(24px) saturate(180%);
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+  --glass-filter-button: blur(11px) saturate(172%) brightness(var(--glass-brightness));
+  --glass-filter-popover: blur(32px) saturate(210%) brightness(var(--glass-brightness));
+  --glass-filter-bar: blur(18px) saturate(186%) brightness(var(--glass-brightness));
 
   /* Shared shadow stacks: chromatic dispersion edge + specular bevel, then a
      depth shadow sized to the surface's elevation. */
@@ -90,9 +97,11 @@
   --glass-bg: rgba(22, 22, 30, 0.72);
   --glass-bg-hover: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.11);
+  /* Don't brighten the dark backdrop — it would wash out the contrast. */
+  --glass-brightness: 1;
   --glass-chroma-a: rgba(200, 120, 180, 0.22);
   --glass-chroma-b: rgba(120, 158, 220, 0.17);
-  --glass-specular: rgba(210, 226, 255, 0.14);
+  --glass-specular: rgba(214, 230, 255, 0.2);
   /* Dark glass already has high contrast, so dial the reflection back. */
   --rg-gain: 0.5;
 }
@@ -102,9 +111,9 @@
    lens (see LiquidGlassDefs). Set at runtime by LiquidGlassDefs after feature
    detection; every other browser keeps the blur+saturate fallback above. */
 html[data-liquid-glass="on"] {
-  --glass-filter: url(#glass-lens) blur(6px) saturate(var(--glass-saturate));
-  --glass-filter-button: url(#glass-lens) blur(2px) saturate(160%);
-  --glass-filter-popover: url(#glass-lens) blur(24px) saturate(200%);
+  --glass-filter: url(#glass-lens) blur(4px) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+  --glass-filter-button: url(#glass-lens) blur(1.5px) saturate(172%) brightness(var(--glass-brightness));
+  --glass-filter-popover: url(#glass-lens) blur(18px) saturate(210%) brightness(var(--glass-brightness));
 }
 
 body {
@@ -145,6 +154,46 @@ body::-webkit-scrollbar {
 @keyframes navItemIn {
   from { opacity: 0; transform: translateX(-22px); }
   to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Liquid-glass interaction utilities ────────────────────────
+   Reusable "gel" feel for any interactive glass surface. Hover lifts with a
+   spring; press squishes non-uniformly (like a droplet) and rebounds via the
+   overshoot easing. Add the `gel` class to any button/card/link. */
+.gel {
+  transition:
+    transform var(--dur-gel) var(--ease-gel),
+    box-shadow var(--dur-fast) var(--ease-glass),
+    background var(--dur-fast) var(--ease-glass);
+}
+.gel:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+.gel:active {
+  transform: translateY(1px) scale(0.95, 0.9);
+  transition-duration: var(--dur-fast);
+}
+
+/* Glass panels popping into place with a soft overshoot. `backwards` fill keeps
+   the start state during any stagger delay, then releases transform so hover
+   effects on the same element still work. */
+@keyframes glassIn {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.glass-in {
+  animation: glassIn var(--dur-bounce) var(--ease-bounce) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gel,
+  .gel:hover,
+  .gel:active {
+    transform: none;
+  }
+  .glass-in {
+    animation: none;
+  }
 }
 
 /* ── Reactivity: liquid-glass light model ──────────────────── */
@@ -196,6 +245,13 @@ body::-webkit-scrollbar {
   opacity: calc(var(--reactive-intensity, 0) * var(--rg-gain, 1));
   transition: opacity 0.4s ease;
   background:
+    /* tight, bright core — the "wet" specular glint that makes glass read as a
+       reflective surface rather than flat frost. */
+    radial-gradient(
+      130px 130px at var(--rg-sx, 50%) var(--rg-sy, 50%),
+      rgba(255, 255, 255, calc(0.13 * var(--rg-li, 0))),
+      rgba(255, 255, 255, 0) 72%
+    ),
     /* travelling specular glint — broad and diffuse, like a soft lamp rather
        than a laser pointer, so several panes catch it at once. Slightly cool
        so it reads as glass reflecting sky, not white paint. */

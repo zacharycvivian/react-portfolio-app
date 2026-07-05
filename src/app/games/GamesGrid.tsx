@@ -156,10 +156,15 @@ export default function GamesGrid() {
         <code className={styles.code}>/play</code> in the terminal.
       </p>
       <div className={styles.grid}>
-        {GAMES.map((g) => {
+        {GAMES.map((g, i) => {
           const best = g.bestKey ? bests[g.bestKey] : undefined;
           return (
-            <Link key={g.href} href={g.href} className={styles.card}>
+            <Link
+              key={g.href}
+              href={g.href}
+              className={`${styles.card} glass-in`}
+              style={{ animationDelay: `${i * 30}ms` }}
+            >
               <span className={styles.cardTag}>{g.tag}</span>
               <span className={styles.cardName}>{g.name}</span>
               <span className={styles.cardDesc}>{g.desc}</span>
