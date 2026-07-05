@@ -83,6 +83,7 @@ function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [animatedTitle, setAnimatedTitle] = useState(NAME);
   const decodeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const titleTapsRef = useRef<number[]>([]);
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<NotifItem[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -237,6 +238,18 @@ function Header() {
     };
   }, [runDecode]);
 
+  // Easter egg: tap the name 5× within 1.5s to open the hidden arcade.
+  const handleTitleTap = () => {
+    const now = Date.now();
+    titleTapsRef.current = [...titleTapsRef.current, now].filter(
+      (t) => now - t < 1500
+    );
+    if (titleTapsRef.current.length >= 5) {
+      titleTapsRef.current = [];
+      window.location.href = "/games";
+    }
+  };
+
   const handleAuthAction = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
@@ -272,7 +285,11 @@ function Header() {
       <div className={styles.headertext}>
         {/* The animated glyphs are decorative; screen readers get the static
             name and never hear the mid-decode noise. */}
-        <h2 onPointerEnter={runDecode}>
+        <h2
+          onPointerEnter={runDecode}
+          onClick={handleTitleTap}
+          style={{ userSelect: "none" }}
+        >
           <span aria-hidden="true">
             {animatedTitle}
             <span className={styles.cursor}>|</span>

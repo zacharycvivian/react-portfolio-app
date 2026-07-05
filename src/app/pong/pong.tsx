@@ -35,10 +35,11 @@ const PongGame: React.FC = () => {
     if (sessionStorage.getItem("pongInstructionsShown") !== "true") {
       alert(
         "Welcome to Pong! Here's How to Play:\n\n" +
-          "- Pick a difficulty: Easy, Medium, or Hard.\n" +
-          "- Use your cursor, or finger if you're on mobile to move your 'paddle' in that direction.\n" +
-          "- Play against the computer, your goal is to prevent the ball from entering your goal.\n" +
-          "- First player to 5 points wins.\n\n" +
+          "- You are the CYAN node; you're up against a red SENTINEL.\n" +
+          "- Pick a threat level: Easy, Medium, Hard, or Impossible.\n" +
+          "- Move your cursor, or finger on mobile, to steer your node.\n" +
+          "- Deflect the data packet and keep it out of your goal.\n" +
+          "- First to 5 points breaches the firewall and wins.\n\n" +
           "Good Luck!"
       );
 
@@ -320,33 +321,92 @@ const PongGame: React.FC = () => {
       }
     };
 
-    const draw = () => {
+    const draw = (t: number) => {
       ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-      // Center line
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
-      ctx.setLineDash([8, 10]);
+      // Scrolling cyber grid.
+      ctx.save();
+      ctx.strokeStyle = "rgba(80,200,255,0.06)";
+      ctx.lineWidth = 1;
+      const scroll = (t * 40) % 40;
+      for (let x = -scroll; x < CANVAS_W; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, CANVAS_H);
+        ctx.stroke();
+      }
+      for (let y = 0; y < CANVAS_H; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(CANVAS_W, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Drifting scan-line glow.
+      const scanY = ((t * 60) % (CANVAS_H + 40)) - 20;
+      const scan = ctx.createLinearGradient(0, scanY - 30, 0, scanY + 30);
+      scan.addColorStop(0, "rgba(120,240,255,0)");
+      scan.addColorStop(0.5, "rgba(120,240,255,0.06)");
+      scan.addColorStop(1, "rgba(120,240,255,0)");
+      ctx.fillStyle = scan;
+      ctx.fillRect(0, scanY - 30, CANVAS_W, 60);
+
+      // Glowing center line.
+      ctx.save();
+      ctx.strokeStyle = "rgba(120,240,255,0.35)";
+      ctx.shadowColor = "rgba(120,240,255,0.6)";
+      ctx.shadowBlur = 8;
+      ctx.setLineDash([8, 12]);
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(CANVAS_W / 2, 0);
       ctx.lineTo(CANVAS_W / 2, CANVAS_H);
       ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.restore();
 
-      ctx.fillStyle = "white";
+      // Player paddle — a cyan data node.
+      ctx.save();
+      ctx.shadowColor = "rgba(120,240,255,0.9)";
+      ctx.shadowBlur = 14;
+      const pg = ctx.createLinearGradient(0, 0, PADDLE_W, 0);
+      pg.addColorStop(0, "#9bfcff");
+      pg.addColorStop(1, "#12a9d8");
+      ctx.fillStyle = pg;
       ctx.fillRect(0, g.playerY, PADDLE_W, g.paddleH);
+      ctx.restore();
+
+      // Sentinel paddle — hostile red.
+      ctx.save();
+      ctx.shadowColor = "rgba(255,90,70,0.9)";
+      ctx.shadowBlur = 14;
+      const ag = ctx.createLinearGradient(CANVAS_W - PADDLE_W, 0, CANVAS_W, 0);
+      ag.addColorStop(0, "#ff8a3d");
+      ag.addColorStop(1, "#ff4d4d");
+      ctx.fillStyle = ag;
       ctx.fillRect(CANVAS_W - PADDLE_W, g.aiY, PADDLE_W, g.paddleH);
+      ctx.restore();
+
+      // Data packet (ball).
+      ctx.save();
+      ctx.shadowColor = "rgba(200,250,255,0.95)";
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = "#eaffff";
       ctx.beginPath();
       ctx.arc(g.ballX, g.ballY, BALL_R, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
     };
 
     let last = performance.now();
+    let elapsed = 0;
     const gameLoop = (now: number) => {
       // Clamp dt so a background-tab pause doesn't teleport the ball.
       const dt = Math.min((now - last) / 1000, 1 / 30);
       last = now;
+      elapsed += dt;
       step(dt);
-      draw();
+      draw(elapsed);
       animationFrameId.current = requestAnimationFrame(gameLoop);
     };
 
@@ -396,7 +456,9 @@ const PongGame: React.FC = () => {
       <div className={styles.container}>
         <h1 className={styles.title}>Pong</h1>
         <div className={styles.score}>
-          Player: {playerScore} | Computer: {computerScore}
+          USER {playerScore}
+          <span className={styles.scoreDivider}>{"//"}</span>
+          SENTINEL {computerScore}
         </div>
         <div
           className={styles.gameCanvasContainer}
@@ -405,26 +467,38 @@ const PongGame: React.FC = () => {
           <canvas ref={gameCanvasRef} className={styles.gameCanvas}></canvas>
 
           {gameStatus === "idle" && (
-            <div className={styles.centeredControls}>
-              <button className={styles.Button} onClick={() => startGame("easy")}>
-                Easy
-              </button>
-              <button className={styles.Button} onClick={() => startGame("medium")}>
-                Medium
-              </button>
-              <button className={styles.Button} onClick={() => startGame("hard")}>
-                Hard
-              </button>
-              <button className={styles.Button} onClick={() => startGame("impossible")}>
-                Impossible
-              </button>
+            <div className={styles.overlay}>
+              <p className={styles.overlayTitle}>SELECT THREAT LEVEL</p>
+              <div className={styles.difficultyRow}>
+                <button className={styles.Button} onClick={() => startGame("easy")}>
+                  Easy
+                </button>
+                <button className={styles.Button} onClick={() => startGame("medium")}>
+                  Medium
+                </button>
+                <button className={styles.Button} onClick={() => startGame("hard")}>
+                  Hard
+                </button>
+                <button className={styles.Button} onClick={() => startGame("impossible")}>
+                  Impossible
+                </button>
+              </div>
+              <p className={styles.overlayText}>
+                Move your cursor or finger to steer the cyan node. First to{" "}
+                {WIN_SCORE} breaches the firewall.
+              </p>
             </div>
           )}
 
           {gameStatus === "ended" && (
-            <div className={styles.centeredMessage}>
-              <p>
-                Game Over. {playerScore === 5 ? "Player" : "Computer"} Wins!
+            <div className={styles.overlay}>
+              <p className={styles.overlayTitle}>
+                {playerScore === WIN_SCORE ? "FIREWALL BREACHED" : "CONNECTION LOST"}
+              </p>
+              <p className={styles.overlayText}>
+                {playerScore === WIN_SCORE
+                  ? "You outpaced the sentinel and slipped through."
+                  : "The sentinel held the line. Try again."}
               </p>
               <button
                 className={styles.Button}
@@ -434,7 +508,7 @@ const PongGame: React.FC = () => {
                   setGameStatus("idle");
                 }}
               >
-                Restart Game
+                Reconnect
               </button>
             </div>
           )}

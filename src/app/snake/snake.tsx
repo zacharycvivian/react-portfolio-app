@@ -8,6 +8,25 @@ interface Point {
   y: number;
 }
 
+/** Rounded-rect path helper for the neon game nodes. */
+function rr(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number
+) {
+  const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + rad, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rad);
+  ctx.arcTo(x + w, y + h, x, y + h, rad);
+  ctx.arcTo(x, y + h, x, y, rad);
+  ctx.arcTo(x, y, x + w, y, rad);
+  ctx.closePath();
+}
+
 const SnakeGame: React.FC = () => {
   // First useEffect initializes the matrix-style animation background
   useEffect(() => {
@@ -123,11 +142,11 @@ const SnakeGame: React.FC = () => {
       if (sessionStorage.getItem("snakeInstructionsShown") !== "true") {
         alert(
           "Welcome to Snake! Here's How to Play:\n\n" +
-            "- You are GREEN.\n" +
-            "- Use arrow keys, or swipe if you're on mobile to move in that direction.\n" +
-            "- 'Eat' apples by colliding with them.\n" +
-            "- Your goal is to eat as many apples as you can without hitting the walls, or running into yourself.\n" +
-            "- If you fill the entire grid with your snake self, YOU WIN.\n\n" +
+            "- You are the GREEN node snaking through the grid.\n" +
+            "- Use arrow keys, or swipe on mobile, to change direction.\n" +
+            "- Capture the red DATA PACKETS by colliding with them.\n" +
+            "- Grab as many as you can without hitting the walls or your own trail.\n" +
+            "- Fill the entire grid with your node and YOU WIN.\n\n" +
             "Good Luck!"
         );
   
@@ -379,13 +398,71 @@ const SnakeGame: React.FC = () => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, gameSize.width, gameSize.height);
-    ctx.fillStyle = "red";
-    ctx.fillRect(apple.x, apple.y, 20, 20);
+    const W = gameSize.width;
+    const H = gameSize.height;
+    ctx.clearRect(0, 0, W, H);
 
+    // Neon grid aligned to the cell size.
+    ctx.strokeStyle = "rgba(120,240,255,0.05)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += segmentSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= H; y += segmentSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
+
+    // Target data packet (the "apple").
+    ctx.save();
+    ctx.shadowColor = "rgba(255,90,70,0.9)";
+    ctx.shadowBlur = 14;
+    const ag = ctx.createLinearGradient(
+      apple.x,
+      apple.y,
+      apple.x + segmentSize,
+      apple.y + segmentSize
+    );
+    ag.addColorStop(0, "#ff8a6b");
+    ag.addColorStop(1, "#ff4d4d");
+    ctx.fillStyle = ag;
+    rr(ctx, apple.x + 2, apple.y + 2, segmentSize - 4, segmentSize - 4, 4);
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = "rgba(255,220,200,0.9)";
+    ctx.beginPath();
+    ctx.arc(apple.x + segmentSize / 2, apple.y + segmentSize / 2, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Snake — glowing green data nodes; the head is brighter with a visor.
     snake.forEach((segment, index) => {
-      ctx.fillStyle = index === 0 ? "darkgreen" : "green";
-      ctx.fillRect(segment.x, segment.y, 20, 20);
+      const head = index === 0;
+      ctx.save();
+      ctx.shadowColor = head ? "rgba(130,255,150,0.95)" : "rgba(70,230,120,0.55)";
+      ctx.shadowBlur = head ? 16 : 8;
+      const g = ctx.createLinearGradient(
+        segment.x,
+        segment.y,
+        segment.x + segmentSize,
+        segment.y + segmentSize
+      );
+      g.addColorStop(0, head ? "#c6ffce" : "#4be38a");
+      g.addColorStop(1, head ? "#39ff88" : "#17b45f");
+      ctx.fillStyle = g;
+      rr(ctx, segment.x + 2, segment.y + 2, segmentSize - 4, segmentSize - 4, head ? 6 : 5);
+      ctx.fill();
+      ctx.restore();
+
+      if (head) {
+        ctx.fillStyle = "rgba(6,26,16,0.85)";
+        rr(ctx, segment.x + 5, segment.y + 6, segmentSize - 10, 5, 2);
+        ctx.fill();
+      }
     });
   }, [snake, apple, gameSize]);
 
@@ -404,20 +481,37 @@ const SnakeGame: React.FC = () => {
       <canvas id="canvas2" className={styles.matrixCanvasOverlay}></canvas>
       <div className={styles.container}>
         <h2 className={styles.title}>Snake</h2>
-        <div className={styles.score}>Apples Eaten: {score}</div>
+        <div className={styles.score}>Data Packets: {score}</div>
         <div className={styles.aspectRatioBox}>
           <canvas ref={canvasRef} className={styles.gameCanvas} />
-        </div>
-        {gameOver && (
-          <div className={styles.gameOverOverlay}>
-            <div className={styles.gameOverMessage}>
-              GAME OVER! YOU ATE {score} APPLES. PLAY AGAIN?
+
+          {!started && !gameOver && (
+            <div
+              className={styles.overlay}
+              onPointerDown={() => setStarted(true)}
+            >
+              <p className={styles.overlayTitle}>INFILTRATE THE GRID</p>
+              <p className={styles.overlayText}>
+                Steer your node to capture data packets. Don&apos;t hit the walls
+                or your own trail. Arrow keys or swipe — tap to jack in.
+              </p>
+              <span className={styles.cta}>Jack In</span>
             </div>
-            <button className={styles.restartButton} onClick={restartGame}>
-              Restart Game
-            </button>
-          </div>
-        )}
+          )}
+
+          {gameOver && (
+            <div className={styles.overlay}>
+              <p className={styles.overlayTitle}>SYSTEM TRACE COMPLETE</p>
+              <p className={styles.overlayText}>
+                You captured {score} data packet{score === 1 ? "" : "s"}. Run it
+                back?
+              </p>
+              <button className={styles.restartButton} onClick={restartGame}>
+                Reconnect
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

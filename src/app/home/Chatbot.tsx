@@ -190,7 +190,7 @@ export default function Chatbot() {
       "/help - Shows a list of commands\n" +
         "/message - Share a message/job opportunity with me\n" +
         "/ask <question> - Ask a Chatbot a question about this site\n" +
-        "/play <game> - Play one of my games\n" +
+        "/play <game> - Launch a game (or just /play to open the arcade)\n" +
         "/bug <report> - Leave notice of a bug you found\n" +
         "/feedback <suggestion> - Suggest improvements\n",
     );
@@ -294,31 +294,76 @@ export default function Chatbot() {
   };
 
   const handlePlayCommand = (argument: string) => {
-    if (argument) {
-      switch (argument.toLowerCase()) {
-        case "cyberwordle":
-          window.location.href = "/cyberwordle";
-          break;
-        case "snake":
-          window.location.href = "/snake";
-          break;
-        case "pong":
-          window.location.href = "/pong";
-          break;
-        default:
-          setTerminalOutput(
-            "Unknown game. Available games: CyberWordle, Snake, Pong.",
-          );
-      }
+    // No game specified — open the arcade hub with all the games.
+    if (!argument) {
+      window.location.href = "/games";
+      return;
+    }
+    const routes: Record<string, string> = {
+      cyberwordle: "/cyberwordle",
+      wordle: "/cyberwordle",
+      snake: "/snake",
+      pong: "/pong",
+      cyberbird: "/cyberbird",
+      "cyber bird": "/cyberbird",
+      flappy: "/cyberbird",
+      "cyber runner": "/cyber-runner",
+      cyberrunner: "/cyber-runner",
+      jetpack: "/cyber-runner",
+      joyride: "/cyber-runner",
+      runner: "/cyber-runner",
+      "trace run": "/trace-run",
+      tracerun: "/trace-run",
+      "temple run": "/trace-run",
+      temple: "/trace-run",
+      trace: "/trace-run",
+      "data flow": "/data-flow",
+      dataflow: "/data-flow",
+      flow: "/data-flow",
+      "stack jump": "/stack-jump",
+      stackjump: "/stack-jump",
+      doodle: "/stack-jump",
+      "doodle jump": "/stack-jump",
+      "packet siege": "/packet-siege",
+      packetsiege: "/packet-siege",
+      siege: "/packet-siege",
+      "angry birds": "/packet-siege",
+      angrybirds: "/packet-siege",
+      "malware sweeper": "/malware-sweeper",
+      malwaresweeper: "/malware-sweeper",
+      minesweeper: "/malware-sweeper",
+      sweeper: "/malware-sweeper",
+      sudoku: "/sudoku",
+      "word search": "/word-search",
+      wordsearch: "/word-search",
+      "cipher cross": "/cipher-cross",
+      ciphercross: "/cipher-cross",
+      crossword: "/cipher-cross",
+      ping: "/ping",
+      "binary breach": "/binary-breach",
+      binarybreach: "/binary-breach",
+      "2048": "/binary-breach",
+      "access sequence": "/access-sequence",
+      accesssequence: "/access-sequence",
+      simon: "/access-sequence",
+      "packet breaker": "/packet-breaker",
+      packetbreaker: "/packet-breaker",
+      breakout: "/packet-breaker",
+      "decryption terminal": "/decryption-terminal",
+      decryptionterminal: "/decryption-terminal",
+      decrypt: "/decryption-terminal",
+      typing: "/decryption-terminal",
+    };
+    const dest = routes[argument.toLowerCase().trim()];
+    if (dest) {
+      window.location.href = dest;
     } else {
       setTerminalOutput(
-        "A thrill-seeker I see! I have a few options for you!\n" +
-          "You must specify a game after '/play'. For example,\n" +
-          "\n" +
-          "'/play CyberWordle'\n" +
-          "\n" +
-          "CyberWordle, Pong, Snake\n" +
-          "More games coming in the future!",
+        "Unknown game. Type '/play' on its own to open the arcade, or try:\n" +
+          "Trace Run, Cyber Runner, Stack Jump, Packet Siege, Data Flow,\n" +
+          "Malware Sweeper, Sudoku, Word Search, Cipher Cross, Ping,\n" +
+          "Binary Breach, Access Sequence, Packet Breaker, Decryption Terminal,\n" +
+          "Cyber Bird, CyberWordle, Snake, Pong.",
       );
     }
   };

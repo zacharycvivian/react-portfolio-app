@@ -39,7 +39,52 @@
   .gameCanvasContainer {
     position: relative;
   }
-  
+
+  .scoreDivider {
+    margin: 0 10px;
+    color: #7ef9ff;
+    opacity: 0.65;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 26px;
+    text-align: center;
+    color: #fff;
+    z-index: 10;
+    background-color: rgba(8, 10, 18, 0.5);
+    backdrop-filter: var(--glass-filter-popover);
+    border-radius: 20px;
+  }
+
+  .overlayTitle {
+    font-size: clamp(20px, 4.5vw, 30px);
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #7ef9ff;
+    text-shadow: 0 0 14px rgba(120, 240, 255, 0.6);
+  }
+
+  .overlayText {
+    font-size: 15px;
+    max-width: 340px;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+
+  .difficultyRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
   .centeredControls, .centeredMessage {
     position: absolute;
     top: 50%;

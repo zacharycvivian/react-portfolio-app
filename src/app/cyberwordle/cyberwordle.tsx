@@ -188,12 +188,12 @@ const CyberWordle: React.FC = () => {
     setGuesses(newGuesses);
     if (guess.toUpperCase() === currentWord) {
       setTimeout(() => {
-        alert("Congratulations, you guessed the word!");
+        alert("ACCESS GRANTED — key decrypted. Nice work, hacker!");
         setGameOver(true);
       }, 500);
     } else if (newGuesses.length >= 6) {
       setTimeout(() => {
-        alert(`Game over! The word was ${currentWord}.`);
+        alert(`ACCESS DENIED — the key was ${currentWord}.`);
         setGameOver(true);
       }, 500);
     }
