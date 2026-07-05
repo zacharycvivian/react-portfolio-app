@@ -7,11 +7,12 @@ import Footer from "@/components/Footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/../auth";
 import SessionProvider from "@/components/SessionProvider";
-import { Providers } from "./providers.jsx";
+import { Providers } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import FirebaseAuthProvider from "@/components/FirebaseAuthProvider";
 import LiquidGlassDefs from "@/components/LiquidGlassDefs";
+import ArcadeNav from "@/components/ArcadeNav";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira", display: "swap" });
@@ -38,6 +39,7 @@ export default async function RootLayout({
             <LiquidGlassDefs />
             <Header />
             <Sidebar />
+            <ArcadeNav />
             {children}
             <SpeedInsights />
             <Analytics />

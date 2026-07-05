@@ -208,8 +208,10 @@ const PongGame: React.FC = () => {
     const ctx = gameCanvas?.getContext("2d");
     if (!gameCanvas || !ctx) return;
 
-    gameCanvas.width = CANVAS_W;
-    gameCanvas.height = CANVAS_H;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    gameCanvas.width = CANVAS_W * dpr;
+    gameCanvas.height = CANVAS_H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const g = gameRef.current;
     const clamp = (v: number, min: number, max: number) =>

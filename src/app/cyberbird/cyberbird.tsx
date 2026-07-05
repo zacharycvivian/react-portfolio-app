@@ -467,8 +467,10 @@ const CyberBird: React.FC = () => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = WIDTH * dpr;
+    canvas.height = HEIGHT * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const g = gameRef.current;
     let raf = 0;

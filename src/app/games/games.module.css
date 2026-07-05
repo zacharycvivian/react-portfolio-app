@@ -101,12 +101,26 @@
   flex: 1;
 }
 
+.cardFooter {
+  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .cardRun {
-  margin-top: 8px;
   font-family: "Courier New", monospace;
   font-size: 13px;
   color: #7ef9ff;
   text-shadow: 0 0 10px rgba(120, 240, 255, 0.4);
+}
+
+.cardBest {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {

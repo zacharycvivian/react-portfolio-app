@@ -312,8 +312,10 @@ export default function PacketBreaker() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    canvas.width = W;
-    canvas.height = H;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const g = gameRef.current;
     let raf = 0;
 
