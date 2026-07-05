@@ -60,5 +60,10 @@
     "eslint-config-next": "^16.2.7",
     "tailwindcss": "^4.1.17",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "cookie": "^0.7.2",
+    "postcss": "^8.5.10",
+    "uuid": "^11.1.1"
   }
 }
