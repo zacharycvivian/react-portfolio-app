@@ -35,11 +35,15 @@ function isFullScreen(r: DOMRect) {
 }
 
 function tiltEligible(r: DOMRect) {
+  // The width cap (plus isFullScreen) is what keeps full-viewport background
+  // panes from tilting. Height is allowed to run well past the viewport so tall
+  // content cards — e.g. the 16-row Technical Skills card — still lean with the
+  // cursor instead of sitting flat while their shorter neighbours tilt.
   return (
     r.width >= 180 &&
     r.height >= 110 &&
     r.width <= window.innerWidth * 0.92 &&
-    r.height <= window.innerHeight * 0.9
+    r.height <= window.innerHeight * 1.6
   );
 }
 
@@ -120,13 +124,12 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
         }
         // Only tilt in-flow panels (static/relative). Fixed/absolute glass is
         // typically centered via transform (modals, dropdowns) — leave those be.
-        // Also skip surfaces that animate their OWN transform: the gallery's
-        // polaroid tilt (Framer) and the home carousel (embla slides the track +
-        // a CSS hover scale). Otherwise the engine's per-frame `el.style.transform`
-        // fights them — on the carousel a 3D tilt on the overflow-clipped embla
-        // container visibly breaks the slider. These still get the light sheen.
+        // Skip the gallery polaroids, whose OWN transform is driven by Framer
+        // (tilt + hover); the engine and Framer would fight over el.style.transform
+        // every frame. The home carousel is fine to tilt — embla positions its
+        // track from offsetWidth, which a transform on the wrapper doesn't touch.
         const inFlow = cs.position === "static" || cs.position === "relative";
-        const ownsTransform = el.matches('[class*="photoCard"], [class*="carouselItem"]');
+        const ownsTransform = el.matches('[class*="photoCard"]');
         if (!prefersReduced && inFlow && tiltEligible(r) && !ownsTransform) {
           el.dataset.reactiveTilt = "1";
           // Neutralize any transform transition so our per-frame easing reads

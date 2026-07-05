@@ -16,7 +16,11 @@
   font-size: 0.95rem;
   text-align: center;
   opacity: 0.8;
-  line-height: 1.5;
+  line-height: 1.6;
+  /* Fira Code has deep descenders; without slack below the last line they sit
+     flush on the box edge and get clipped ~1px while the fade-in transform layer
+     is active. The padding gives the descenders room. */
+  padding-bottom: 6px;
 }
 
 /* ── Photo wall — tight Instagram-style square grid ── */
@@ -65,18 +69,36 @@
   box-shadow: var(--glass-shadow-panel-hover);
 }
 
-/* Loading placeholder tile — same footprint as a photo */
+/* Loading placeholder tile — a blank polaroid with the same glass frame. */
 .skeletonTile {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: var(--card-color-light);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-filter-bar);
+  padding: 5% 5% 12%;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-panel);
 }
 
 .image {
   object-fit: cover;
+  /* Hidden until it loads, then .developed runs the film-develop reveal. */
+  opacity: 0;
   transition: transform 0.35s ease;
+}
+
+/* The photo emerges from a dark, desaturated exposure to full colour — like an
+   instant photo developing in your hand. */
+.developed {
+  animation: develop 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes develop {
+  0%   { opacity: 0; filter: brightness(0.12) contrast(1.9) saturate(0) sepia(0.7); }
+  30%  { opacity: 1; filter: brightness(0.45) contrast(1.5) saturate(0.35) sepia(0.5); }
+  65%  { opacity: 1; filter: brightness(0.85) contrast(1.2) saturate(0.8) sepia(0.2); }
+  100% { opacity: 1; filter: none; }
 }
 
 @keyframes shimmer {
@@ -84,19 +106,49 @@
   100% { background-position: -200% 0; }
 }
 
-.imageShimmer {
+/* Undeveloped film — a dark chemical bath with a drifting emulsion bloom, a slow
+   develop sweep and a fine grain, shown while a photo is still loading. */
+.developing {
   position: absolute;
   inset: 0;
   z-index: 2;
   border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    var(--card-color-light) 25%,
-    var(--card-hover-light) 50%,
-    var(--card-color-light) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
+  overflow: hidden;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1.4px) 0 0 / 3px 3px,
+    radial-gradient(115% 85% at 50% 42%, rgba(74, 86, 96, 0.5), rgba(9, 13, 19, 0.96) 80%);
+}
+.developing::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  background: radial-gradient(closest-side, rgba(120, 240, 255, 0.14), transparent 70%);
+  animation: emulsion 2.2s ease-in-out infinite;
+  animation-delay: var(--dev-delay, 0s);
+}
+.developing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.05), transparent 55%);
+  animation: developSweep 2.8s ease-in-out infinite;
+  animation-delay: var(--dev-delay, 0s);
+}
+
+@keyframes emulsion {
+  0%, 100% { transform: translate(-6%, 5%) scale(1);    opacity: 0.5; }
+  50%      { transform: translate(6%, -5%) scale(1.18); opacity: 0.85; }
+}
+@keyframes developSweep {
+  0%   { opacity: 0; transform: translateY(45%); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-45%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .developed { animation: none; opacity: 1; filter: none; }
+  .developing::before,
+  .developing::after { animation: none; }
 }
 
 .avatarWrapperLg {
@@ -1148,7 +1200,8 @@
   }
 
   /* Slimmer polaroid mat on small tiles so the photo still dominates. */
-  .photoCard {
+  .photoCard,
+  .skeletonTile {
     padding: 4% 4% 10%;
   }
 

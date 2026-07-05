@@ -36,7 +36,12 @@ function SkeletonGrid() {
     <div className={styles.grid} aria-hidden="true">
       {Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className={styles.skeletonTile}>
-          <div className={styles.imageShimmer} style={{ animationDelay: `${(i % 4) * 0.12}s` }} />
+          <div className={styles.polaroidInner}>
+            <div
+              className={styles.developing}
+              style={{ "--dev-delay": `${(i % 4) * 0.18}s` } as React.CSSProperties}
+            />
+          </div>
         </div>
       ))}
     </div>
@@ -52,6 +57,11 @@ function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0, rotation
   rotation?: number;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [inView, setInView] = useState(false);
+  // The film-develop reveal waits until the tile is actually scrolled into
+  // view, so photos develop one-by-one as you move down the wall instead of all
+  // at once on load (images below the fold lazy-load, then develop on reveal).
+  const developed = imgLoaded && inView;
   return (
     <motion.div
       className={styles.photoCard}
@@ -67,15 +77,16 @@ function PhotoCard({ photo, isAdmin, onSelect, onDelete, animDelay = 0, rotation
         transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
       }}
       viewport={{ once: true, amount: 0.05 }}
+      onViewportEnter={() => setInView(true)}
       transition={{ delay: animDelay, duration: 0.45, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
     >
       <div className={styles.polaroidInner}>
-        {!imgLoaded && <div className={styles.imageShimmer} />}
+        {!developed && <div className={styles.developing} />}
         <Image
           src={photo.url}
           alt={photo.caption || "Gallery photo"}
           fill
-          className={styles.image}
+          className={`${styles.image} ${developed ? styles.developed : ""}`}
           sizes="(max-width: 500px) 50vw, 33vw"
           onLoad={() => setImgLoaded(true)}
         />
