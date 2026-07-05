@@ -9,12 +9,25 @@ const GROUND = 418;
 const ANCHOR_X = 132;
 const ANCHOR_Y = GROUND - 66;
 const PROJ_R = 13;
-const GRAVITY = 1150;
-const POWER = 9.5;
-const MAX_PULL = 120;
+// Tuned so a full-power shot arcs up and lands back inside the playfield around
+// the fort (never flying flat off the right edge). Stronger gravity + a lower
+// launch multiplier give a clear rise-and-fall parabola instead of a line drive.
+const GRAVITY = 1500;
+const POWER = 8.3;
+const MAX_PULL = 124;
 const REST = 0.34;
 const STOP_SPEED = 62;
 const START_BIRDS = 3;
+
+// Structure physics — blocks and pigs fall and stack under their own gravity, so
+// knocking out a supporting wall lets the roof topple down onto the pigs.
+const B_GRAVITY = 1400; // gravity for blocks + pigs
+const B_FRICTION = 0.78; // horizontal damping when a body rests on ground/support
+const KNOCK = 0.05; // fraction of the bird's velocity a struck block absorbs
+const CRUSH_SPEED = 150; // block speed above which it crushes a pig it lands on
+const SETTLE_TIME = 1.1; // seconds to let the structure finish collapsing
+const MAX_BODY_V = 1600; // clamp so a bad contact can't fling a block off-screen
+const TIP_ACC = 1500; // sideways pull on a block whose weight overhangs its support
 
 type Mat = "glass" | "wood" | "steel";
 type Status = "idle" | "playing" | "over";
@@ -28,6 +41,8 @@ interface Block {
   hp: number;
   max: number;
   mat: Mat;
+  vx: number;
+  vy: number;
 }
 interface Pig {
   x: number;
@@ -35,6 +50,8 @@ interface Pig {
   r: number;
   hp: number;
   max: number;
+  vx: number;
+  vy: number;
 }
 interface GState {
   proj: { x: number; y: number; vx: number; vy: number };
@@ -44,6 +61,7 @@ interface GState {
   birds: number;
   phase: Phase;
   settleT: number;
+  lowT: number;
   over: boolean;
   won: boolean;
 }
@@ -63,9 +81,9 @@ function rr(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: n
 }
 
 const mk = (x: number, y: number, w: number, h: number, mat: Mat): Block => ({
-  x, y, w, h, mat, hp: HP[mat], max: HP[mat],
+  x, y, w, h, mat, hp: HP[mat], max: HP[mat], vx: 0, vy: 0,
 });
-const pig = (x: number, y: number): Pig => ({ x, y, r: 17, hp: 12, max: 12 });
+const pig = (x: number, y: number): Pig => ({ x, y, r: 17, hp: 12, max: 12, vx: 0, vy: 0 });
 
 function buildLevel(idx: number): { blocks: Block[]; pigs: Pig[] } {
   if (idx % 2 === 0) {
@@ -101,6 +119,7 @@ function freshState(level: number): GState {
     birds: START_BIRDS,
     phase: "aim",
     settleT: 0,
+    lowT: 0,
     over: false,
     won: false,
   };
@@ -115,6 +134,135 @@ function circleBox(cx: number, cy: number, r: number, b: Block) {
   if (d2 >= r * r) return null;
   const dist = Math.sqrt(d2) || 0.0001;
   return { nx: dx / dist, ny: dy / dist, pen: r - dist };
+}
+
+function overlapBox(a: Block, b: Block) {
+  const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+  const oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+  return ox > 0 && oy > 0 ? { ox, oy } : null;
+}
+
+// Separate two overlapping blocks along the axis of least penetration. For a
+// vertical overlap the upper block is lifted onto the lower one (which stays put
+// as the support), so stacks resting on the ground stay stable instead of
+// sinking into each other.
+function resolveBlockPair(a: Block, b: Block) {
+  const o = overlapBox(a, b);
+  if (!o) return;
+  if (o.ox < o.oy) {
+    const push = o.ox / 2;
+    if (a.x < b.x) { a.x -= push; b.x += push; } else { a.x += push; b.x -= push; }
+    a.vx *= 0.5;
+    b.vx *= 0.5;
+  } else {
+    const upper = a.y <= b.y ? a : b;
+    upper.y -= o.oy;
+    if (upper.vy > 0) upper.vy = 0;
+    upper.vx *= B_FRICTION;
+  }
+}
+
+// Where a block is held up from directly below (by the ground or another block)
+// and the x-span of that contact. A block is only stable if its centre of mass
+// sits within that span — otherwise it overhangs and should tip off.
+function supportInfo(b: Block, blocks: Block[]) {
+  const EPS = 3;
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let supported = false;
+  if (b.y + b.h >= GROUND - EPS) {
+    supported = true;
+    minX = b.x;
+    maxX = b.x + b.w;
+  }
+  for (const s of blocks) {
+    if (s === b) continue;
+    if (Math.abs(s.y - (b.y + b.h)) <= EPS) {
+      const ox0 = Math.max(b.x, s.x);
+      const ox1 = Math.min(b.x + b.w, s.x + s.w);
+      if (ox1 > ox0) {
+        supported = true;
+        minX = Math.min(minX, ox0);
+        maxX = Math.max(maxX, ox1);
+      }
+    }
+  }
+  return { supported, minX, maxX };
+}
+
+// One frame of gravity + stacking for the blocks and pigs. Runs every frame in
+// every phase so a structure keeps settling (and can crush a pig) even after the
+// bird itself has come to rest.
+function stepBodies(g: GState, dt: number) {
+  for (const b of g.blocks) {
+    b.vy += B_GRAVITY * dt;
+    b.vx = clamp(b.vx, -MAX_BODY_V, MAX_BODY_V);
+    b.vy = clamp(b.vy, -MAX_BODY_V, MAX_BODY_V);
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+  }
+  for (const p of g.pigs) {
+    p.vy += B_GRAVITY * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+  }
+
+  // Crush check happens before resolution zeroes the falling velocity, so we can
+  // read the true impact speed of a block landing on a pig.
+  for (let i = g.pigs.length - 1; i >= 0; i--) {
+    const pg = g.pigs[i];
+    for (const b of g.blocks) {
+      if (!circleBox(pg.x, pg.y, pg.r, b)) continue;
+      const spd = Math.hypot(b.vx, b.vy);
+      if (spd > CRUSH_SPEED) pg.hp -= clamp(spd * 0.06, 3, 40);
+    }
+    if (pg.hp <= 0) g.pigs.splice(i, 1);
+  }
+
+  // A few positional iterations settle the stack cleanly.
+  for (let iter = 0; iter < 4; iter++) {
+    for (const b of g.blocks) {
+      if (b.y + b.h > GROUND) {
+        b.y = GROUND - b.h;
+        if (b.vy > 0) b.vy = 0;
+        b.vx *= B_FRICTION;
+      }
+      if (b.x < 0) { b.x = 0; if (b.vx < 0) b.vx = 0; }
+      if (b.x + b.w > W) { b.x = W - b.w; if (b.vx > 0) b.vx = 0; }
+    }
+    for (let i = 0; i < g.blocks.length; i++) {
+      for (let j = i + 1; j < g.blocks.length; j++) {
+        resolveBlockPair(g.blocks[i], g.blocks[j]);
+      }
+    }
+    for (const pg of g.pigs) {
+      // Rest on / get pushed out of blocks.
+      for (const b of g.blocks) {
+        const hit = circleBox(pg.x, pg.y, pg.r, b);
+        if (!hit) continue;
+        pg.x += hit.nx * hit.pen;
+        pg.y += hit.ny * hit.pen;
+        if (hit.ny < 0 && pg.vy > 0) pg.vy = 0; // landed on top of a block
+      }
+      if (pg.y + pg.r > GROUND) {
+        pg.y = GROUND - pg.r;
+        if (pg.vy > 0) pg.vy = 0;
+        pg.vx *= B_FRICTION;
+      }
+      pg.x = clamp(pg.x, pg.r, W - pg.r);
+    }
+  }
+
+  // Tipping pass: a resting block whose centre of mass hangs past its support
+  // gets pulled toward the overhang so it slides off and drops — this is what
+  // makes a roof come down once you knock out the wall holding up one end.
+  for (const b of g.blocks) {
+    const info = supportInfo(b, g.blocks);
+    if (!info.supported) continue;
+    const com = b.x + b.w / 2;
+    if (com < info.minX - 2) b.vx -= TIP_ACC * dt;
+    else if (com > info.maxX + 2) b.vx += TIP_ACC * dt;
+  }
 }
 
 function stepFly(g: GState, dt: number) {
@@ -145,6 +293,10 @@ function stepFly(g: GState, dt: number) {
       p.vy *= 0.82;
     } else {
       b.hp -= dmg;
+      // Shove the block in the bird's travel direction (before we bounce the
+      // bird) so a solid hit can knock a wall loose and topple what it holds up.
+      b.vx += p.vx * KNOCK;
+      b.vy += p.vy * KNOCK;
       p.x += hit.nx * hit.pen;
       p.y += hit.ny * hit.pen;
       const vdot = p.vx * hit.nx + p.vy * hit.ny;
@@ -175,10 +327,23 @@ function stepFly(g: GState, dt: number) {
   }
 
   const spd = Math.hypot(p.vx, p.vy);
-  const onGround = p.y + PROJ_R >= GROUND - 0.5;
-  if (p.x - PROJ_R > W || p.x + PROJ_R < 0 || (onGround && spd < STOP_SPEED)) {
+  if (p.x - PROJ_R > W || p.x + PROJ_R < 0) {
     g.phase = "settle";
-    g.settleT = 0.5;
+    g.settleT = SETTLE_TIME;
+    g.lowT = 0;
+    return;
+  }
+  // Settle once the bird has been slow for a moment — whether it stopped on the
+  // ground or came to rest on top of the rubble.
+  if (spd < STOP_SPEED) {
+    g.lowT += dt;
+    if (g.lowT > 0.45) {
+      g.phase = "settle";
+      g.settleT = SETTLE_TIME;
+      g.lowT = 0;
+    }
+  } else {
+    g.lowT = 0;
   }
 }
 
@@ -404,7 +569,12 @@ export default function PacketSiege() {
 
       if (g.phase === "fly") {
         stepFly(g, dt);
-      } else if (g.phase === "settle") {
+      }
+      // Structures fall/settle every frame, so a collapse (and any pig it
+      // crushes) keeps resolving even after the bird has stopped.
+      stepBodies(g, dt);
+
+      if (g.phase === "settle") {
         g.settleT -= dt;
         if (g.settleT <= 0) {
           if (g.pigs.length === 0) {
@@ -421,6 +591,13 @@ export default function PacketSiege() {
             }
           }
         }
+      }
+
+      // A pig can be wiped out by falling debris at any moment, not just by a
+      // direct bird hit — clear the level as soon as the last one is gone.
+      if (!g.over && g.pigs.length === 0) {
+        g.won = true;
+        g.over = true;
       }
 
       if (g.birds !== shown.current.birds) {

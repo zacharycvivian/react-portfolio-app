@@ -120,11 +120,13 @@ export function ReactivityProvider({ children }: { children: React.ReactNode }) 
         }
         // Only tilt in-flow panels (static/relative). Fixed/absolute glass is
         // typically centered via transform (modals, dropdowns) — leave those be.
-        // Also skip tiles that animate their OWN transform (the gallery's
-        // polaroid tilt) — otherwise the engine and Framer fight for
-        // `el.style.transform` every frame. Those still get the light sheen.
+        // Also skip surfaces that animate their OWN transform: the gallery's
+        // polaroid tilt (Framer) and the home carousel (embla slides the track +
+        // a CSS hover scale). Otherwise the engine's per-frame `el.style.transform`
+        // fights them — on the carousel a 3D tilt on the overflow-clipped embla
+        // container visibly breaks the slider. These still get the light sheen.
         const inFlow = cs.position === "static" || cs.position === "relative";
-        const ownsTransform = el.matches('[class*="photoCard"]');
+        const ownsTransform = el.matches('[class*="photoCard"], [class*="carouselItem"]');
         if (!prefersReduced && inFlow && tiltEligible(r) && !ownsTransform) {
           el.dataset.reactiveTilt = "1";
           // Neutralize any transform transition so our per-frame easing reads
