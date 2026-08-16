@@ -129,9 +129,9 @@ export default function Home() {
                     <p>
                       <strong>
                         On The Mark Solutions — Customer Experience &amp; Product
-                        Quality Lead (formerly Implementation &amp; Support
-                        Specialist):
+                        Quality Lead:
                       </strong>{" "}
+                      (formerly Implementation &amp; Support Specialist)
                       The primary point of contact for OTMS's clients throughout the
                       implementation process + ongoing support. Creating accurate
                       documentation for user guides and troubleshooting resources,
