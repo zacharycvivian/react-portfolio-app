@@ -77,8 +77,8 @@ export default function Home() {
               <RotatingWord />
               <p className={styles.infoContainerText}>
                 I am a cybersecurity professional currently working for On The
-                Mark Solutions as an Implementation and Support Specialist. If
-                you'd like to learn more about my experience, projects, and
+                Mark Solutions as a Customer Experience &amp; Product Quality
+                Lead. If you'd like to learn more about my experience, projects, and
                 technical skills, scroll below. Questions? Press 'Chat' in the
                 lower right corner to open a terminal window to ask AI any
                 questions you have about my site.
@@ -128,8 +128,9 @@ export default function Home() {
                   <AnimatedItem className={styles.card} index={2}>
                     <p>
                       <strong>
-                        On The Mark Solutions — Implementation &amp; Support
-                        Specialist:
+                        On The Mark Solutions — Customer Experience &amp; Product
+                        Quality Lead (formerly Implementation &amp; Support
+                        Specialist):
                       </strong>{" "}
                       The primary point of contact for OTMS's clients throughout the
                       implementation process + ongoing support. Creating accurate
@@ -139,9 +140,10 @@ export default function Home() {
                       resolving/troubleshooting issues. Also responsible for
                       planning implementation timelines, coordinating with
                       cross-functional teams, and ensuring a smooth transition for
-                      clients adopting new software solutions. Additionally,
-                      quality assurance testing software and interfaces before
-                      client deployment to ensure reliability and accuracy.
+                      clients adopting new software solutions. Also ensuring
+                      software quality and version testing by validating
+                      releases before client deployment as well as gathering and relaying
+                      product feedback to the development team.
                     </p>
                   </AnimatedItem>
                 </div>
@@ -216,22 +218,7 @@ export default function Home() {
                   future academic use. Due to some difficulties the team had
                   with the UI towards the end of the project, I quickly remade
                   the entire UI with the experience I had gained from making
-                  this website. If you'd like to check out the template, visit
-                  my GitHub profile from the 'Contact' page or simply click{" "}
-                  <a
-                    href="https://angular-cyberlabs-app.vercel.app/login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.hyperlink}
-                  >
-                    this link
-                  </a>
-                  . Login with usernames <strong>student</strong> or{" "}
-                  <strong>teacher</strong> and the secure password,{" "}
-                  <strong>password</strong>, to view this template built in
-                  Angular. This does not have any security implementations, the
-                  MySQL database, or the Proxmox VE environment built in with it
-                  since it's being shown publicly on my GitHub profile.
+                  this website.
                 </p>
               </AnimatedItem>
               <AnimatedItem className={styles.card} index={2}>
